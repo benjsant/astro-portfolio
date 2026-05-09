@@ -6,12 +6,26 @@ import icon from 'astro-icon';
 import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
 import netlify from '@astrojs/netlify';
+import node from '@astrojs/node';
 
 const isNetlify = process.env.DEPLOY_TARGET === 'netlify';
+const isVercel = process.env.DEPLOY_TARGET === 'vercel';
+
+function getAdapter() {
+  if (isNetlify) return netlify();
+  if (isVercel) return vercel();
+  return node({ mode: 'standalone' });
+}
 
 export default defineConfig({
   output: 'static',
-  adapter: isNetlify ? netlify() : vercel(),
+  adapter: getAdapter(),
+
+  server: {
+    host: true,
+    port: 4321,
+  },
+
   site: process.env.SITE_URL || 'https://example.com',
 
   build: {
@@ -31,6 +45,7 @@ export default defineConfig({
       PUBLIC_GOOGLE_MAPS_API_KEY: envField.string({ context: 'client', access: 'public', optional: true, default: '' }),
       PUBLIC_CONSENT_ENABLED: envField.boolean({ context: 'client', access: 'public', optional: true, default: false }),
       PUBLIC_PRIVACY_POLICY_URL: envField.string({ context: 'client', access: 'public', optional: true, default: '' }),
+      DEEPSEEK_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
 

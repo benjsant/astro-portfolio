@@ -41,6 +41,7 @@
   "dependencies": {
     "@astrojs/mdx": "5.0.0",
     "@astrojs/netlify": "^7.0.2",
+    "@astrojs/node": "^10.1.0",
     "@astrojs/react": "5.0.0",
     "@astrojs/sitemap": "^3.7.1",
     "@astrojs/vercel": "^10.0.0",
