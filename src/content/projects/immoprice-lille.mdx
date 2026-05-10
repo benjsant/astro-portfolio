@@ -1,0 +1,42 @@
+---
+title: "ImmoPrice Lille"
+description: "API REST de prédiction du prix au m² à Lille basée sur les données DVF 2022 — modèles ML entraînés et testés pour la généralisation sur Bordeaux."
+repo: "https://github.com/benjsant/immoprice_lille_fastapi"
+tags: ["Python", "FastAPI", "ML", "scikit-learn", "Jupyter", "Données ouvertes"]
+featured: false
+order: 5
+year: 2024
+role: "Data Scientist & Développeur"
+services: ["Machine Learning", "API REST", "Data Science"]
+---
+
+## À propos du projet
+
+Outil de prédiction du prix au m² pour les logements de 4 pièces à Lille, basé sur les données publiques DVF (Demandes de Valeurs Foncières) 2022. L'API est testée pour sa capacité de généralisation sur Bordeaux.
+
+## Données
+
+Les données DVF sont des données gouvernementales publiques recensant toutes les transactions immobilières en France. Après nettoyage et filtrage sur Lille / 4 pièces, plusieurs modèles ML sont entraînés et comparés.
+
+## Modèles ML
+
+Comparaison de plusieurs algorithmes :
+- Régression linéaire (baseline)
+- Random Forest
+- Gradient Boosting
+- Ridge / Lasso
+
+Sélection du meilleur modèle par validation croisée et évaluation sur un test set Bordeaux.
+
+## API FastAPI
+
+L'API expose un endpoint de prédiction documenté automatiquement (Swagger UI) :
+- Input : surface, nombre de pièces, type de bien, localisation
+- Output : prix prédit au m² avec intervalle de confiance
+
+## Stack technique
+
+- **ML** : scikit-learn, pandas, numpy
+- **API** : FastAPI, Pydantic
+- **Analyse** : Jupyter Notebook
+- **Données** : DVF 2022 (data.gouv.fr)

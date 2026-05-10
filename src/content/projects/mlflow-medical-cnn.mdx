@@ -1,0 +1,41 @@
+---
+title: "Medical Screen CNN"
+description: "CNN pour le screening médical d'images avec suivi complet des expériences via MLflow — métriques, hyperparamètres et artefacts versionnés."
+repo: "https://github.com/benjsant/MlFlow_medical_screen_CNN"
+tags: ["PyTorch", "CNN", "MLflow", "Computer Vision", "Santé", "Python"]
+featured: false
+order: 4
+year: 2024
+role: "ML Engineer"
+services: ["Deep Learning", "MLOps", "Computer Vision"]
+---
+
+## À propos du projet
+
+Développement d'un réseau de neurones convolutif (CNN) pour l'analyse d'images médicales, avec un accent particulier sur la traçabilité des expériences via MLflow.
+
+## Architecture CNN
+
+Le modèle traite des images médicales et effectue une classification binaire ou multi-classes selon le type de screening. L'architecture a été optimisée pour équilibrer précision et temps d'inférence sur des ressources limitées.
+
+## Suivi MLflow
+
+Chaque run d'entraînement est tracé automatiquement :
+- **Métriques** : accuracy, F1-score, AUC, loss par epoch
+- **Hyperparamètres** : learning rate, batch size, architecture
+- **Artefacts** : modèle sérialisé, courbes d'apprentissage, matrice de confusion
+- **Comparaison** : visualisation des runs pour sélectionner le meilleur modèle
+
+## Ce que ça démontre
+
+- Conception et entraînement de CNN en PyTorch
+- Mise en place d'un workflow MLOps avec MLflow
+- Application de l'IA à un domaine à fort impact (santé)
+- Reproductibilité des expériences ML
+
+## Stack technique
+
+- **DL Framework** : PyTorch / TensorFlow
+- **MLOps** : MLflow (tracking, model registry)
+- **Data** : augmentation, normalisation, train/val/test split
+- **Analyse** : Jupyter Notebook, matplotlib, seaborn

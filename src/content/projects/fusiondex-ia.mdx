@@ -1,0 +1,34 @@
+---
+title: "FusionDex-IA"
+description: "Pokédex intelligent pour Pokémon Infinite Fusion — pipeline ETL complet, API FastAPI, interface Next.js et recherche assistée par IA en langage naturel."
+repo: "https://github.com/benjsant/FusionDex-IA"
+tags: ["Python", "FastAPI", "Next.js", "PostgreSQL", "NLP", "ETL", "Docker"]
+featured: true
+order: 1
+year: 2025
+role: "Développeur Full Stack IA"
+services: ["Data Engineering", "IA & NLP", "API REST", "Frontend"]
+---
+
+## À propos du projet
+
+FusionDex-IA est un Pokédex intelligent conçu pour Pokémon Infinite Fusion, un ROM hack permettant la fusion de 400+ Pokémon. Le défi : aucune API officielle n'existe, les données sont dispersées dans des wikis et fichiers de jeu.
+
+## Pipeline ETL
+
+Un pipeline d'extraction, transformation et chargement extrait et structure automatiquement toutes les données du jeu dans une base **PostgreSQL** — sprites, statistiques, combinaisons de fusion, types, évolutions.
+
+## API FastAPI
+
+Une API REST documentée expose les données avec filtres avancés, pagination et endpoints dédiés aux recherches complexes (par types combinés, stats, générations).
+
+## Recherche IA en langage naturel
+
+L'interface intègre un moteur de recherche assisté par IA permettant d'interroger les données en langage naturel : *"montre-moi des fusions avec des types Feu/Dragon et une attaque spéciale supérieure à 100"*.
+
+## Stack technique
+
+- **Backend** : Python, FastAPI, SQLModel, PostgreSQL
+- **Frontend** : Next.js, TypeScript, Tailwind CSS
+- **Data** : Pipeline ETL Python, scraping, transformation
+- **Infra** : Docker, Docker Compose

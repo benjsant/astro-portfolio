@@ -1,0 +1,38 @@
+---
+title: "CI/CD Semantic Release"
+description: "API REST CRUD avec pipeline CI/CD complet — GitHub Actions, versionnage sémantique automatique et build Docker vers GitHub Container Registry."
+repo: "https://github.com/benjsant/ci_cd_semantic"
+tags: ["FastAPI", "PostgreSQL", "GitHub Actions", "Docker", "CI/CD", "Python"]
+featured: false
+order: 6
+year: 2024
+role: "Développeur & DevOps"
+services: ["DevOps", "CI/CD", "API REST"]
+---
+
+## À propos du projet
+
+Mise en place d'un pipeline CI/CD complet autour d'une API REST FastAPI, démontrant les bonnes pratiques DevOps : automatisation, versionnage sémantique et containerisation.
+
+## Pipeline CI/CD
+
+**Continuous Integration (CI)**
+- Lint avec Ruff
+- Tests automatisés avec pytest
+- Vérification des types avec mypy
+
+**Continuous Delivery (CD)**
+- Build de l'image Docker
+- Push vers GitHub Container Registry
+- Versionnage sémantique automatique avec `python-semantic-release`
+
+## Versionnage sémantique
+
+Le versioning suit la convention Conventional Commits : chaque commit déclenche automatiquement une version MAJOR, MINOR ou PATCH selon le type de changement (feat, fix, breaking change).
+
+## Stack technique
+
+- **Backend** : Python 3.13, FastAPI, SQLModel, PostgreSQL
+- **DevOps** : GitHub Actions, Docker, GHCR
+- **Qualité** : pytest, Ruff, mypy
+- **Versioning** : python-semantic-release
