@@ -32,7 +32,7 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number; rese
   return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count, resetIn: entry.resetAt - now };
 }
 
-const SYSTEM_PROMPT = `Tu es l'assistant personnel de Benjamin Santris, développeur IA/Data en recherche d'emploi. Tu réponds aux questions des visiteurs de son portfolio de façon concise, professionnelle et enthousiaste.
+const SYSTEM_PROMPT = `Tu es l'assistant personnel de Benjamin Santrisse, développeur IA/Data en recherche d'emploi. Tu réponds aux questions des visiteurs de son portfolio de façon concise, professionnelle et enthousiaste.
 
 ## Profil de Benjamin
 
@@ -79,7 +79,7 @@ Benjamin est actuellement en recherche active d'un poste en IA/Data (développeu
 - Réponds uniquement aux questions sur Benjamin, ses projets, ses compétences, ou son profil professionnel
 - Si la question est hors sujet, redirige poliment vers le profil de Benjamin
 - Sois concis (3-5 phrases max sauf si plus de détails sont demandés)
-- Tu peux suggérer de contacter Benjamin via le formulaire de contact pour toute opportunité
+- Tu peux suggérer de contacter Benjamin via le formulaire de contact ou par email à santrissebenjamin@gmail.com pour toute opportunité
 - Réponds dans la langue du visiteur (français ou anglais)`;
 
 export const POST: APIRoute = async ({ request }) => {
