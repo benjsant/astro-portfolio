@@ -105,30 +105,25 @@ export interface SiteConfig {
 }
 
 const siteConfig: SiteConfig = {
-  name: 'Astro Rocket',
+  name: 'Benjamin Santrisse',
   description:
-    'Astro Rocket — A production-ready Astro 6 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on.',
-  url: SITE_URL || 'https://astrorocket.dev',
+    'Développeur spécialisé en Intelligence Artificielle et Data Engineering — pipelines ML, APIs FastAPI, orchestration Airflow, LLMs. Disponible pour de nouvelles opportunités.',
+  url: SITE_URL || 'https://example.com',
   ogImage: '/og-default.svg',
-  author: 'Hans Martens',
-  email: 'hello@hansmartens.dev',
+  author: 'Benjamin Santris',
+  email: 'santrisseb@gmail.com',
   address: {
     street: '',
-    city: 'Veghel',
+    city: 'Marly', // à mettre à jour avec ta ville
     state: '',
     zip: '',
-    country: 'the Netherlands',
+    country: 'France',
   },
   socialLinks: [
-    'https://github.com/hansmartens68/Astro-Rocket',
-    'https://x.com/hansmartens_dev',
-    'https://www.linkedin.com',
-    'https://bsky.app/profile/hansmartens-online.bsky.social',
+    'https://github.com/benjsant',
+    'https://www.linkedin.com/in/benjamin-santrisse/', // à mettre à jour avec ton profil LinkedIn
   ],
-  twitter: {
-    site: 'https://x.com/hansmartens_dev',
-    creator: '@hansmartens_dev',
-  },
+  twitter: undefined,
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,
@@ -162,7 +157,7 @@ const siteConfig: SiteConfig = {
   },
   branding: {
     logo: {
-      alt: 'Astro Rocket',
+      alt: 'Benjamin Santris',
       imageUrl: '/favicon.svg',
     },
     favicon: {

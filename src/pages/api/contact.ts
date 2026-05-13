@@ -64,8 +64,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     const resend = new Resend(apiKey);
 
-    const toEmail = siteConfig.email;
-    const fromEmail = import.meta.env.RESEND_FROM_EMAIL || toEmail;
+    // CONTACT_TO_EMAIL = adresse privée de réception (jamais exposée publiquement)
+    // Fallback sur siteConfig.email si non défini
+    const toEmail = import.meta.env.CONTACT_TO_EMAIL || siteConfig.email;
+    const fromEmail = import.meta.env.RESEND_FROM_EMAIL || siteConfig.email;
     const siteLabel = siteConfig.name;
 
     const subject = result.data.subject

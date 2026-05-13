@@ -46,6 +46,7 @@ export default defineConfig({
       PUBLIC_CONSENT_ENABLED: envField.boolean({ context: 'client', access: 'public', optional: true, default: false }),
       PUBLIC_PRIVACY_POLICY_URL: envField.string({ context: 'client', access: 'public', optional: true, default: '' }),
       DEEPSEEK_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
+      CONTACT_TO_EMAIL: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
 
