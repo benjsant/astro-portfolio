@@ -1,0 +1,37 @@
+---
+title: "Audiomancy"
+description: "Plateforme de génération de playlists musicales assistée par IA — agent DeepSeek + API Jamendo, monitoring Prometheus/Grafana, déployée sur Azure."
+repo: "https://github.com/benjsant/audiomancy"
+tags: ["Python", "FastAPI", "Next.js", "MongoDB", "DeepSeek", "Docker", "Azure", "Prometheus"]
+featured: true
+order: 4
+year: 2026
+role: "Développeur IA Full Stack"
+services: ["IA & LLMs", "API REST", "Frontend", "DevOps"]
+---
+
+## À propos du projet
+
+Audiomancy est une application web qui génère des playlists musicales personnalisées grâce à un agent IA — projet réalisé en équipe dans le cadre de la formation Simplon.
+
+## Agent IA DeepSeek
+
+L'agent utilise **DeepSeek** pour comprendre les préférences musicales de l'utilisateur en langage naturel et construire des requêtes intelligentes vers l'**API Jamendo** (catalogue de musique libre).
+
+## Architecture
+
+- **Backend** : FastAPI exposant les endpoints de génération et gestion des playlists
+- **Frontend** : Next.js avec interface de chat pour interagir avec l'agent
+- **Base de données** : MongoDB pour les playlists et préférences utilisateur
+- **Monitoring** : Prometheus + Grafana pour observer les métriques en production
+
+## Déploiement Azure
+
+L'application est conteneurisée avec **Docker** et déployée sur **Azure** — pipeline CI/CD automatisé pour les mises en production.
+
+## Stack technique
+
+- **IA** : DeepSeek API, prompt engineering
+- **Backend** : Python, FastAPI, MongoDB
+- **Frontend** : Next.js, TypeScript
+- **DevOps** : Docker, Azure, Prometheus, Grafana

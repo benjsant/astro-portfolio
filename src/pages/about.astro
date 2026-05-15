@@ -12,120 +12,130 @@ import { Hero } from '@/components/hero';
 import TypingEffect from '@/components/ui/TypingEffect.astro';
 import TechStack from '@/components/landing/TechStack.astro';
 import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
-import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
+import siteConfig from '@/config/site.config';
 ---
 <PageLayout
-  title="About Astro Rocket — Web Designer & Developer | Veghel"
-  description="Designer & developer — Crafting modern web experiences shaped by clean design, solid structure, and attention to detail."
+  title="À propos — Benjamin Santrisse, Développeur IA & Data"
+  description="Développeur spécialisé en IA et Data Engineering. Certifié Développeur IA (RNCP Niv. 6, Simplon). Passionné par la chaîne complète : pipelines ML, APIs FastAPI, orchestration, LLMs."
 >
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
       <Icon name="user" size="sm" />
-      About me
+      À propos
     </Badge>
     <h1 slot="title">
-      <span class="text-foreground [-webkit-text-fill-color:currentColor]">Astro Rocket —</span><br />
+      <span class="text-foreground [-webkit-text-fill-color:currentColor]">Benjamin Santrisse —</span><br />
       <span class="text-brand-500 [-webkit-text-fill-color:var(--color-brand-500)]">
-        <TypingEffect words={["Web Designer", "Web Developer", "Astro Developer", "Claude Code User", "UI / UX Enthusiast", "Blogger", "Coffee lover"]} />
+        <TypingEffect words={["Développeur IA", "Data Engineer", "ML Engineer", "Python Developer", "Passionné de LLMs", "Open to work"]} />
       </span>
     </h1>
-
     <p slot="description">
-      I care about both sides of the craft — how a site looks and how it
-      performs. Here's a bit more about how I think and work.
+      Je construis des systèmes IA concrets et déployables — de la donnée brute au modèle en production.
+      Disponible pour de nouvelles opportunités.
     </p>
   </Hero>
 
-  <!-- What's possible now -->
+  <!-- Profil -->
   <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
     <div class="mx-auto max-w-6xl px-6">
       <div class="grid gap-12 lg:grid-cols-2">
-        <!-- Left: text -->
         <div class="flex flex-col gap-4" data-reveal="right">
           <div class="flex flex-col gap-6">
-            <Badge variant="brand" pill class="self-start">The partnership</Badge>
+            <Badge variant="brand" pill class="self-start">Mon profil</Badge>
             <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-              Meet the team:<br /> Astro Rocket & Claude
+              Développeur IA<br />& Data Engineering
             </h2>
           </div>
           <p class="text-lg text-foreground-muted leading-relaxed">
-           I'm a web designer and developer with 16 years of hands‑on experience. Today I work alongside <a href="https://claude.ai/code" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 decoration-brand-500 hover:text-brand-400 transition-colors">Claude</a> — not as a shortcut, but as a genuine collaborator that helps me think through design decisions, review code, and build more thoroughly than I could alone.
+            Spécialisé en Intelligence Artificielle et Data Engineering, je maîtrise la chaîne complète :
+            collecte de données, entraînement de modèles, exposition via APIs FastAPI, et orchestration de pipelines avec Airflow.
           </p>
           <p class="text-lg text-foreground-muted leading-relaxed">
-            This isn't about automating the work — it's about raising the standard of it. Every design decision still comes from craft and experience. Every line of code is still written with intention. Claude helps me think more rigorously, not less. The work stays mine. The thinking gets sharper.
+            Passionné par les LLMs et l'automatisation intelligente, je construis des outils concrets qui résolvent
+            de vrais problèmes — pas des démos. Chaque projet que tu vois ici est fonctionnel et déployé.
           </p>
+          <div class="flex gap-3 mt-2">
+            <Button variant="outline" href={siteConfig.socialLinks[0]} target="_blank" rel="noopener noreferrer">
+              <Icon name="brand-github" size="sm" />
+              GitHub
+            </Button>
+            <Button variant="outline" href={siteConfig.socialLinks[1]} target="_blank" rel="noopener noreferrer">
+              <Icon name="brand-linkedin" size="sm" />
+              LinkedIn
+            </Button>
+          </div>
         </div>
-        <!-- Right: two stacked partner cards -->
+
         <div class="flex flex-col gap-4 h-full" data-reveal="left" data-reveal-delay="1">
           <Card variant="elevated" hover class="flex-1 flex flex-col justify-center">
             <div class="flex items-start gap-4">
               <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                <Icon name="code-2" size="md" />
+                <Icon name="graduation-cap" size="md" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-xs font-bold tracking-wide casesensitive text-foreground-muted mb-1">Web Designer & Developer</p>
-                <h3 class="text-base font-semibold text-foreground">Astro Rocket</h3>
+                <p class="text-xs font-bold tracking-wide text-foreground-muted mb-1">Certification RNCP Niveau 6 — Simplon, Lille</p>
+                <h3 class="text-base font-semibold text-foreground">Développeur IA (2025–2026)</h3>
                 <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                  16 years of craft — design, code, performance, and honest communication. Based in Veghel, working worldwide.
+                  Formation intensive : Python, ML/DL, MLOps, LLMs, FastAPI, Docker. Équivalent Bac+3/4.
                 </p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
-                  <Badge size="sm" variant="brand">Astro</Badge>
-                  <Badge size="sm" variant="brand">Tailwind</Badge>
-                  <Badge size="sm" variant="brand">TypeScript</Badge>
+                  <Badge size="sm" variant="brand">Python</Badge>
+                  <Badge size="sm" variant="brand">TensorFlow</Badge>
+                  <Badge size="sm" variant="brand">MLflow</Badge>
+                  <Badge size="sm" variant="brand">Airflow</Badge>
                 </div>
               </div>
             </div>
           </Card>
-          <Card variant="elevated" hover href="https://claude.ai/code" target="_blank" rel="noopener noreferrer" class="group flex-1 flex flex-col justify-center">
-            <div class="flex items-start justify-between gap-4">
-              <div class="flex items-start gap-4 flex-1 min-w-0">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                  <Icon name="sparkles" size="md" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-xs font-bold tracking-wide casesensitive text-foreground-muted mb-1">AI Thinking Partner</p>
-                <h3 class="text-base font-semibold text-foreground">Claude</h3>
+          <Card variant="elevated" hover class="flex-1 flex flex-col justify-center">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="map-pin" size="md" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold tracking-wide text-foreground-muted mb-1">Localisation & mobilité</p>
+                <h3 class="text-base font-semibold text-foreground">Marly — Métropole Valenciennoise</h3>
                 <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                  Reasoning through decisions, reviewing code and copy, exploring alternatives — a second perspective at every stage of a project.
+                  Mobilité départementale (permis B + véhicule). Ouvert au remote total ou hybride.
+                  Métropole Lilloise accessible.
                 </p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
-                  <Badge size="sm" variant="brand">Design review</Badge>
-                  <Badge size="sm" variant="brand">Code QA</Badge>
-                  <Badge size="sm" variant="brand">Deep thinking</Badge>
+                  <Badge size="sm" variant="brand">Remote OK</Badge>
+                  <Badge size="sm" variant="brand">Hybride OK</Badge>
+                  <Badge size="sm" variant="brand">Présentiel Nord</Badge>
                 </div>
               </div>
-              </div>
-              <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
             </div>
           </Card>
         </div>
       </div>
     </div>
   </section>
-  <!-- Values -->
+
+  <!-- Ce que je fais -->
   <section class="py-[var(--space-section-md)] bg-background border-t border-border">
     <div class="mx-auto max-w-6xl px-6">
       <div class="mb-8 text-center flex flex-col items-center gap-4" data-reveal>
         <div class="flex flex-col items-center gap-6">
-          <Badge variant="brand" pill>My Process</Badge>
+          <Badge variant="brand" pill>Compétences</Badge>
           <h2 class="font-display text-4xl font-bold text-foreground">
-            How I Work
+            Ce que je maîtrise
           </h2>
         </div>
         <p class="text-lg text-foreground-muted max-w-2xl mx-auto text-balance">
-          These aren't aspirations — they're the constraints every project is held to, from the first conversation to the final handover.
+          De la donnée brute au modèle en production — je couvre toute la chaîne.
         </p>
       </div>
       <div class="grid gap-8 md:grid-cols-3">
         <Card hover data-reveal>
           <div class="flex items-start gap-4">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="zap" size="md" />
+              <Icon name="bot" size="md" />
             </div>
             <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-foreground">Performance First</h3>
+              <h3 class="text-base font-semibold text-foreground">IA & LLMs</h3>
               <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Fast sites rank better, convert better, and keep users happy. I optimise for speed from the ground up.
+                Intégration de LLMs (DeepSeek, Claude), RAG, agents IA, automatisation de workflows intelligents.
               </p>
             </div>
           </div>
@@ -133,12 +143,12 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
         <Card hover data-reveal data-reveal-delay="1">
           <div class="flex items-start gap-4">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="award" size="md" />
+              <Icon name="database" size="md" />
             </div>
             <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-foreground">Experience That Shows</h3>
+              <h3 class="text-base font-semibold text-foreground">Data Engineering</h3>
               <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Sixteen years of experience means I know what works, what doesn't, and exactly what your project needs.
+                Pipelines ETL, APIs FastAPI, PostgreSQL, MongoDB, orchestration Airflow.
               </p>
             </div>
           </div>
@@ -146,12 +156,12 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
         <Card hover data-reveal data-reveal-delay="2">
           <div class="flex items-start gap-4">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="rocket" size="md" />
+              <Icon name="flask-conical" size="md" />
             </div>
             <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-foreground">Modern from the Ground Up</h3>
+              <h3 class="text-base font-semibold text-foreground">MLOps & Déploiement</h3>
               <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Built with today's tooling. Fast, maintainable, and ready for whatever comes next.
+                Suivi d'expériences MLflow, conteneurisation Docker, CI/CD GitHub Actions, versionnage sémantique.
               </p>
             </div>
           </div>
@@ -159,212 +169,134 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
       </div>
     </div>
   </section>
-  <!-- My Stack -->
+
+  <!-- Stack -->
   <TechStack
-    badge="Tools & Tech"
-    title="My Stack"
-    description="The tools I rely on every day to build fast, modern websites — chosen for performance, great developer experience, and reliability."
+    badge="Stack technique"
+    title="Mes outils du quotidien"
+    description="Les technologies que j'utilise pour construire des systèmes IA robustes et déployables."
     background="secondary"
   />
-  <!-- FAQ -->
+
+  <!-- Parcours -->
   <section class="py-[var(--space-section-md)] bg-background border-t border-border">
     <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
       <div class="flex flex-col items-center gap-4 text-center" data-reveal>
         <div class="flex flex-col items-center gap-6">
-          <Badge variant="brand" pill>Good to know</Badge>
+          <Badge variant="brand" pill>Parcours</Badge>
           <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            Frequently asked questions
+            Formation & expérience
           </h2>
         </div>
-        <p class="text-lg text-foreground-muted max-w-2xl mx-auto text-balance">
-          Some of the questions I get asked most often.
-        </p>
       </div>
 
       <div class="grid gap-6 md:grid-cols-2">
-        <!-- Card 1: About Astro -->
+        <Card variant="elevated" padding="lg" data-reveal>
+          <div class="flex items-center gap-3 pb-4 border-b border-border">
+            <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="graduation-cap" size="md" />
+            </div>
+            <h3 class="font-display text-base font-semibold text-foreground">Formations</h3>
+          </div>
+          <div class="flex flex-col divide-y divide-border">
+            <div class="py-4">
+              <div class="flex items-baseline justify-between gap-2 mb-1">
+                <p class="text-sm font-semibold text-foreground">Développeur IA — RNCP Niv. 6</p>
+                <span class="text-xs text-foreground-muted shrink-0">2025 – 2026</span>
+              </div>
+              <p class="text-xs text-foreground-muted">Simplon, Lille · <span class="text-brand-500 font-medium">Certifié</span></p>
+            </div>
+            <div class="py-4">
+              <div class="flex items-baseline justify-between gap-2 mb-1">
+                <p class="text-sm font-semibold text-foreground">Licence Pro SIO — Option Développement</p>
+                <span class="text-xs text-foreground-muted shrink-0">2018 – 2019</span>
+              </div>
+              <p class="text-xs text-foreground-muted">UVHC, Valenciennes</p>
+            </div>
+            <div class="py-4">
+              <div class="flex items-baseline justify-between gap-2 mb-1">
+                <p class="text-sm font-semibold text-foreground">BTS SIO — Option SLAM</p>
+                <span class="text-xs text-foreground-muted shrink-0">2015 – 2017</span>
+              </div>
+              <p class="text-xs text-foreground-muted">Lycée Henri Wallon, Valenciennes</p>
+            </div>
+          </div>
+        </Card>
+
         <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="1">
           <div class="flex items-center gap-3 pb-4 border-b border-border">
             <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="rocket" size="md" />
+              <Icon name="briefcase" size="md" />
             </div>
-            <h3 class="font-display text-base font-semibold text-foreground">About Astro</h3>
+            <h3 class="font-display text-base font-semibold text-foreground">Expérience</h3>
           </div>
-          <div class="w-full">
-            <details class="border-b border-border" name="faq-astro">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                What is Astro?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Astro is a modern web framework built for content-driven sites. It ships zero JavaScript by default — only sending what the page actually needs. The result is fast load times, excellent Core Web Vitals scores, and lean, maintainable code.
+          <div class="flex flex-col divide-y divide-border">
+            <div class="py-4">
+              <div class="flex items-baseline justify-between gap-2 mb-1">
+                <p class="text-sm font-semibold text-foreground">Développeur Web Symfony</p>
+                <span class="text-xs text-foreground-muted shrink-0">2016 – 2019</span>
               </div>
-            </details>
-            <details class="border-b border-border" name="faq-astro">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Why do you build with Astro?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Because it matches the way I think about the web: lean, purposeful, and built to last. Astro lets me ship fast sites without fighting the framework — minimal JavaScript, clean HTML, great SEO — so I can focus on the design and details that actually matter.
+              <p class="text-xs text-foreground-muted mb-2">CAF du Nord, Valenciennes · Stages successifs (6 mois)</p>
+              <ul class="text-xs text-foreground-muted space-y-1 list-disc list-inside">
+                <li>Développement d'interfaces web avec Symfony et Bootstrap</li>
+                <li>Plateforme de gestion des espaces de travail</li>
+                <li>Stack : PHP, Symfony, Bootstrap, PostgreSQL, Git</li>
+              </ul>
+            </div>
+            <div class="py-4">
+              <div class="flex items-baseline justify-between gap-2 mb-1">
+                <p class="text-sm font-semibold text-foreground">Certification Gestion de Projet Agile</p>
+                <span class="text-xs text-foreground-muted shrink-0">2025</span>
               </div>
-            </details>
-            <details class="border-b border-border" name="faq-astro">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Do you always build with Astro?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Almost always. For portfolios, business sites, marketing pages, and blogs, Astro is the right tool. If a project genuinely calls for something different, I'll be upfront about it. But Astro handles most of what clients need, and it does it exceptionally well.
-              </div>
-            </details>
-            <details class="border-b border-border" name="faq-astro">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Do you build Astro themes?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Yes. I built <a href="https://astro.build/themes/details/astro-rocket/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 decoration-brand-500 hover:text-brand-400 transition-colors">Astro Rocket</a> — a free, production-ready theme listed on the official Astro themes directory. It includes a full component library, blog support, dark mode, SEO, and everything you need to launch a fast modern website without starting from scratch.
-              </div>
-            </details>
-            <details class="border-b border-border last:border-0" name="faq-astro">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Do you plan to build more Astro themes?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Yes, that's the plan. Astro Rocket is actively maintained and I have ideas for new themes in the pipeline. Follow along on the blog or keep an eye on the official Astro themes directory for what's next.
-              </div>
-            </details>
+              <p class="text-xs text-foreground-muted">Méthodes agiles — certification professionnelle</p>
+            </div>
           </div>
         </Card>
-
-        <!-- Card 2: About the work -->
-        <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="2">
-          <div class="flex items-center gap-3 pb-4 border-b border-border">
-            <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="user" size="md" />
-            </div>
-            <h3 class="font-display text-base font-semibold text-foreground">About the work</h3>
-          </div>
-          <div class="w-full">
-            <details class="border-b border-border" name="faq-work">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Do you use AI when you build a website?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Yes — I work alongside Claude as a thinking partner throughout every project. Not as a shortcut, but as a second perspective that helps me think through design decisions, review code, and spot things I might otherwise miss.
-              </div>
-            </details>
-            <details class="border-b border-border" name="faq-work">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Are you a company or agency?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                No. I'm a designer and developer who works solo, driven by genuine enthusiasm for the craft — not by commercial targets. There's no sales team, no account manager, no handoff to a junior. You work directly with me from the first conversation to the final delivery.
-              </div>
-            </details>
-            <details class="border-b border-border" name="faq-work">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                How do you choose which projects to take on?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                I look for projects where good design and solid execution actually matter to the client. I work best when there's a clear goal, an open line of communication, and a client who trusts the process. I'd rather take on fewer projects and do them properly than stretch across too many at once.
-              </div>
-            </details>
-            <details class="border-b border-border" name="faq-work">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Do you offer support or maintenance after launch?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Yes. Whether it's small updates, content changes, or something more involved — I'm available after launch. We can agree on whatever arrangement works best for the project.
-              </div>
-            </details>
-            <details class="border-b border-border last:border-0" name="faq-work">
-              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                Do you work with clients outside the Netherlands?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
-              </summary>
-              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
-                Absolutely. I'm based in Veghel but work with clients worldwide. Most projects run entirely remote, which works well for clear briefs and good communication. Time zone differences are rarely a problem.
-              </div>
-            </details>
-          </div>
-        </Card>
-      </div>
-    </div>
-  </section>
-
-  <!-- More about me -->
-  <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="grid gap-10 lg:grid-cols-2">
-        <!-- Text -->
-        <div class="flex flex-col justify-center gap-4" data-reveal="right">
-          <Badge variant="brand" pill class="self-start">Backstory</Badge>
-          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            The longer story
-          </h2>
-          <p class="text-lg text-foreground-muted leading-relaxed">
-            You've seen the work, the process, and the tools. If you'd like to know the person behind them, I've put the whole story in one place.
-          </p>
-          <Button variant="outline" size="lg" href="https://hansmartens.dev/blog/hans-martens-web-designer-veghel" target="_blank" rel="noopener noreferrer" class="self-start mt-2">
-            Read the full story
-            <Icon name="arrow-right" size="sm" />
-          </Button>
-        </div>
-
-        <!-- Image -->
-        <div class="mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none" data-reveal="left" data-reveal-delay="1">
-          <a
-            href="https://hansmartens.dev/blog/hans-martens-web-designer-veghel"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group block overflow-hidden rounded-2xl border border-brand-500/20 bg-brand-500/5 shadow-md ring-1 ring-border/60 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:border-brand-500/40"
-            aria-label="Read the introduction post"
-          >
-            <div class="transition-transform duration-300 group-hover:scale-105">
-              <BlogImageSVG slug="hi-im-hans-martens" title="Hi, I'm Hans Martens — the longer story" />
-            </div>
-          </a>
-        </div>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border">
-    <!-- Mobile: flat section, no card -->
+  <section class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
     <div class="glitch:hidden mx-auto max-w-2xl px-6 text-center" data-reveal>
-      <Badge variant="brand" pill class="mb-6">Let's talk</Badge>
+      <Badge variant="brand" pill class="mb-6">Contact</Badge>
       <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
-        Sound like a good fit?
+        Mon profil vous intéresse ?
       </h2>
       <p class="text-lg text-foreground-muted mb-8 text-balance">
-        If my background and approach match what you're looking for, I'm open to new projects. Let's have a conversation.
+        Disponible immédiatement pour un poste en IA, Data Engineering ou ML Engineering.
+        Parlons-en.
       </p>
-      <Button size="lg" href="/contact" class="cta-btn-brand">
-        Start a Project
-        <Icon name="arrow-right" size="sm" />
-      </Button>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button size="lg" href="/contact" class="cta-btn-brand">
+          Me contacter
+          <Icon name="arrow-right" size="sm" />
+        </Button>
+        <Button size="lg" variant="outline" href="/cv.pdf" target="_blank" rel="noopener noreferrer">
+          <Icon name="download" size="sm" />
+          Télécharger mon CV
+        </Button>
+      </div>
     </div>
 
-    <!-- Desktop: contained LetterGlitch band with glass card -->
     <LetterGlitchBand>
       <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
-        Sound like a good fit?
+        Mon profil vous intéresse ?
       </h2>
       <p class="text-lg text-foreground-muted mb-8 text-balance">
-        If my background and approach match what you're looking for, I'm open to new projects. Let's have a conversation.
+        Disponible immédiatement pour un poste en IA, Data Engineering ou ML Engineering.
+        Parlons-en.
       </p>
-      <Button size="lg" href="/contact" class="hero-btn-brand">
-        Start a Project
-        <Icon name="arrow-right" size="sm" />
-      </Button>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button size="lg" href="/contact" class="hero-btn-brand">
+          Me contacter
+          <Icon name="arrow-right" size="sm" />
+        </Button>
+        <Button size="lg" variant="outline" href="/cv.pdf" target="_blank" rel="noopener noreferrer">
+          <Icon name="download" size="sm" />
+          Télécharger mon CV
+        </Button>
+      </div>
     </LetterGlitchBand>
   </section>
 </PageLayout>

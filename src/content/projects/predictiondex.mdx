@@ -1,0 +1,34 @@
+---
+title: "PredictionDex"
+description: "Pipeline MLOps complet pour prédire le vainqueur de combats Pokémon — génération de dataset, entraînement XGBoost, exposition via API FastAPI et interface Streamlit."
+repo: "https://github.com/benjsant/PredictionDex"
+tags: ["Python", "XGBoost", "FastAPI", "PostgreSQL", "MLflow", "Streamlit", "Docker"]
+featured: true
+order: 3
+year: 2026
+role: "ML Engineer"
+services: ["Machine Learning", "MLOps", "API REST", "Data Engineering"]
+---
+
+## À propos du projet
+
+PredictionDex est une plateforme de prédiction de combats Pokémon construite comme un pipeline MLOps de bout en bout — de la génération des données jusqu'au déploiement du modèle.
+
+## Génération du dataset
+
+Un générateur simule des milliers de combats Pokémon en tenant compte des statistiques, types, modificateurs et règles de combat. Les résultats sont stockés dans **PostgreSQL** pour l'entraînement.
+
+## Modèle XGBoost
+
+Un modèle **XGBoost** est entraîné sur ces données avec suivi complet des expériences via **MLflow** : métriques, hyperparamètres, artefacts et versionnage des modèles.
+
+## Déploiement
+
+Le modèle est exposé via une **API FastAPI** et une interface **Streamlit** permet de lancer des prédictions en temps réel — avec affichage des probabilités de victoire pour chaque Pokémon.
+
+## Stack technique
+
+- **ML** : Python, XGBoost, scikit-learn, MLflow
+- **API** : FastAPI, PostgreSQL
+- **Interface** : Streamlit
+- **Infra** : Docker, Docker Compose

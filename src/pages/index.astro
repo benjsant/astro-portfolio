@@ -25,7 +25,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 ---
 
 <LandingLayout
-  title="Benjamin Santris — Développeur IA & Data"
+  title="Benjamin Santrisse — Développeur IA & Data"
   description="Développeur spécialisé en Intelligence Artificielle et Data Engineering. Pipelines ML, APIs FastAPI, orchestration Airflow, LLMs. Disponible pour de nouvelles opportunités."
   image="/og-default.svg"
   includePersonSchema={true}
@@ -126,13 +126,13 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
       <div class="flex flex-col items-center gap-4 text-center" data-reveal>
         <div class="flex flex-col items-center gap-6">
-          <Badge variant="brand" pill>Selected work</Badge>
+          <Badge variant="brand" pill>Projets réalisés</Badge>
           <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            Projects I've built
+            Ce que j'ai construit
           </h2>
         </div>
         <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          A selection of recent work.
+          Une sélection de projets récents — de la donnée brute au modèle déployé.
         </p>
       </div>
 
@@ -165,75 +165,75 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 
       <div class="flex justify-center">
         <Button variant="outline" href="/projects">
-          View all projects
+          Voir tous les projets
           <Icon name="arrow-right" size="sm" />
         </Button>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials -->
+  <!-- Parcours & Formation -->
   <section class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
     <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
       <div class="flex flex-col items-center gap-4 text-center" data-reveal>
         <div class="flex flex-col items-center gap-6">
-          <Badge variant="brand" pill>Testimonials</Badge>
+          <Badge variant="brand" pill>Parcours</Badge>
           <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            What clients say
+            Formation & expérience
           </h2>
         </div>
-        <p class="text-lg text-foreground-muted">
-          Replace these with your own client quotes.
+        <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
+          Un profil ancré dans le terrain — projets concrets, certification récente, disponible immédiatement.
         </p>
       </div>
 
       <div class="grid gap-6 md:grid-cols-2">
-        <!-- Testimonial 1 -->
+        <!-- Formation Simplon -->
         <Card variant="elevated" padding="lg" hover data-reveal>
           <div class="flex flex-col h-full gap-4">
-            <div class="flex gap-1 text-brand-500" role="img" aria-label="5 out of 5 stars">
-              {[...Array(5)].map(() => (
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="graduation-cap" size="sm" />
+              </div>
+              <Badge variant="brand" size="sm">2025 – 2026</Badge>
             </div>
-            <blockquote class="flex-1 text-foreground-muted leading-relaxed">
-              "The new site launched on time and hit every goal we set. Performance improved dramatically — load times dropped and the feedback from our customers has been overwhelmingly positive."
-            </blockquote>
-            <div class="flex items-center gap-3 pt-4 border-t border-border">
-              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/30 to-brand-500/10 flex items-center justify-center text-brand-500 font-bold text-sm shrink-0">
-                A
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-foreground">Alex Morgan</p>
-                <p class="text-xs text-foreground-muted">Founder, Bright Studio</p>
-              </div>
+            <div>
+              <h3 class="text-base font-semibold text-foreground">Développeur IA — RNCP Niv. 6</h3>
+              <p class="text-sm text-foreground-muted mt-0.5">Simplon, Lille</p>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed flex-1">
+              Formation intensive axée sur Python, Machine Learning, Deep Learning, MLOps et déploiement de modèles. Certification professionnelle reconnue équivalent Bac+3/4.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-2 border-t border-border">
+              <Badge size="sm" variant="brand">Python</Badge>
+              <Badge size="sm" variant="brand">ML / DL</Badge>
+              <Badge size="sm" variant="brand">MLOps</Badge>
+              <Badge size="sm" variant="brand">FastAPI</Badge>
+              <Badge size="sm" variant="brand">Docker</Badge>
             </div>
           </div>
         </Card>
 
-        <!-- Testimonial 2 -->
+        <!-- Expérience + disponibilité -->
         <Card variant="elevated" padding="lg" hover data-reveal data-reveal-delay="1">
           <div class="flex flex-col h-full gap-4">
-            <div class="flex gap-1 text-brand-500" role="img" aria-label="5 out of 5 stars">
-              {[...Array(5)].map(() => (
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="briefcase" size="sm" />
+              </div>
+              <Badge variant="brand" size="sm" class="dark:text-brand-200">Disponible · Open to work</Badge>
             </div>
-            <blockquote class="flex-1 text-foreground-muted leading-relaxed">
-              "Straightforward from first conversation to final handover. The right questions were asked, we were kept in the loop throughout, and the end result exceeded what we imagined. Would recommend without hesitation."
-            </blockquote>
-            <div class="flex items-center gap-3 pt-4 border-t border-border">
-              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/30 to-brand-500/10 flex items-center justify-center text-brand-500 font-bold text-sm shrink-0">
-                S
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-foreground">Sarah Chen</p>
-                <p class="text-xs text-foreground-muted">CEO, Luma Agency</p>
-              </div>
+            <div>
+              <h3 class="text-base font-semibold text-foreground">Recherche active d'emploi</h3>
+              <p class="text-sm text-foreground-muted mt-0.5">Métropole Valenciennoise + Lilloise · Remote</p>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed flex-1">
+              Développeur passionné par la chaîne complète de l'IA — de la collecte de données au modèle en production. À la recherche d'un poste dans lequel mettre mes projets concrets en valeur.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-2 border-t border-border">
+              <Badge size="sm" variant="brand">ML Engineer</Badge>
+              <Badge size="sm" variant="brand">Data Engineer</Badge>
+              <Badge size="sm" variant="brand">Dev IA</Badge>
             </div>
           </div>
         </Card>
@@ -263,31 +263,32 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             Passionné par les LLMs, le MLOps et l'automatisation intelligente. Toujours en veille sur les dernières avancées de l'écosystème IA.
           </p>
            <Button variant="outline" href="/about" class="self-start">
-            More about me
+            En savoir plus
             <Icon name="arrow-right" size="sm" />
           </Button>
         </div>
         <Card variant="elevated" padding="lg" class="h-full flex flex-col" data-reveal="left" data-reveal-delay="1">
-          <p class="text-sm text-foreground mb-5 text-center">A few things about me.</p>
+          <p class="text-sm text-foreground mb-5 text-center">En quelques chiffres.</p>
           <div class="grid grid-cols-2 gap-3 flex-1 auto-rows-fr">
             <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
-              <Icon name="history" class="w-10 h-10 text-brand-500" />
-              <p class="text-sm font-semibold text-foreground">16 Years Experience</p>
+              <Icon name="graduation-cap" class="w-10 h-10 text-brand-500" />
+              <p class="text-sm font-semibold text-foreground">Certifié<br />Développeur IA</p>
+              <p class="text-xs text-foreground-muted">RNCP Niv. 6 — Simplon</p>
             </div>
-            <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 h-full">
-              <svg class="w-10 h-10 text-brand-500" viewBox="0 0 1280 1280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M815.039 94.6439C824.758 106.709 829.714 122.99 839.626 155.553L1056.17 866.901C976.107 825.368 889.072 795.413 797.281 779.252L656.29 302.798C653.983 295.002 646.822 289.654 638.693 289.654C630.542 289.654 623.368 295.03 621.08 302.853L481.795 779.011C389.579 795.1 302.146 825.109 221.741 866.793L439.347 155.388L439.348 155.388C449.291 122.882 454.262 106.629 463.982 94.5853C472.562 83.9531 483.723 75.6958 496.4 70.6002C510.76 64.8284 527.756 64.8284 561.749 64.8284H717.174C751.212 64.8284 768.23 64.8284 782.603 70.6123C795.292 75.7184 806.459 83.9923 815.039 94.6439Z" fill="currentColor"/>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M840.951 900.754C805.253 931.279 734.002 952.097 651.929 952.097C551.197 952.097 466.767 920.737 444.363 878.561C436.354 902.732 434.558 930.396 434.558 948.068C434.558 948.068 429.281 1034.84 489.636 1095.2C489.636 1063.86 515.042 1038.46 546.381 1038.46C600.097 1038.46 600.036 1085.32 599.987 1123.34C599.986 1124.48 599.984 1125.61 599.984 1126.73C599.984 1184.44 635.255 1233.91 685.416 1254.77C677.924 1239.36 673.721 1222.05 673.721 1203.77C673.721 1148.73 706.034 1128.23 743.588 1104.41L743.588 1104.41C773.469 1085.46 806.668 1064.41 829.548 1022.17C841.486 1000.13 848.265 974.893 848.265 948.068C848.265 931.573 845.702 915.676 840.951 900.754Z" fill="currentColor"/>
-              </svg>
-              <p class="text-sm font-semibold text-foreground">Building with Astro</p>
+            <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
+              <Icon name="layers" class="w-10 h-10 text-brand-500" />
+              <p class="text-sm font-semibold text-foreground">6+ projets<br />déployés</p>
+              <p class="text-xs text-foreground-muted">IA, Data, APIs, CI/CD</p>
+            </div>
+            <a href={siteConfig.socialLinks[0]} target="_blank" rel="noopener noreferrer" class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 h-full">
+              <Icon name="brand-github" class="w-10 h-10 text-brand-500" />
+              <p class="text-sm font-semibold text-foreground">GitHub</p>
+              <p class="text-xs text-foreground-muted">benjsant</p>
             </a>
             <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
-              <Icon name="globe" class="w-10 h-10 text-brand-500" />
-              <p class="text-sm font-semibold text-foreground">Working worldwide</p>
-            </div>
-            <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
               <Icon name="map-pin" class="w-10 h-10 text-brand-500" />
-              <p class="text-sm font-semibold text-foreground">Based in <br class="sm:hidden" />{siteConfig.address?.city ?? 'Your City'}{siteConfig.address?.country ? `, ${siteConfig.address.country}` : ''}</p>
+              <p class="text-sm font-semibold text-foreground">Basé à<br />{siteConfig.address?.city ?? 'France'}</p>
+              <p class="text-xs text-foreground-muted">Métropole Valenciennoise</p>
             </div>
           </div>
         </Card>
@@ -299,9 +300,9 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
   <section class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border">
     <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
       <div class="flex flex-col items-center gap-6 text-center" data-reveal>
-        <Badge variant="brand" pill>From the blog</Badge>
+        <Badge variant="brand" pill>Blog</Badge>
         <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-          Featured
+          Articles récents
         </h2>
       </div>
 
@@ -322,7 +323,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 
       <div class="flex justify-center">
         <Button variant="outline" href="/blog">
-          View all posts
+          Voir tous les articles
           <Icon name="arrow-right" size="sm" />
         </Button>
       </div>
@@ -335,18 +336,18 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     <div class="glitch:hidden mx-auto max-w-2xl px-6 text-center" data-reveal>
       <Badge variant="brand" pill class="mb-6">Let's talk</Badge>
       <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
-        Have a project in mind?
+        Une opportunité à me proposer ?
       </h2>
       <p class="text-lg text-foreground-muted mb-8 text-balance">
-        Whether it's a new build or something that needs a fresh perspective — I'd love to hear about it.
+        Disponible pour un poste en IA, ML Engineering ou Data — parlons-en.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <Button size="lg" href="/contact" class="cta-btn-brand">
-          Start a project
+          Me contacter
           <Icon name="arrow-right" size="sm" />
         </Button>
         <Button size="lg" variant="outline" href="/about">
-          More about me
+          En savoir plus
           <Icon name="arrow-right" size="sm" />
         </Button>
       </div>
@@ -355,18 +356,18 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     <!-- Desktop: contained LetterGlitch band with glass card -->
     <LetterGlitchBand>
       <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
-        Have a project in mind?
+        Une opportunité à me proposer ?
       </h2>
       <p class="text-lg text-foreground-muted mb-8 text-balance">
-        Whether it's a new build or something that needs a fresh perspective — I'd love to hear about it.
+        Disponible pour un poste en IA, ML Engineering ou Data — parlons-en.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <Button size="lg" href="/contact" class="hero-btn-brand">
-          Start a project
+          Me contacter
           <Icon name="arrow-right" size="sm" />
         </Button>
         <Button size="lg" variant="outline" href="/about">
-          More about me
+          En savoir plus
           <Icon name="arrow-right" size="sm" />
         </Button>
       </div>
