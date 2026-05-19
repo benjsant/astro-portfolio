@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
+import { searchPortfolio } from '@/lib/portfolio-data';
 
 export const prerender = false;
 
+// ── Rate limiting ────────────────────────────────────────────────────────────
 const RATE_LIMIT_MAX = 10;
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 heure
-
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 function getRateLimitKey(request: Request): string {
@@ -32,56 +33,124 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number; rese
   return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count, resetIn: entry.resetAt - now };
 }
 
-const SYSTEM_PROMPT = `Tu es l'assistant personnel de Benjamin Santrisse, développeur IA/Data en recherche d'emploi. Tu réponds aux questions des visiteurs de son portfolio de façon concise, professionnelle et enthousiaste.
+// ── System prompt ────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `Tu es l'assistant personnel de Benjamin Santrisse, développeur IA/Data en recherche d'emploi. Tu réponds aux questions des visiteurs de son portfolio de façon concise et professionnelle (3-5 phrases max).
 
-## Profil de Benjamin
+## Profil
+- Certifié Développeur IA (Simplon, RNCP Niveau 6, 2026)
+- Spécialités : Python, FastAPI, LLMs, RAG, ETL, MLOps, Docker
+- Disponible immédiatement pour un poste IA/Data/ML Engineering
+- Localisation : Marly (Nord), mobilité totale, télétravail
+- Contact : santrissebenjamin@gmail.com
 
-Développeur spécialisé en Intelligence Artificielle et Data Engineering, passionné par la construction de systèmes IA concrets et déployables. Maîtrise de la chaîne complète : collecte de données, entraînement de modèles, déploiement d'APIs et interfaces utilisateur.
+## Outil disponible
+Tu peux appeler search_portfolio pour chercher dans les projets et articles de Benjamin avant de répondre. Utilise-le quand la question porte sur un projet, une technologie, ou un article spécifique.
 
-## Projets principaux
+Réponds toujours en français. Si tu mentionnes un projet ou un article, inclus son URL sous la forme [Titre](url).`;
 
-**FusionDex-IA** (Python, FastAPI, Next.js, PostgreSQL)
-Pokédex intelligent pour Pokémon Infinite Fusion. Pipeline ETL complet qui extrait et structure les données du jeu dans PostgreSQL. API FastAPI exposant les données, interface Next.js, et recherche assistée par IA en langage naturel (NLP).
+// ── DeepSeek tools definition ─────────────────────────────────────────────────
+const TOOLS = [
+  {
+    type: 'function',
+    function: {
+      name: 'search_portfolio',
+      description:
+        "Cherche dans les projets et articles du portfolio de Benjamin. À utiliser quand la question porte sur un projet précis, une technologie, ou un article.",
+      parameters: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+            description: 'Mots-clés décrivant ce que cherche le visiteur (ex: "RAG pgvector", "Scrapy ETL", "monitoring")',
+          },
+        },
+        required: ['query'],
+      },
+    },
+  },
+];
 
-**n8n Veille Auto** (n8n, DeepSeek, Discord)
-Système de veille data engineering automatisé : agrégation de flux RSS, déduplication, et génération d'un rapport IA quotidien via DeepSeek. Digest envoyé sur Discord avec scores et recommandations structurées.
+// ── Agent loop ────────────────────────────────────────────────────────────────
+async function runAgent(userMessage: string, apiKey: string): Promise<string> {
+  const messages: object[] = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user', content: userMessage },
+  ];
 
-**Airflow ML Mail Automation** (Apache Airflow, Python, MailCatcher)
-Pipeline ML orchestré par Airflow : chargement des données, prétraitement, entraînement d'un modèle de régression logistique, évaluation, et notifications email automatiques en cas de succès ou d'échec.
+  for (let i = 0; i < 3; i++) {
+    const res = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages,
+        tools: TOOLS,
+        tool_choice: 'auto',
+        max_tokens: 500,
+        temperature: 0.6,
+      }),
+    });
 
-**MlFlow Medical Screen CNN** (Python, MLflow, TensorFlow)
-CNN pour le screening médical d'images, suivi complet des expériences avec MLflow (métriques, hyperparamètres, artefacts).
+    if (!res.ok) throw new Error(`DeepSeek error: ${res.status}`);
 
-**ImmoPrice Lille FastAPI** (Python, FastAPI, Jupyter, DVF)
-API REST de prédiction du prix au m² de logements à Lille, basée sur les données DVF 2022. Modèles ML entraînés et testés pour la généralisation sur Bordeaux.
+    const data = await res.json();
+    const choice = data.choices?.[0];
+    const message = choice?.message;
 
-**CI/CD Semantic** (FastAPI, PostgreSQL, GitHub Actions, Docker)
-API REST CRUD avec pipeline CI/CD complet : GitHub Actions, versionnage sémantique automatique, build et push Docker vers GitHub Container Registry.
+    if (!message) throw new Error('No message in response');
+    messages.push(message);
 
-**Lets Go PredictionDex** (Python, Jupyter, ML)
-Modèle de classification ML pour prédire le vainqueur de combats Pokémon Let's Go.
+    // Final answer — no tool call
+    if (choice.finish_reason === 'stop') {
+      return message.content ?? 'Pas de réponse.';
+    }
 
-## Stack technique
+    // Tool call requested
+    if (choice.finish_reason === 'tool_calls' && message.tool_calls?.length) {
+      for (const toolCall of message.tool_calls) {
+        if (toolCall.function?.name === 'search_portfolio') {
+          let args: { query?: string };
+          try {
+            args = JSON.parse(toolCall.function.arguments);
+          } catch {
+            args = { query: userMessage };
+          }
 
-- **IA/ML** : Python, TensorFlow/Keras, scikit-learn, MLflow, LangChain, RAG, CNN
-- **Orchestration** : Apache Airflow, n8n
-- **APIs** : FastAPI, REST, PostgreSQL, MongoDB
-- **Frontend** : Next.js, Astro, React
-- **DevOps** : Docker, GitHub Actions, CI/CD sémantique
-- **LLMs** : DeepSeek, intégration d'APIs IA
+          const results = searchPortfolio(args.query ?? userMessage);
+          const content =
+            results.length > 0
+              ? JSON.stringify(
+                  results.map((r) => ({
+                    type: r.type,
+                    title: r.title,
+                    description: r.description,
+                    tags: r.tags,
+                    url: r.url,
+                  }))
+                )
+              : JSON.stringify({ message: 'Aucun résultat trouvé.' });
 
-## Disponibilité
+          messages.push({
+            role: 'tool',
+            tool_call_id: toolCall.id,
+            content,
+          });
+        }
+      }
+      continue;
+    }
 
-Benjamin est actuellement en recherche active d'un poste en IA/Data (développeur IA, ML Engineer, Data Engineer). Disponible immédiatement.
+    // Fallback
+    return message.content ?? 'Pas de réponse.';
+  }
 
-## Règles
+  return "Désolé, je n'ai pas pu générer de réponse.";
+}
 
-- Réponds uniquement aux questions sur Benjamin, ses projets, ses compétences, ou son profil professionnel
-- Si la question est hors sujet, redirige poliment vers le profil de Benjamin
-- Sois concis (3-5 phrases max sauf si plus de détails sont demandés)
-- Tu peux suggérer de contacter Benjamin via le formulaire de contact ou par email à santrissebenjamin@gmail.com pour toute opportunité
-- Réponds dans la langue du visiteur (français ou anglais)`;
-
+// ── Route handler ─────────────────────────────────────────────────────────────
 export const POST: APIRoute = async ({ request }) => {
   const ip = getRateLimitKey(request);
   const { allowed, remaining, resetIn } = checkRateLimit(ip);
@@ -130,30 +199,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const deepseekResponse = await fetch('https://api.deepseek.com/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userMessage },
-        ],
-        max_tokens: 400,
-        temperature: 0.7,
-      }),
-    });
-
-    if (!deepseekResponse.ok) {
-      throw new Error(`DeepSeek error: ${deepseekResponse.status}`);
-    }
-
-    const data = await deepseekResponse.json();
-    const reply = data.choices?.[0]?.message?.content ?? 'Pas de réponse.';
-
+    const reply = await runAgent(userMessage, apiKey);
     return new Response(JSON.stringify({ reply, remaining }), {
       status: 200,
       headers: {
@@ -162,10 +208,10 @@ export const POST: APIRoute = async ({ request }) => {
       },
     });
   } catch (err) {
-    console.error('DeepSeek API error:', err);
-    return new Response(JSON.stringify({ error: 'Erreur lors de la génération de la réponse.' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    console.error('Agent error:', err);
+    return new Response(
+      JSON.stringify({ error: 'Erreur lors de la génération de la réponse.' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 };
