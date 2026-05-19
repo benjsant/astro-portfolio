@@ -1,0 +1,364 @@
+---
+title: "Monitoring d'une API FastAPI avec Prometheus, Grafana et Loki"
+description: "Instrumenter une API FastAPI avec prometheus_client, collecter les métriques HTTP/LLM/cache, visualiser dans Grafana et recevoir des alertes Discord — stack complète dans Audiomancy."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["Prometheus", "Grafana", "FastAPI", "Monitoring", "Docker", "Python"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+Déployer une API sans monitoring, c'est piloter à l'aveugle. Sur **Audiomancy** — un assistant musical avec un agent DeepSeek et un cache MongoDB — j'ai mis en place une stack de monitoring complète : métriques Prometheus depuis FastAPI, dashboards Grafana, logs Loki, et alertes vers Discord.
+
+Voici comment tout s'assemble.
+
+---
+
+## Les métriques : définition centralisée
+
+Toutes les métriques sont déclarées dans un seul module `metrics_routes.py`, ce qui évite les imports circulaires et permet de les réutiliser dans n'importe quelle couche de l'application :
+
+```python
+from prometheus_client import Counter, Histogram, Gauge, REGISTRY
+
+# HTTP
+http_requests_total = Counter(
+    "http_requests_total",
+    "Total HTTP requests",
+    ["method", "endpoint", "status_code"],
+    registry=REGISTRY
+)
+http_request_duration_seconds = Histogram(
+    "http_request_duration_seconds",
+    "HTTP request latency in seconds",
+    ["method", "endpoint"],
+    registry=REGISTRY
+)
+
+# DeepSeek / LLM
+deepseek_requests_total = Counter(
+    "deepseek_requests_total",
+    "Total requests to DeepSeek API",
+    ["status"],
+    registry=REGISTRY
+)
+deepseek_latency_seconds = Histogram(
+    "deepseek_latency_seconds",
+    "DeepSeek API response time in seconds",
+    buckets=[0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 30.0],
+    registry=REGISTRY
+)
+deepseek_tokens_used = Counter(
+    "deepseek_tokens_used_total",
+    "Total tokens consumed",
+    ["type"],  # prompt / completion / total
+    registry=REGISTRY
+)
+deepseek_errors_total = Counter(
+    "deepseek_errors_total",
+    "Total DeepSeek API errors",
+    ["error_type"],
+    registry=REGISTRY
+)
+
+# Cache MongoDB
+cache_operations_total = Counter(
+    "cache_operations_total",
+    "Total cache operations",
+    ["operation", "result"],  # get/hit, get/miss, set/ok
+    registry=REGISTRY
+)
+cache_hit_ratio = Gauge(
+    "cache_hit_ratio",
+    "Cache hit ratio (hits / total requests)",
+    registry=REGISTRY
+)
+
+# Endpoint d'exposition
+@router.get("/metrics")
+def metrics():
+    return Response(
+        content=generate_latest(REGISTRY),
+        media_type=CONTENT_TYPE_LATEST
+    )
+```
+
+Les buckets du `Histogram` DeepSeek sont choisis en fonction de la réalité : les appels LLM prennent entre 1 et 15 secondes, pas 10ms. Des buckets trop fins dans la plage 0-100ms ne donnent aucune information utile.
+
+---
+
+## Collecter les métriques HTTP automatiquement
+
+Un middleware Starlette capture chaque requête sans modifier les routes :
+
+```python
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.routes.metrics_routes import (
+    http_requests_total,
+    http_request_duration_seconds
+)
+
+class PrometheusMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        # Éviter la récursion sur /metrics lui-même
+        if request.url.path == "/metrics":
+            return await call_next(request)
+
+        start = time.time()
+        status_code = 500  # valeur par défaut si exception non gérée
+
+        try:
+            response = await call_next(request)
+            status_code = response.status_code
+            return response
+        finally:
+            # finally garantit l'enregistrement même en cas d'exception
+            http_requests_total.labels(
+                method=request.method,
+                endpoint=request.url.path,
+                status_code=status_code,
+            ).inc()
+            http_request_duration_seconds.labels(
+                method=request.method,
+                endpoint=request.url.path,
+            ).observe(time.time() - start)
+```
+
+```python
+# main.py
+app.add_middleware(PrometheusMiddleware)
+```
+
+Le `finally` est la clé : sans lui, une exception non capturée laisse la requête sans métrique. Avec `finally`, le status 500 par défaut est enregistré même si `call_next` lève une exception.
+
+---
+
+## Instrumenter le client DeepSeek
+
+Les métriques LLM s'instrumentent directement dans le client, autour de chaque appel API :
+
+```python
+class DeepSeekClient:
+    def generate(self, prompt: str) -> str:
+        start = time.time()
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                stop=["Observation:"],
+            )
+
+            deepseek_requests_total.labels(status="success").inc()
+            deepseek_latency_seconds.observe(time.time() - start)
+
+            if response.usage:
+                deepseek_tokens_used.labels(type="prompt").inc(
+                    response.usage.prompt_tokens or 0
+                )
+                deepseek_tokens_used.labels(type="completion").inc(
+                    response.usage.completion_tokens or 0
+                )
+
+            return response.choices[0].message.content.strip()
+
+        except Exception as exc:
+            deepseek_requests_total.labels(status="error").inc()
+            deepseek_errors_total.labels(error_type=type(exc).__name__).inc()
+            raise RuntimeError(f"DeepSeek API call failed: {exc}") from exc
+```
+
+Le suivi par `type` (prompt/completion) permet de calculer les coûts réels en post-traitement — les tokens de prompt sont bien moins chers que les tokens de complétion chez DeepSeek.
+
+---
+
+## Le stack monitoring Docker Compose
+
+Le monitoring tourne dans un `docker-compose.monitoring.yml` séparé, sur le même réseau Docker que l'application :
+
+```yaml
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "19090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - audiomancy-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "19091:9091"
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - audiomancy-network
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "19100:3100"
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+    networks:
+      - audiomancy-network
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+    networks:
+      - audiomancy-network
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "19093:9093"
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks:
+      - audiomancy-network
+
+networks:
+  audiomancy-network:
+    name: audiomancy_audiomancy-network  # même réseau que le compose principal
+```
+
+Démarrage :
+```bash
+docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up -d
+```
+
+Les ports sont préfixés en `190xx` pour éviter les conflits avec d'autres services locaux (Prometheus sur 9090 est souvent déjà pris).
+
+---
+
+## Configuration Prometheus : scrape des deux services
+
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'Audiomancy_backend'
+    static_configs:
+      - targets: ['backend:8000']  # service Docker
+
+  - job_name: 'Audiomancy_frontend'
+    static_configs:
+      - targets: ['frontend:3000']
+    metrics_path: '/api/metrics'  # endpoint Next.js custom
+    scrape_interval: 15s
+```
+
+Le frontend Next.js expose ses métriques sur `/api/metrics` plutôt que `/metrics` — Prometheus supporte `metrics_path` pour ce cas.
+
+---
+
+## Alertes Prometheus avec notification Discord
+
+Trois alertes critiques configurées dans `alert.rules.yml` :
+
+```yaml
+groups:
+  - name: service_availability
+    interval: 30s
+    rules:
+      - alert: ServiceDown
+        expr: up{job=~"Audiomancy_.*"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          remediation: "1. Check container logs\n2. Verify network\n3. Check resources"
+
+      - alert: HighErrorRate
+        expr: >
+          rate(http_requests_total{
+            job=~"Audiomancy_.*",
+            status_code=~"5.."
+          }[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate on {{ $labels.job }}"
+          description: "Error rate: {{ $value | humanizePercentage }}"
+
+      - alert: HighLatency
+        expr: >
+          histogram_quantile(0.95,
+            rate(http_request_duration_seconds_bucket{
+              job=~"Audiomancy_.*"
+            }[5m])
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 latency > 2s on {{ $labels.job }}"
+```
+
+Le seuil `HighErrorRate > 0.05` signifie plus de 5% des requêtes en erreur sur 5 minutes — ce qui correspond à une dégradation réelle, pas à une erreur isolée.
+
+Les alertes sont routées vers Discord via un webhook :
+
+```yaml
+# alertmanager.yml
+route:
+  receiver: discord
+receivers:
+  - name: discord
+    webhook_configs:
+      - url: 'http://alertmanager-discord:9094/alert'
+```
+
+`alertmanager-discord` est un petit service intermédiaire qui traduit le format Alertmanager en message Discord — il reçoit le webhook d'Alertmanager et forward vers l'URL Discord.
+
+---
+
+## Promtail : logs Docker vers Loki
+
+Promtail lit les logs de tous les conteneurs Docker via le socket et les envoie à Loki :
+
+```yaml
+# promtail-config.yml
+scrape_configs:
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    relabel_configs:
+      - source_labels: [__meta_docker_container_name]
+        target_label: container
+```
+
+Dans Grafana, les logs Loki et les métriques Prometheus s'affichent sur le même dashboard — une erreur 500 dans les métriques est directement corrélable avec le traceback dans les logs.
+
+---
+
+## Ce que j'ai appris
+
+**Séparer le stack monitoring du stack applicatif.** Un `docker-compose.monitoring.yml` distinct permet d'activer ou désactiver le monitoring sans toucher à l'application. En dev, on ne démarre pas toujours les 7 services de monitoring.
+
+**Les histogrammes ont besoin de buckets calibrés.** Les buckets par défaut de Prometheus (`[0.005, 0.01, 0.025, ...]`) sont faits pour des APIs HTTP classiques. Pour un LLM qui répond en 1-15 secondes, il faut des buckets adaptés — sinon 100% des requêtes tombent dans le dernier bucket et les percentiles sont inutilisables.
+
+**`finally` dans le middleware HTTP.** Sans `finally`, une exception non gérée échappe à l'instrumentation. Le status 500 par défaut dans un bloc `finally` garantit qu'aucune requête ne passe sans métrique, même les crashs inattendus.
+
+Le code source est disponible sur [GitHub](https://github.com/ABA-DEV-IA/Audiomancy).
