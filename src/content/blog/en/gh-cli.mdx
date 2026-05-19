@@ -1,0 +1,220 @@
+---
+title: "gh : GitHub sans quitter le terminal"
+description: "gh est l'outil en ligne de commande officiel de GitHub. Il permet de gérer ses dépôts, pull requests et issues directement depuis le terminal."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["GitHub", "CLI", "Git", "Terminal"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+## Pourquoi un CLI pour GitHub
+
+On connaît tous le workflow classique : on code dans le terminal, on commit, on push… et on ouvre le navigateur pour créer une pull request ou vérifier une issue. Puis on revient au terminal. Puis au navigateur. Et ainsi de suite.
+
+**gh** est l'outil en ligne de commande officiel de GitHub. Il permet de faire tout ça sans quitter le terminal : créer des PR, reviewer du code, gérer les issues, consulter les workflows CI/CD, et bien plus.
+
+---
+
+## Installation
+
+### Linux (Debian/Ubuntu)
+
+```bash
+sudo apt install gh
+```
+
+### Linux (Fedora)
+
+```bash
+sudo dnf install gh
+```
+
+### Via Homebrew (Linux/macOS)
+
+```bash
+brew install gh
+```
+
+### Windows (via Winget)
+
+```powershell
+winget install GitHub.cli
+```
+
+---
+
+## Première connexion
+
+Avant de l'utiliser, il faut s'authentifier :
+
+```bash
+gh auth login
+```
+
+L'outil propose de se connecter via le navigateur ou avec un token. La méthode navigateur est la plus simple : un code s'affiche, on le colle sur GitHub, et c'est fait.
+
+On peut vérifier que tout marche avec :
+
+```bash
+gh auth status
+```
+
+---
+
+## Les commandes du quotidien
+
+### Cloner un dépôt
+
+```bash
+gh repo clone nom-utilisateur/nom-repo
+```
+
+Plus besoin de chercher l'URL sur GitHub.
+
+### Créer un dépôt
+
+```bash
+gh repo create mon-projet --public --source=. --push
+```
+
+Ça crée le dépôt sur GitHub, ajoute le remote et push le code en une seule commande.
+
+### Voir les pull requests
+
+```bash
+gh pr list
+```
+
+### Créer une pull request
+
+```bash
+gh pr create --title "Ajout de la page contact" --body "Description des changements"
+```
+
+Pas besoin d'ouvrir le navigateur. Le titre, la description, les reviewers — tout se fait depuis le terminal.
+
+### Merger une PR
+
+```bash
+gh pr merge 42 --squash
+```
+
+### Checker out une PR localement
+
+```bash
+gh pr checkout 42
+```
+
+Pratique pour tester le code d'une PR avant de la merger.
+
+---
+
+## Gérer les issues
+
+### Lister les issues ouvertes
+
+```bash
+gh issue list
+```
+
+### Créer une issue
+
+```bash
+gh issue create --title "Bug sur la page d'accueil" --body "Description du problème"
+```
+
+### Fermer une issue
+
+```bash
+gh issue close 15
+```
+
+---
+
+## Suivre la CI/CD
+
+### Voir les workflows récents
+
+```bash
+gh run list
+```
+
+### Suivre un workflow en direct
+
+```bash
+gh run watch
+```
+
+Le terminal affiche la progression en temps réel. Plus besoin de rafraîchir l'onglet Actions sur GitHub.
+
+### Voir les logs d'un run qui a échoué
+
+```bash
+gh run view 123456 --log-failed
+```
+
+---
+
+## Gists
+
+gh gère aussi les Gists :
+
+```bash
+# Créer un gist depuis un fichier
+gh gist create mon_script.sh --public
+
+# Lister ses gists
+gh gist list
+```
+
+---
+
+## Quelques astuces
+
+### Format de sortie personnalisé
+
+La plupart des commandes acceptent `--json` pour filtrer la sortie :
+
+```bash
+gh pr list --json number,title,author
+```
+
+Combiné avec `jq`, ça devient un outil de requête puissant.
+
+### Alias
+
+On peut créer ses propres raccourcis :
+
+```bash
+gh alias set prl "pr list"
+gh alias set prv "pr view"
+```
+
+Ensuite, `gh prl` suffit pour lister les PR.
+
+---
+
+## gh vs l'interface web
+
+| | gh (terminal) | GitHub.com |
+|---|---|---|
+| Créer une PR | Une commande | Plusieurs clics |
+| Suivre la CI | `gh run watch` | Rafraîchir la page |
+| Checkout une PR | `gh pr checkout 42` | Copier la commande git |
+| Créer un dépôt | Une commande | Formulaire web |
+| Scriptable | Oui | Non |
+| Revue de code détaillée | Limitée | Meilleure |
+
+gh ne remplace pas l'interface web pour tout (la revue de code reste plus agréable sur le site), mais pour le workflow quotidien — créer, pusher, merger — c'est un vrai gain de temps.
+
+---
+
+## Conclusion
+
+gh fait partie de ces outils qui, une fois adoptés, deviennent indispensables. Le fait de ne pas avoir à basculer entre le terminal et le navigateur pour chaque opération GitHub change vraiment le rythme de travail.
+
+C'est aussi un outil qui se scripte facilement — on peut l'intégrer dans des scripts bash pour automatiser la création de dépôts, la gestion des releases ou le suivi de la CI.
+
+Disponible sur Linux, macOS et Windows.

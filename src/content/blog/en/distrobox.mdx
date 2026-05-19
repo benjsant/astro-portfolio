@@ -1,0 +1,178 @@
+---
+title: "Distrobox : utiliser n'importe quelle distribution Linux depuis la sienne"
+description: "Distrobox permet de lancer des distributions Linux dans des conteneurs intégrés au système hôte. On garde son système principal et on accède à Arch, Fedora, Ubuntu ou d'autres en une commande."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["Distrobox", "Podman", "Docker", "Conteneurs", "Linux"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+## Le problème que ça résout
+
+Sous Linux, on se retrouve souvent face à un dilemme : on a une distribution stable qui fonctionne bien (Mint, Debian, MX Linux...) mais on aurait besoin d'un paquet récent disponible uniquement sur Fedora, ou d'un outil AUR d'Arch Linux, ou d'un environnement Python propre pour un projet.
+
+Les solutions classiques — dual boot, machines virtuelles, chroot — fonctionnent mais sont lourdes. **Distrobox** prend une approche différente : lancer n'importe quelle distribution dans un conteneur Podman ou Docker, totalement intégré au système hôte.
+
+Concrètement, les applications installées dans le conteneur peuvent accéder au réseau, au son, à l'affichage graphique, aux fichiers du home, et même apparaître dans le menu d'applications. On a l'impression d'être sur la distro en question, sans avoir quitté la sienne.
+
+---
+
+## Comment ça fonctionne
+
+Distrobox utilise Podman (ou Docker) pour créer des conteneurs, mais va beaucoup plus loin qu'un simple `podman run`. Il monte automatiquement le dossier home, partage le serveur graphique (X11/Wayland), le son (PulseAudio/PipeWire), les périphériques USB, et configure le réseau pour que tout fonctionne de manière transparente.
+
+Le résultat : on lance un terminal dans le conteneur, et tout se comporte comme si on avait cette distribution installée nativement.
+
+---
+
+## Installation
+
+### Prérequis
+
+Avoir **Podman** ou **Docker** installé. Podman est recommandé car il fonctionne sans daemon et sans root.
+
+```bash
+# Debian/Ubuntu/Mint
+sudo apt install podman
+
+# Fedora
+sudo dnf install podman
+```
+
+### Installer Distrobox
+
+```bash
+curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sudo sh
+```
+
+Ou via le gestionnaire de paquets si disponible :
+
+```bash
+# Fedora
+sudo dnf install distrobox
+
+# Arch
+sudo pacman -S distrobox
+```
+
+---
+
+## Utilisation de base
+
+### Créer un conteneur
+
+```bash
+distrobox create --name dev-fedora --image fedora:40
+```
+
+Ça télécharge l'image Fedora 40 et crée un conteneur nommé `dev-fedora`.
+
+### Entrer dans le conteneur
+
+```bash
+distrobox enter dev-fedora
+```
+
+On se retrouve dans un shell Fedora. On peut installer des paquets avec `dnf`, compiler du code, lancer des applications graphiques — tout fonctionne.
+
+### Quelques exemples de conteneurs utiles
+
+```bash
+# Ubuntu pour le dev
+distrobox create --name dev-ubuntu --image ubuntu:24.04
+
+# Arch Linux pour accéder à l'AUR
+distrobox create --name arch --image archlinux:latest
+
+# Debian stable pour un environnement minimal
+distrobox create --name debian --image debian:12
+```
+
+### Lister les conteneurs
+
+```bash
+distrobox list
+```
+
+### Supprimer un conteneur
+
+```bash
+distrobox rm dev-fedora
+```
+
+---
+
+## Exporter des applications
+
+C'est l'une des fonctionnalités les plus pratiques. On peut exporter une application installée dans le conteneur pour qu'elle apparaisse dans le menu d'applications du système hôte, comme si elle était installée nativement.
+
+```bash
+# Depuis l'intérieur du conteneur
+distrobox-export --app firefox
+```
+
+Firefox (version du conteneur) apparaît maintenant dans le lanceur d'applications. Ça marche aussi pour les binaires :
+
+```bash
+distrobox-export --bin /usr/bin/htop --export-path ~/.local/bin
+```
+
+---
+
+## Cas d'usage concrets
+
+### Un environnement de dev isolé
+
+On crée un conteneur Ubuntu avec Python, Node.js ou ce qu'on veut. Le code est dans le home (partagé), les dépendances restent dans le conteneur. Si on casse quelque chose, on supprime le conteneur et on recommence.
+
+### Accéder à l'AUR depuis Mint ou Debian
+
+Arch Linux a un dépôt communautaire (AUR) avec des milliers de paquets qu'on ne trouve nulle part ailleurs. Avec Distrobox, on crée un conteneur Arch, on installe `yay`, et on a accès à tout l'AUR sans quitter sa distro principale.
+
+```bash
+distrobox create --name arch --image archlinux:latest
+distrobox enter arch
+# Installer yay et les paquets AUR depuis là
+```
+
+### Tester une distribution sans l'installer
+
+Envie de voir à quoi ressemble Fedora ou openSUSE ? Un conteneur Distrobox prend quelques secondes à créer, contre des dizaines de minutes pour une VM.
+
+### Séparer les usages
+
+Un conteneur pour le dev, un pour le gaming (avec Steam/Lutris), un pour l'IA — chacun avec ses propres paquets et configurations, sans qu'ils interfèrent entre eux.
+
+---
+
+## Distrobox vs les alternatives
+
+| | Distrobox | VM (VirtualBox) | Dual boot | Flatpak |
+|---|---|---|---|---|
+| Intégration au système | Totale | Aucune | Séparée | Partielle |
+| Performance | Native | Réduite | Native | Native |
+| Accès au home | Oui | Non | Possible | Limité |
+| Apps graphiques | Oui | Oui | Oui | Oui |
+| Espace disque | ~500 Mo/conteneur | ~10-20 Go/VM | Partition dédiée | Variable |
+| Temps de création | Secondes | Minutes | Long | N/A |
+| Isolation | Légère | Forte | Totale | Moyenne |
+
+Distrobox ne remplace pas une VM quand on a besoin d'une isolation complète. Mais pour du dev, du test ou l'accès à des paquets d'autres distros, c'est plus rapide et plus léger.
+
+---
+
+## Les limites
+
+- Tous les conteneurs partagent le même noyau Linux. On ne peut pas tester un noyau différent.
+- Certaines applications très bas niveau (pilotes, modules noyau) ne fonctionnent pas dans un conteneur.
+- La première création d'un conteneur télécharge l'image, ce qui prend un peu de temps selon la connexion.
+
+---
+
+## Conclusion
+
+Distrobox est l'un de ces outils qui change la façon dont on utilise Linux. Plus besoin de choisir entre stabilité et accès aux derniers paquets. On garde sa distribution principale intacte et on pioche dans les autres quand on en a besoin.
+
+Pour ceux qui aiment tester, bidouiller et séparer leurs environnements sans se compliquer la vie, c'est un incontournable.
