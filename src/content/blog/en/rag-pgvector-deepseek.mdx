@@ -1,0 +1,290 @@
+---
+title: "Construire un agent RAG avec pgvector et DeepSeek"
+description: "Retour d'expérience sur l'implémentation d'un agent RAG complet : embeddings sentence-transformers, stockage pgvector, agent DeepSeek avec 3 outils, dans le projet Let's Go Dex."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["RAG", "pgvector", "DeepSeek", "Python", "FastAPI", "IA", "LLM"]
+draft: false
+featured: true
+locale: "fr"
+---
+
+Le RAG (Retrieval-Augmented Generation) est devenu incontournable pour construire des assistants IA capables de répondre sur une base de connaissances spécifique — sans halluciner, sans fine-tuning coûteux. Dans ce projet, j'ai implémenté un agent RAG complet pour **Let's Go Dex**, un Pokédex interactif avec assistant conversationnel.
+
+Voici comment ça fonctionne, du stockage des embeddings jusqu'à l'agent multi-outils.
+
+---
+
+## Pourquoi pgvector plutôt qu'un vectorstore dédié
+
+La première question quand on aborde le RAG : où stocker les embeddings ? Pinecone, Chroma, Weaviate sont les choix habituels. J'ai choisi **pgvector**, l'extension PostgreSQL pour la recherche vectorielle.
+
+La raison est simple : le projet utilise déjà PostgreSQL pour stocker les données du Pokédex. Ajouter pgvector évite d'introduire un service supplémentaire — tout reste dans la même base, les données structurées et les vecteurs sont interrogeables ensemble dans une seule requête SQL.
+
+```sql
+-- Activer l'extension
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Table des embeddings
+CREATE TABLE pokemon_embeddings (
+    id SERIAL PRIMARY KEY,
+    pokemon_id INTEGER REFERENCES pokemon(id),
+    chunk_text TEXT NOT NULL,
+    embedding vector(384),  -- dimension all-MiniLM-L6-v2
+    chunk_type VARCHAR(50)  -- 'description', 'stats', 'moves'
+);
+
+-- Index pour la recherche par similarité cosinus
+CREATE INDEX ON pokemon_embeddings
+USING ivfflat (embedding vector_cosine_ops)
+WITH (lists = 100);
+```
+
+L'index `ivfflat` (Inverted File Flat) approxime la recherche des voisins les plus proches — bien plus rapide qu'une recherche exacte sur 188 Pokémon × plusieurs chunks chacun.
+
+---
+
+## Générer les embeddings avec sentence-transformers
+
+Pour transformer le texte en vecteurs, j'utilise `sentence-transformers` avec le modèle `all-MiniLM-L6-v2` — léger (80 Mo), rapide, et produit des vecteurs de 384 dimensions cohérents pour la recherche sémantique en français.
+
+```python
+from sentence_transformers import SentenceTransformer
+from sqlalchemy.orm import Session
+from core.models import Pokemon, PokemonEmbedding
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+def index_pokemon(db: Session, pokemon: Pokemon):
+    chunks = build_chunks(pokemon)
+    
+    for chunk_type, text in chunks.items():
+        if not text:
+            continue
+        embedding = model.encode(text).tolist()
+        
+        db.add(PokemonEmbedding(
+            pokemon_id=pokemon.id,
+            chunk_text=text,
+            embedding=embedding,
+            chunk_type=chunk_type,
+        ))
+    
+    db.commit()
+
+def build_chunks(pokemon: Pokemon) -> dict:
+    return {
+        "description": pokemon.pokedex_description or "",
+        "stats": (
+            f"{pokemon.name} : PV {pokemon.hp}, Attaque {pokemon.attack}, "
+            f"Défense {pokemon.defense}, Vitesse {pokemon.speed}."
+        ),
+        "moves": f"Capacités de {pokemon.name} : "
+                 + ", ".join(m.name for m in pokemon.moves[:20]),
+    }
+```
+
+Le chunking est intentionnellement simple : un chunk par type d'information (description, stats, capacités). Pour une base de données structurée comme celle-ci, c'est plus efficace qu'un découpage par taille de texte — chaque chunk répond à un type de question précis.
+
+---
+
+## La recherche vectorielle
+
+Une fois les embeddings indexés, la recherche se fait avec l'opérateur `<=>` de pgvector (distance cosinus) :
+
+```python
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import func, text
+
+def vector_search(db: Session, query: str, limit: int = 5) -> list[dict]:
+    query_embedding = model.encode(query).tolist()
+    
+    results = (
+        db.query(
+            PokemonEmbedding,
+            func.cosine_distance(
+                PokemonEmbedding.embedding,
+                query_embedding
+            ).label("distance")
+        )
+        .order_by("distance")
+        .limit(limit)
+        .all()
+    )
+    
+    return [
+        {
+            "pokemon_id": r.PokemonEmbedding.pokemon_id,
+            "chunk": r.PokemonEmbedding.chunk_text,
+            "score": 1 - r.distance,  # similarité 0→1
+        }
+        for r in results
+    ]
+```
+
+La distance cosinus est adaptée ici car les vecteurs sentence-transformers sont déjà normalisés — une distance proche de 0 signifie une forte similarité sémantique.
+
+---
+
+## L'agent DeepSeek avec 3 outils
+
+Le cœur du système : un agent qui reçoit une question en langage naturel et décide quel outil utiliser pour y répondre.
+
+```python
+SYSTEM_PROMPT = """Tu es PokéAssistant, un expert Pokémon Let's Go.
+Tu as accès à 3 outils :
+
+1. sql_search — requête SQL directe sur la base (stats précises, filtres)
+2. vector_search — recherche sémantique dans les descriptions (questions ouvertes)
+3. web_search — recherche web via SearXNG (infos hors base de données)
+
+Choisis toujours l'outil le plus adapté à la question.
+Réponds en français, de façon concise et précise."""
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "sql_search",
+            "description": "Requête SQL pour des données précises : stats, types, évolutions",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Requête SQL SELECT"}
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "vector_search",
+            "description": "Recherche sémantique dans les descriptions Pokédex",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Question en langage naturel"}
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "description": "Recherche web pour des informations non disponibles en base",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"}
+                },
+                "required": ["query"]
+            }
+        }
+    }
+]
+```
+
+La boucle d'exécution de l'agent :
+
+```python
+import json
+import httpx
+
+async def run_agent(question: str, db: Session) -> str:
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": question},
+    ]
+    
+    async with httpx.AsyncClient() as client:
+        while True:
+            response = await client.post(
+                "https://api.deepseek.com/chat/completions",
+                headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}"},
+                json={
+                    "model": "deepseek-chat",
+                    "messages": messages,
+                    "tools": tools,
+                    "tool_choice": "auto",
+                    "max_tokens": 1000,
+                },
+            )
+            
+            choice = response.json()["choices"][0]
+            message = choice["message"]
+            messages.append(message)
+            
+            # Pas d'appel d'outil → réponse finale
+            if choice["finish_reason"] == "stop":
+                return message["content"]
+            
+            # Exécuter les outils demandés
+            for tool_call in message.get("tool_calls", []):
+                name = tool_call["function"]["name"]
+                args = json.loads(tool_call["function"]["arguments"])
+                
+                if name == "sql_search":
+                    result = execute_sql(db, args["query"])
+                elif name == "vector_search":
+                    result = vector_search(db, args["query"])
+                elif name == "web_search":
+                    result = await searxng_search(args["query"])
+                
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tool_call["id"],
+                    "content": json.dumps(result, ensure_ascii=False),
+                })
+```
+
+L'agent tourne en boucle jusqu'à obtenir une réponse finale (`finish_reason == "stop"`). À chaque tour, il peut appeler un ou plusieurs outils, puis intégrer leurs résultats dans le contexte avant de répondre.
+
+---
+
+## Quel outil pour quelle question
+
+En pratique, l'agent choisit correctement dans la grande majorité des cas :
+
+| Question | Outil choisi |
+|---|---|
+| "Quelles sont les statistiques de Pikachu ?" | `sql_search` |
+| "Quel Pokémon ressemble à un fantôme et peut se transformer ?" | `vector_search` |
+| "Quelle est la meilleure stratégie contre Lokhlass ?" | `web_search` |
+| "Pokémon avec plus de 100 en vitesse et type Psy ?" | `sql_search` |
+
+La séparation des outils est clé : la recherche vectorielle répond aux questions sémantiques ouvertes, SQL répond aux questions factuelles précises, et le web couvre tout ce qui dépasse la base locale.
+
+---
+
+## L'exposition via FastAPI
+
+L'endpoint `/chat/` reçoit un message et un `conversation_id` optionnel pour maintenir le contexte entre les échanges :
+
+```python
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from core.db import get_db
+from rag.agent import run_agent
+
+router = APIRouter()
+
+@router.post("/chat/")
+async def chat(payload: ChatRequest, db: Session = Depends(get_db)):
+    reply = await run_agent(payload.message, db)
+    return {"reply": reply, "conversation_id": payload.conversation_id}
+```
+
+---
+
+## Ce que j'ai appris
+
+**pgvector est sous-estimé.** Pour les projets qui ont déjà PostgreSQL, c'est le choix le plus simple et le plus cohérent. Pas de service supplémentaire, pas de synchronisation à gérer, et les performances sont largement suffisantes pour des bases de quelques milliers de documents.
+
+**Le chunking doit coller à la structure des données.** Chunker par type d'information (stats / description / capacités) donne de meilleurs résultats que chunker par taille de texte sur des données structurées. L'agent sait exactement ce qu'il va trouver dans chaque chunk.
+
+**L'agent multi-outils est plus robuste qu'un pipeline RAG fixe.** Un pipeline classique (retrieve → augment → generate) aurait du mal sur des questions SQL précises. L'agent choisit dynamiquement — et se trompe moins.
+
+Le code source est disponible sur [GitHub](https://github.com/benjsant/lets-go-dex).
