@@ -1,0 +1,303 @@
+---
+title: "Pipeline ETL multi-sources avec Scrapy et FastAPI"
+description: "Pipeline ETL en 4 étapes pour Let's Go PredictionDex : CSV, enrichissement PokéAPI en parallèle (ThreadPoolExecutor), scraping Pokepédia avec Scrapy, upsert PostgreSQL idempotent."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["Scrapy", "ETL", "FastAPI", "PostgreSQL", "Python", "Data Engineering"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+Construire un Pokédex complet avec des données fiables, c'est un problème d'intégration de données multi-sources : une partie vient d'un CSV officiel, une partie d'une API REST publique, et les données les plus spécifiques — les capacités apprises dans un jeu précis — ne sont disponibles que sur un wiki communautaire.
+
+Dans **Let's Go PredictionDex**, j'ai résolu ça avec un pipeline ETL en 4 étapes orchestrées, dont un spider Scrapy pour récupérer les learnsets sur Pokepédia.
+
+---
+
+## Architecture du pipeline
+
+```
+1. etl_init_db.py        → schéma PostgreSQL + données de référence
+2. etl_load_csv.py       → Pokémon de base (CSV officiel)
+3. etl_enrich_pokeapi.py → stats + sprites (PokeAPI, 10 threads)
+4. scrapy crawl          → capacités LGPE (Pokepédia, rate-limited)
+```
+
+L'orchestration est un script Python qui enchaîne les étapes avec `subprocess.run`, et vérifie avant chaque exécution si le travail est déjà fait :
+
+```python
+def check_etl_already_done() -> bool:
+    """Vérifie si des Pokémon existent déjà en base."""
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv("POSTGRES_HOST", "localhost"),
+            user=os.getenv("POSTGRES_USER"),
+            password=os.getenv("POSTGRES_PASSWORD"),
+            dbname=os.getenv("POSTGRES_DB"),
+            connect_timeout=5,
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM pokemon;")
+        count = cursor.fetchone()[0]
+        conn.close()
+        return count > 0
+    except Exception:
+        return False  # table absente = ETL jamais exécuté
+
+def main(force: bool = False) -> None:
+    if check_etl_already_done() and not force:
+        print("ETL déjà exécuté. Utilisez --force pour rejouer.")
+        return
+
+    run(["python", "scripts/etl_init_db.py"], "Init DB")
+    run(["python", "scripts/etl_load_csv.py"], "CSV")
+    run(["python", "scripts/etl_enrich_pokeapi.py"], "PokeAPI")
+    run(["scrapy", "crawl", "letsgo_moves_sql"], "Pokepédia",
+        cwd=SCRAPER_DIR)
+```
+
+L'idempotence est la propriété la plus importante d'un ETL : rejouer le pipeline ne doit pas créer de doublons ni corrompre les données existantes.
+
+---
+
+## Étape 3 : enrichissement PokéAPI en parallèle
+
+PokeAPI est une API REST publique sans authentification. Chaque appel est indépendant — `ThreadPoolExecutor` permet de les paralléliser à 10 workers sans blocage :
+
+```python
+MAX_WORKERS = 10
+REQUEST_DELAY = 0.05  # 50ms entre requêtes pour limiter la charge
+POKEAPI_URL = "https://pokeapi.co/api/v2/pokemon/{}"
+
+def get_pokemon_data(name: str) -> dict | None:
+    """Fetch et normalise les données PokeAPI pour un Pokémon."""
+    for attempt in range(MAX_RETRIES):
+        try:
+            response = requests.get(
+                POKEAPI_URL.format(name),
+                timeout=REQUEST_TIMEOUT
+            )
+            response.raise_for_status()
+            data = response.json()
+
+            stats = {s["stat"]["name"]: s["base_stat"]
+                     for s in data["stats"]}
+
+            return {
+                "hp": stats.get("hp"),
+                "attack": stats.get("attack"),
+                "defense": stats.get("defense"),
+                "speed": stats.get("speed"),
+                "height": Decimal(data["height"]) / 10,  # dm → m
+                "weight": Decimal(data["weight"]) / 10,  # hg → kg
+                "sprite_url": data["sprites"]["front_default"],
+            }
+        except requests.HTTPError as exc:
+            if exc.response.status_code == 404:
+                return None  # Pokémon inconnu de l'API
+            time.sleep(RETRY_DELAY * (attempt + 1))
+    return None
+
+def enrich_all(pokemons: list) -> None:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(get_pokemon_data, p.name_pokeapi): p
+            for p in pokemons
+            if p.name_pokeapi
+        }
+        for future in as_completed(futures):
+            pokemon = futures[future]
+            data = future.result()
+            if data:
+                upsert_pokemon_stats(pokemon.id, data)
+```
+
+Le `time.sleep(RETRY_DELAY * (attempt + 1))` est un backoff exponentiel basique : 2s, 4s, 6s. Suffisant pour absorber les erreurs transitoires d'une API publique gratuite.
+
+---
+
+## Étape 4 : Scrapy pour Pokepédia
+
+La partie intéressante. Les données de capacités pour Pokémon Let's Go Pikachu/Évoli ne sont pas dans PokeAPI — elles sont sur Pokepédia, le wiki Pokémon francophone.
+
+### Le spider piloté par la base de données
+
+Au lieu de coder une liste de noms en dur, le spider lit directement la table `pokemon` pour générer ses requêtes initiales :
+
+```python
+class LetsGoPokemonMovesSQLSpider(scrapy.Spider):
+    name = "letsgo_moves_sql"
+    allowed_domains = ["pokepedia.fr"]
+
+    def start_requests(self):
+        with Session(engine) as session:
+            form_ids = {f.name: f.id for f in session.query(Form).all()}
+            mega_form_id = form_ids.get("mega")
+            starter_form_id = form_ids.get("starter")
+
+            pokemons = (
+                session.query(Pokemon)
+                .filter(Pokemon.form_id != mega_form_id)  # Méga exclus
+                .all()
+            )
+
+            for pokemon in pokemons:
+                if not pokemon.name_pokepedia:
+                    continue  # Pas de page Pokepédia → skip
+
+                url = (
+                    f"https://www.pokepedia.fr/"
+                    f"{pokemon.name_pokepedia}/Génération_7"
+                )
+
+                yield scrapy.Request(
+                    url=url,
+                    callback=self.parse_all,
+                    dont_filter=(pokemon.form_id == starter_form_id),
+                    meta={
+                        "pokemon_id": pokemon.id,
+                        "form_id": pokemon.form_id,
+                        "starter_form_id": starter_form_id,
+                    },
+                )
+```
+
+`dont_filter=True` pour les formes starter : Pikachu-starter et Pikachu-base ont la même URL Pokepédia, Scrapy dédupliquerait sinon la deuxième requête.
+
+### Le parsing XPath
+
+Les tables Pokepédia ont une structure HTML stable mais complexe — les colonnes LGPE sont identifiées par le titre du lien dans l'en-tête :
+
+```python
+def _find_lgpe_column_index(self, table):
+    """Trouve l'index de la colonne LGPE dans le tableau de capacités."""
+    headers = table.xpath(".//thead/tr[2]/th")
+    for index, header in enumerate(headers, start=1):
+        title = header.xpath(".//a/@title").get()
+        if title and "Let's Go, Pikachu et Let's Go, Évoli" in title:
+            return index
+    return None
+
+def parse_level_up(self, response):
+    pokemon_id = response.meta["pokemon_id"]
+
+    header = response.xpath('//*[@id="Par_montée_en_niveau"]')
+    if not header:
+        return
+
+    table = header.xpath("following::table[1]")
+    lgpe_col = self._find_lgpe_column_index(table)
+    if lgpe_col is None:
+        return
+
+    for row in table.xpath(".//tbody/tr"):
+        move_name = row.xpath("./td[1]//a/text() | ./td[1]/text()").get()
+        lgpe_cell = row.xpath(f"./td[{lgpe_col}]")
+
+        if not move_name or not lgpe_cell:
+            continue
+
+        for level in self._parse_lgpe_levels(lgpe_cell):
+            yield PokemonMoveItem(
+                pokemon_id=pokemon_id,
+                move_name=move_name.strip(),
+                learn_method="level_up",
+                learn_level=level,
+            )
+```
+
+Les niveaux ont des cas spéciaux à gérer : `"Départ"` (niveau 0, capacité de départ), `"Évolution"` (niveau -1), et `"N.15"` (regex `r"N\.(\d+)"`).
+
+### La pipeline Scrapy : upsert PostgreSQL
+
+Chaque `PokemonMoveItem` est persisté via un upsert PostgreSQL — si la relation Pokémon/Capacité/Méthode existe déjà, seul le niveau est mis à jour :
+
+```python
+class PokemonMovePipeline:
+    def open_spider(self, spider):
+        self.session = Session(engine)
+        # Cache en mémoire pour éviter des requêtes SQL à chaque item
+        self.move_cache = {
+            move.name.lower(): move.id
+            for move in self.session.execute(select(Move)).scalars()
+        }
+        self.learn_method_cache = {
+            lm.name: lm.id
+            for lm in self.session.execute(select(LearnMethod)).scalars()
+        }
+
+    def process_item(self, item, spider):
+        item.validate()  # Lève ValueError si champs manquants
+
+        move_name = (
+            item["move_name"].strip().lower()
+            .replace("'", "'")  # Apostrophe typographique → ASCII
+        )
+
+        move_id = self.move_cache.get(move_name)
+        if not move_id:
+            return item  # Capacité inconnue → ignorée silencieusement
+
+        stmt = (
+            insert(PokemonMove)
+            .values(
+                pokemon_id=item["pokemon_id"],
+                move_id=move_id,
+                learn_method_id=self.learn_method_cache[item["learn_method"]],
+                learn_level=item.get("learn_level"),
+            )
+            .on_conflict_do_update(
+                index_elements=["pokemon_id", "move_id", "learn_method_id"],
+                set_={"learn_level": item.get("learn_level")},
+            )
+        )
+        self.session.execute(stmt)
+        self.session.flush()
+        return item
+
+    def close_spider(self, spider):
+        try:
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+        finally:
+            self.session.close()
+```
+
+La normalisation de l'apostrophe (`'` → `'`) est un détail qui coûte plusieurs heures si on le loupe : Pokepédia utilise l'apostrophe typographique dans "Morsure d'acier", la base de données stocke l'ASCII. Sans ce remplacement, la capacité n'est jamais matchée.
+
+---
+
+## Configuration Scrapy : scraping responsable
+
+```python
+# settings.py
+ROBOTSTXT_OBEY = True
+CONCURRENT_REQUESTS_PER_DOMAIN = 2
+DOWNLOAD_DELAY = 1.2
+RANDOMIZE_DOWNLOAD_DELAY = True
+
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+
+HTTPCACHE_ENABLED = True
+HTTPCACHE_EXPIRATION_SECS = 3600  # Cache 1h pour le dev
+
+RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
+RETRY_TIMES = 2
+```
+
+L'`AutoThrottle` ajuste automatiquement le délai en fonction des temps de réponse du serveur — si Pokepédia ralentit, le spider ralentit aussi. Le cache HTTP est indispensable en développement : sans lui, chaque debug relance 188 requêtes vers un wiki communautaire.
+
+---
+
+## Ce que j'ai appris
+
+**Piloter Scrapy depuis la base de données.** Générer les URLs à partir des données existantes plutôt que d'une liste codée en dur garantit la cohérence avec le reste du pipeline. Si un Pokémon est ajouté en CSV, il sera automatiquement scrappé.
+
+**Les caches en mémoire dans les pipelines Scrapy.** Charger `Move` et `LearnMethod` une seule fois dans `open_spider` et les cacher en dict évite des milliers de requêtes SQL pendant le crawl. Pour 188 Pokémon × plusieurs capacités chacun, c'est la différence entre 2 minutes et 20 minutes.
+
+**L'idempotence est non négociable en ETL.** L'upsert PostgreSQL (`ON CONFLICT DO UPDATE`) et la vérification d'existence avant de lancer le pipeline permettent de rejouer n'importe quelle étape sans effets de bord. En production, un ETL non idempotent crée des doublons dès le premier incident réseau.
+
+Le code source est disponible sur [GitHub](https://github.com/benjsant/lets-go-predictiondex).
