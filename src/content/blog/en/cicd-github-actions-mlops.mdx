@@ -1,0 +1,267 @@
+---
+title: "CI/CD pour un projet MLOps avec GitHub Actions"
+description: "Comment j'ai structuré un pipeline CI/CD en 4 étapes pour un projet ML Python : qualité de code, tests unitaires, build Docker en matrice, tests d'intégration avec PostgreSQL en service."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["CI/CD", "GitHub Actions", "MLOps", "Docker", "Python", "Tests"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+Monter un pipeline CI/CD pour un projet ML, c'est plus qu'un simple `pytest` dans une action. Quand le projet implique plusieurs services Docker, une base PostgreSQL, des modèles ML et des scans de sécurité, il faut structurer les workflows pour qu'ils soient rapides, lisibles, et vraiment utiles.
+
+Voici comment j'ai organisé le pipeline CI/CD de **Let's Go PredictionDex**, un projet MLOps Python avec FastAPI, PostgreSQL, MLflow et Streamlit.
+
+---
+
+## Architecture en 4 workflows chaînés
+
+L'idée centrale : **chaque workflow ne s'exécute que si le précédent réussit**. Les tests lents et coûteux ne tournent pas si le lint échoue — économie de minutes GitHub Actions et feedback immédiat.
+
+```
+1-lint-and-format.yml     → qualité + sécurité (< 10 min)
+       ↓ (si ✓)
+2-tests-unit.yml          → tests unitaires sans Docker (< 15 min)
+       ↓ (si ✓)
+3-docker-build.yml        → build en matrice (tous les services)
+       ↓ (si ✓)
+4-integration-tests.yml   → tests end-to-end avec Docker Compose
+```
+
+Le déclenchement en cascade se fait avec `workflow_run` :
+
+```yaml
+# 4-integration-tests.yml
+on:
+  workflow_run:
+    workflows: ["3️⃣ Docker Build (C13)"]
+    types:
+      - completed
+    branches: [main, develop]
+
+jobs:
+  integration-tests:
+    if: ${{ github.event.workflow_run.conclusion == 'success'
+            || github.event_name == 'workflow_dispatch' }}
+```
+
+Le `workflow_dispatch` permet de déclencher manuellement n'importe quelle étape en isolation — utile pour déboguer sans avoir à pousser un commit.
+
+---
+
+## Étape 1 : Qualité de code et sécurité
+
+Le premier filtre est le plus rapide : Pylint avec un seuil à 9.0/10, Bandit pour les vulnérabilités statiques, Safety pour les dépendances.
+
+```yaml
+# 1-lint-and-format.yml
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install linting tools
+        run: |
+          pip install pylint bandit safety
+          pip install -r api_pokemon/requirements.txt
+
+      - name: Run Pylint
+        run: |
+          pylint api_pokemon core machine_learning interface etl_pokemon \
+            --disable=C0114,C0115,C0116,W0511 \
+            --max-line-length=120 \
+            --fail-under=9.0
+
+      - name: Run Bandit (security)
+        run: |
+          bandit -r api_pokemon core machine_learning \
+            -f json -o bandit-report.json || echo '{}' > bandit-report.json
+
+      - name: Run Safety (dependencies)
+        continue-on-error: true
+        run: safety check --json --output safety-report.json
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: "*.json"
+          retention-days: 30
+```
+
+Le `--fail-under=9.0` bloque la CI si le score Pylint tombe sous 9.0 — sur ce projet, le score atteint 9.46/10. Bandit est en `|| echo '{}'` pour ne pas bloquer sur des faux positifs, mais le rapport est uploadé systématiquement (`if: always()`).
+
+---
+
+## Étape 2 : Tests unitaires sans Docker
+
+Les tests unitaires tournent sans Docker Compose pour rester rapides. L'isolation se fait via une base PostgreSQL instanciée directement comme **service GitHub Actions** :
+
+```yaml
+# 2-tests-unit.yml
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: letsgo_test
+          POSTGRES_USER: letsgo_user
+          POSTGRES_PASSWORD: letsgo_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-cov pytest-asyncio
+          pip install -r api_pokemon/requirements.txt
+          pip install -r machine_learning/requirements.txt
+
+      - name: Run unit tests
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: letsgo_test
+          POSTGRES_USER: letsgo_user
+          POSTGRES_PASSWORD: letsgo_password
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          pytest tests/unit/ -v --cov=. --cov-report=xml \
+            --tb=short -x
+```
+
+Le `services` block de GitHub Actions démarre un conteneur PostgreSQL et attend qu'il soit healthy avant d'exécuter les steps — sans avoir à gérer un `docker run` manuel ni un `sleep 10` fragile.
+
+---
+
+## Étape 3 : Build Docker en matrice
+
+Le projet a 5 services Docker indépendants. La stratégie `matrix` les build en parallèle :
+
+```yaml
+# 3-docker-build.yml
+jobs:
+  build-images:
+    name: Build - ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api, etl, ml_builder, streamlit, mlflow]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ matrix.service }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ matrix.service }}-
+
+      - name: Build ${{ matrix.service }}
+        run: docker compose build ${{ matrix.service }}
+
+      - name: Save image as artifact
+        run: |
+          docker save lets-go-predictiondex-${{ matrix.service }} \
+            | gzip > ${{ matrix.service }}.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-image-${{ matrix.service }}
+          path: ${{ matrix.service }}.tar.gz
+          retention-days: 1
+```
+
+`fail-fast: false` est important : si `streamlit` échoue, les 4 autres builds continuent. Le cache Buildx par service + par sha réduit drastiquement le temps de rebuild sur les commits rapides.
+
+Les images buildées sont uploadées en artifact (rétention 1 jour) et téléchargées à l'étape suivante — évite de rebuilder à l'identique pour les tests d'intégration.
+
+---
+
+## Étape 4 : Tests d'intégration avec Docker Compose
+
+La dernière étape télécharge les images du build précédent et lance la stack complète :
+
+```yaml
+# 4-integration-tests.yml
+steps:
+  - name: Download Docker images
+    uses: actions/download-artifact@v4
+    with:
+      path: docker-images/
+      run-id: ${{ github.event.workflow_run.id }}
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+    continue-on-error: true
+
+  - name: Load Docker images
+    run: |
+      for service in api etl ml_builder streamlit mlflow; do
+        img="docker-images/docker-image-$service/$service.tar.gz"
+        if [ -f "$img" ]; then
+          gunzip -c "$img" | docker load
+        fi
+      done
+
+  - name: Create .env
+    run: |
+      cat > .env << EOF
+      POSTGRES_USER=letsgo_user
+      POSTGRES_PASSWORD=letsgo_password
+      POSTGRES_DB=letsgo_db
+      POSTGRES_HOST=db
+      DEV_MODE=true
+      API_KEYS=test_key_for_ci
+      ML_SKIP_IF_EXISTS=true
+      EOF
+
+  - name: Start services
+    run: |
+      docker compose -f docker-compose.yml -f docker-compose.ci.yml \
+        up -d db api mlflow
+```
+
+Le `docker-compose.ci.yml` override réduit les ressources allouées et désactive les healthchecks non critiques — les runners GitHub Actions ont 7 Go de RAM, pas question de lancer la stack complète sans ajustements.
+
+---
+
+## Ce que j'ai appris
+
+**Les services GitHub Actions sont sous-utilisés.** Instancier une PostgreSQL ou un Redis directement dans le job (sans Docker Compose) simplifie les tests unitaires et élimine les problèmes de networking inter-conteneur.
+
+**`fail-fast: false` sur les matrices de build.** Par défaut, si un service échoue, GitHub annule tous les jobs de la matrice. Sur un build, ça cache des erreurs indépendantes — mieux vaut voir tous les services qui cassent en même temps.
+
+**Les artifacts comme bus entre workflows.** Passer des images Docker buildées d'un workflow à l'autre via `upload-artifact` / `download-artifact` + `run-id` évite de rebuilder à chaque fois. La rétention à 1 jour suffit pour la chaîne CI.
+
+**Timeout explicite sur chaque job.** Sans `timeout-minutes`, un runner bloqué sur un healthcheck consume des minutes GitHub Actions indéfiniment. Sur un projet ML où certains steps peuvent prendre plusieurs minutes, le timeout est une garantie indispensable.
+
+Le code source est disponible sur [GitHub](https://github.com/benjsant/lets-go-predictiondex).
