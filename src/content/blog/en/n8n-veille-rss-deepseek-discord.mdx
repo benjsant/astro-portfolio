@@ -1,0 +1,239 @@
+---
+title: "Automatiser sa veille tech avec n8n, RSS et DeepSeek"
+description: "Deux workflows n8n pour une veille data engineering zéro maintenance : agrégation RSS multi-sources avec déduplication par static data, et rapport IA quotidien DeepSeek formaté en embeds Discord."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["n8n", "DeepSeek", "Discord", "RSS", "Automatisation", "No-code"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+Rester à jour sur l'IA, le Data Engineering et le MLOps sans y passer 30 minutes par jour — c'est le problème que résout **n8n Veille Auto**. Deux workflows indépendants tournent en autonomie : l'un agrège les flux RSS et envoie un digest Discord chaque matin, l'autre demande à DeepSeek de générer un rapport de tendances structuré en JSON.
+
+---
+
+## Architecture générale
+
+```
+Workflow 1 — RSS digest (8h00)
+  Schedule → 4×RSS → Merge → Filter <24h → Dedup → Build message → Discord
+
+Workflow 2 — Rapport IA (parallèle, quotidien)
+  Schedule → DeepSeek (JSON prompt) → Parse + Build Embeds → Discord
+```
+
+Deux workflows au lieu d'un seul pour une raison simple : si DeepSeek est lent ou en erreur, le digest RSS arrive quand même. Les deux canaux Discord reçoivent leurs messages indépendamment.
+
+---
+
+## Workflow 1 : agrégation RSS avec déduplication
+
+### Les 4 sources RSS
+
+```
+blog.octo.com/feed/                              → architecture, craft
+towardsdatascience.com/feed                      → ML, data science
+medium.com/feed/tag/data-engineering             → data engineering
+practicaldataengineering.substack.com/feed       → newsletter data
+```
+
+Les nœuds RSS sont branchés sur un `Merge` avec `numberInputs: 4`. n8n attend que les 4 flux aient répondu avant de continuer — pas de concurrence à gérer manuellement.
+
+### Filtre sur les 24 dernières heures
+
+Le nœud `If` filtre les articles publiés dans les dernières 24h. Les formats de date RSS ne sont pas standardisés — chaque source utilise un champ différent (`isoDate`, `pubDate`, `published`, `date`) :
+
+```javascript
+// Nœud If — condition
+new Date($json.isoDate || $json.pubDate || $json.published || $json.date || 0)
+  >= new Date(Date.now() - 24 * 60 * 60 * 1000)
+```
+
+### Déduplication avec WorkflowStaticData
+
+Le nœud `Dedup & Sort` utilise `$getWorkflowStaticData('global')` — une mémoire persistante côté n8n qui survit entre les exécutions. Elle stocke les liens déjà envoyés avec leur timestamp :
+
+```javascript
+const store = $getWorkflowStaticData('global');
+if (!store.sentLinks) store.sentLinks = {};
+
+const now = Date.now();
+const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+// Nettoyage automatique des entrées > 30 jours
+for (const k of Object.keys(store.sentLinks)) {
+  if (now - store.sentLinks[k] > THIRTY_DAYS) delete store.sentLinks[k];
+}
+
+function pickLink(j) {
+  return (j.link || j.url || j.guid || '').trim();
+}
+
+function sourceBucket(link) {
+  if (link.includes('medium.com')) return 'medium';
+  return 'other';
+}
+
+// Dédup + limite Medium à 3 articles
+const mediumSeen = 0;
+const newItems = [];
+
+for (const item of items) {
+  const link = pickLink(item.json);
+  if (!link || store.sentLinks[link]) continue;
+
+  if (sourceBucket(link) === 'medium' && mediumSeen >= 3) continue;
+
+  store.sentLinks[link] = now;
+  newItems.push(item);
+}
+
+// Tri chronologique inverse
+newItems.sort((a, b) => pickDate(b.json) - pickDate(a.json));
+return newItems;
+```
+
+`$getWorkflowStaticData` persiste en base SQLite de n8n. C'est la solution la plus simple pour une déduplication sans base externe — pas de Redis, pas de PostgreSQL.
+
+La limite à 3 articles Medium évite le spam : Medium publie parfois 20+ articles par jour sur le tag `data-engineering`, dont beaucoup sont du contenu recyclé.
+
+### Construction du message Discord
+
+```javascript
+let message = '🧠 **Veille Data Engineering** — '
+  + new Date().toLocaleDateString('fr-FR') + '\n\n';
+
+items.forEach((item, i) => {
+  const { title, link, creator } = item.json;
+  message += `**${i + 1}.** ${title}`
+    + (creator ? ` — _${creator}_` : '')
+    + `\n${link}\n\n`;
+});
+
+// Discord limite les messages à 2000 caractères
+if (message.length > 1950) {
+  message = message.substring(0, 1950) + '\n\n… _(liste tronquée)_';
+}
+```
+
+---
+
+## Workflow 2 : rapport IA quotidien avec DeepSeek
+
+### Le prompt structuré JSON
+
+Le nœud HTTP appelle directement l'API DeepSeek avec un prompt qui force une sortie JSON parseable — pas de markdown, pas de texte libre :
+
+```json
+{
+  "model": "deepseek-chat",
+  "temperature": 0.0,
+  "max_tokens": 1500,
+  "messages": [
+    {
+      "role": "system",
+      "content": "Tu es un analyste senior en veille technologique. Tu réponds UNIQUEMENT en français. Tu renvoies UNIQUEMENT un objet JSON valide. Pas de markdown. Pas de texte avant ou après le JSON."
+    },
+    {
+      "role": "user",
+      "content": "Génère un rapport de veille stratégique des dernières 24h.\n\nRetourne EXACTEMENT 4 sections dans cet ordre : AI, Data Engineering, MLOps, Cloud.\n\nChaque section contient :\n- name (string exacte parmi : AI, Data Engineering, MLOps, Cloud)\n- importance (string exacte parmi : high, medium, low)\n- score (entier 0-100, impact stratégique)\n- bullets (tableau de EXACTEMENT 3 strings, max 110 caractères chacune)\n- why_it_matters (1 phrase, max 180 caractères)\n\nNe PAS inventer d'annonces produit spécifiques. Décrire des tendances industrielles vérifiables.\n\nRetourne UNIQUEMENT du JSON valide."
+    }
+  ]
+}
+```
+
+`temperature: 0.0` est important ici — on veut un JSON reproductible et structuré, pas de créativité. Les contraintes de longueur (`max 110 caractères`, `max 180 caractères`) évitent que les embeds Discord soient tronqués.
+
+### Parser la réponse et construire les embeds Discord
+
+```javascript
+const raw = $input.first().json;
+
+// Gestion des erreurs API avant tout parsing
+if (raw?.error) {
+  return [{ json: { embeds: [{
+    title: '❌ DeepSeek — Erreur API',
+    description: String(raw.error.message || raw.error.code).slice(0, 1800),
+    color: 15158332,
+  }] } }];
+}
+
+const content = raw.choices[0].message.content;
+
+// Extraction du JSON même si le modèle a ajouté du texte autour
+const jsonMatch = content.match(/\{[\s\S]*\}/);
+if (!jsonMatch) {
+  return [{ json: { embeds: [{
+    title: '⚠️ Réponse non parseable',
+    description: content.slice(0, 1800),
+    color: 16776960,
+  }] } }];
+}
+
+const report = JSON.parse(jsonMatch[0]);
+
+// Couleur par importance
+const COLORS = { high: 0xE74C3C, medium: 0xF39C12, low: 0x2ECC71 };
+
+const embeds = report.sections.map(section => ({
+  title: `${section.name}  ·  Score ${section.score}/100`,
+  color: COLORS[section.importance] ?? 0x95A5A6,
+  description: section.bullets.map(b => `• ${b}`).join('\n'),
+  footer: { text: section.why_it_matters },
+}));
+
+return [{ json: { embeds } }];
+```
+
+Le `content.match(/\{[\s\S]*\}/)` est une défense : malgré le prompt strict, certains modèles ajoutent parfois une phrase introductive avant le JSON. La regex extrait le premier objet JSON valide quoi qu'il arrive.
+
+### Envoi via webhook Discord
+
+```json
+{
+  "method": "POST",
+  "url": "={{ $env.DISCORD_WEBHOOK_URL_AI }}",
+  "body": {
+    "embeds": "={{ $json.embeds }}"
+  }
+}
+```
+
+Deux webhooks Discord distincts (`DISCORD_WEBHOOK_URL` et `DISCORD_WEBHOOK_URL_AI`) permettent de router les deux types de messages dans des channels différents — le digest RSS dans `#veille-articles`, le rapport IA dans `#veille-tendances`.
+
+---
+
+## Docker Compose : un seul service
+
+```yaml
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - DISCORD_WEBHOOK_URL_AI=${DISCORD_WEBHOOK_URL_AI}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+    volumes:
+      - n8n_data:/home/node/.n8n
+```
+
+`N8N_BLOCK_ENV_ACCESS_IN_NODE=false` est nécessaire pour utiliser `$env.DEEPSEEK_API_KEY` dans les nœuds HTTP. Sans ça, les variables d'environnement ne sont pas accessibles dans les expressions JavaScript des nœuds.
+
+---
+
+## Ce que j'ai appris
+
+**`$getWorkflowStaticData` est la clé pour la déduplication sans infrastructure.** Pas besoin de Redis ou de base externe pour stocker les liens déjà traités — n8n persiste cette mémoire en SQLite. Le nettoyage automatique des entrées > 30 jours évite la croissance infinie.
+
+**`temperature: 0.0` pour les sorties JSON structurées.** Un LLM créatif produit un JSON légèrement différent à chaque appel — parfois avec des champs renommés, des tableaux de taille variable. À température 0, le format est stable et parseable sans surprises.
+
+**La regex de fallback JSON est indispensable.** Même avec un prompt explicite ("renvoie UNIQUEMENT du JSON"), les LLMs ajoutent parfois du texte. Une regex `\{[\s\S]*\}` extrait le JSON quelle que soit la pollution textuelle autour.
+
+**Deux workflows plutôt qu'un.** Si le workflow DeepSeek échoue (quota, timeout), le digest RSS arrive quand même. L'isolation des workflows est la forme la plus simple de résilience dans n8n.
+
+Le code source est disponible sur [GitHub](https://github.com/benjsant/n8n-veille-auto).
