@@ -1,0 +1,23 @@
+---
+title: "Let's Go Dex"
+description: "Pokédex interactif pour Pokémon Let's Go avec synthèse vocale (Coqui TTS) et assistant RAG — pgvector, embeddings sentence-transformers, agent DeepSeek à 3 outils, FastAPI, Next.js."
+repo: "https://github.com/benjsant/lets-go-dex"
+tags: ["Python", "FastAPI", "Next.js", "PostgreSQL", "pgvector", "RAG", "DeepSeek", "Docker"]
+featured: false
+order: 7
+year: 2025
+role: "Développeur IA Full Stack"
+services: ["IA & RAG", "Data Engineering", "API REST", "Frontend"]
+draft: false
+---
+
+Pokédex complet pour Pokémon Let's Go Pikachu/Évoli — 188 Pokémon, 226 capacités, 18 types — avec deux fonctionnalités IA : synthèse vocale des descriptions (Coqui TTS) et assistant conversationnel RAG (DeepSeek + pgvector).
+
+## Ce que j'ai construit
+
+- Pipeline ETL en 8 phases : CSV → PokéAPI → scraping Pokepédia (Scrapy) → pgvector embeddings
+- Recherche vectorielle avec `sentence-transformers` (all-MiniLM-L6-v2, 384 dimensions) et index ivfflat
+- Agent DeepSeek avec 3 outils : `sql_search`, `vector_search`, `web_search` (SearXNG)
+- Synthèse vocale TTS des fiches Pokédex via Coqui
+- Calcul bi-type (faiblesses ×2/×4, résistances, immunités)
+- Monitoring Prometheus + Grafana

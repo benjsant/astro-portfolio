@@ -1,0 +1,28 @@
+---
+title: "DistroScript"
+description: "Ensemble de scripts Bash pour créer et configurer automatiquement des environnements de développement isolés via Distrobox — détection GPU, logs, vérification post-install."
+repo: "https://github.com/benjsant/distroscript"
+tags: ["Bash", "Linux", "Distrobox", "Podman", "Automatisation", "DevOps"]
+featured: false
+order: 8
+year: 2025
+role: "Développeur Linux"
+services: ["Automatisation", "Linux", "DevOps"]
+draft: false
+---
+
+Scripts Bash pour provisionner des environnements de développement reproductibles sous Linux via Distrobox/Podman. Chaque environnement est basé sur Ubuntu 24.04 et préconfiguré pour un usage ciblé.
+
+## Environnements disponibles
+
+- `ubuntu_dev_python` — pyenv, uv, Node (NVM), VS Code, gh
+- `ubuntu_dev_ia` — Ollama, pyenv, uv, VS Code, gh — support GPU NVIDIA/ROCm/CPU automatique
+- `ubuntu_dev_hugo` — Hugo, Homebrew, Node (NVM), VS Code, gh
+- `fedora_gaming` — Steam, gamemode, Heroic, Bottles, MangoHud
+
+## Fonctionnalités
+
+- Détection GPU NVIDIA automatique (activation Ollama GPU si disponible)
+- Logs d'installation dans `~/distrobox/<nom>_install.log`
+- Vérification post-install des outils clés
+- Menu interactif, script de mise à jour et désinstallation propre

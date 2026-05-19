@@ -1,0 +1,27 @@
+---
+title: "CinnamonForge"
+description: "Outil de post-installation pour Fedora Cinnamon — interface web Flask locale avec dry-run, profils par catégorie, gestion des thèmes GTK, rollback et streaming SSE des logs."
+tags: ["Python", "Flask", "Bash", "Pydantic", "Linux", "Automatisation"]
+featured: false
+order: 9
+year: 2025
+role: "Développeur Linux"
+services: ["Automatisation", "Linux", "Outils"]
+draft: false
+---
+
+Interface web locale (Flask + Bash) pour automatiser la post-installation d'un système Fedora Cinnamon de façon reproductible. Remplace les scripts d'installation monolithiques par une UI interactive avec prévisualisation et rollback.
+
+## Fonctionnalités
+
+- **Profils d'installation** par catégorie : Base, Dev, Gaming, Multimedia, Docker, AMD/NVIDIA GPU...
+- **Dry-run** : prévisualisation des paquets avant installation
+- **Streaming SSE** des logs en temps réel dans l'interface
+- **Catalogue de thèmes** GTK, icônes et curseurs depuis GitHub
+- **Paramètres bureau** : gsettings (thème, polices, espaces de travail, mode sombre)
+- **Rollback** : annulation de la dernière action depuis `data/state.json`
+- **API REST** Flask avec blueprints modulaires et validation Pydantic
+
+## Stack
+
+Flask 3, Pydantic v2, uv, crudini, sassc — zéro dépendance frontend (vanilla JS).
