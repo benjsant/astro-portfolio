@@ -1,0 +1,315 @@
+---
+title: "Agent DeepSeek à 9 outils avec streaming SSE réel"
+description: "Architecture d'un agent tool-calling avec streaming token par token, cascade multi-provider (DeepSeek/OpenRouter/Ollama), attribution de sources et feedback Discord — dans FusionDex-IA."
+publishedAt: 2026-01-01
+author: "Benjamin Santrisse"
+tags: ["DeepSeek", "Agent IA", "SSE", "FastAPI", "Python", "LLM", "Tool Calling"]
+draft: false
+featured: true
+locale: "fr"
+---
+
+La plupart des agents LLM ont le même défaut : l'utilisateur voit une réponse complète apparaître d'un coup, sans savoir ce que le modèle fait pendant les 5 secondes d'attente. Dans **FusionDex-IA** — un Pokédex pour Pokémon Infinite Fusion avec 168 000+ fusions — j'ai implémenté un agent à 9 outils qui streame les tokens en temps réel *et* notifie l'interface de chaque appel d'outil avant son exécution.
+
+Voici comment ça fonctionne de bout en bout.
+
+---
+
+## Les 9 outils et leur logique de sélection
+
+L'agent dispose de trois catégories d'outils, chacune adressant un type de question différent :
+
+```
+Outils DB (PostgreSQL)        Outils externes
+─────────────────────         ───────────────────
+get_pokemon                   search_wiki  → wiki Infinite Fusion
+get_fusion                    search_web   → DuckDuckGo
+get_triple_fusion
+search_move
+get_item
+get_move_tutors
+search_pokemon_locations
+```
+
+Le système prompt donne les instructions de sélection : SQL direct pour les faits précis (stats, fusions, capacités), wiki pour les stratégies communautaires, web pour tout ce qui dépasse la base locale.
+
+Tous les outils implémentent le même contrat via une classe `Tool` :
+
+```python
+@dataclass
+class Tool:
+    name: str
+    description: str
+    parameters: dict          # JSON Schema
+    handler: Callable         # async (db, args) → dict
+
+    def to_spec(self) -> dict:
+        return {
+            "type": "function",
+            "function": {
+                "name":        self.name,
+                "description": self.description,
+                "parameters":  self.parameters,
+            },
+        }
+```
+
+Le `dispatch_tool` résout le nom, invoque le handler et logue latence + succès :
+
+```python
+async def dispatch_tool(db: Session, name: str, args: dict) -> dict:
+    tool = _TOOL_MAP.get(name)
+    if tool is None:
+        return {"error": f"Unknown tool '{name}'"}
+
+    t0 = time.monotonic()
+    try:
+        result = await tool.handler(db, args)
+    except Exception as exc:
+        LOGGER.error("tool=%s error=%s", name, exc)
+        return {"error": "Tool execution failed"}
+
+    latency_ms = (time.monotonic() - t0) * 1000
+    LOGGER.info("tool=%s latency_ms=%.1f success=%s",
+                name, latency_ms, "error" not in result)
+    return result
+```
+
+---
+
+## Le streaming SSE avec assemblage des tool calls
+
+La partie la plus délicate : les tool calls arrivent fragmentés dans le stream. OpenAI et DeepSeek envoient les arguments JSON caractère par caractère dans des `delta.tool_calls` successifs — il faut les assembler avant de pouvoir les parser.
+
+```python
+async def _stream_turn(provider: LLMProvider, messages: list[dict]):
+    """Stream un tour LLM. Yield 'token', 'tool_calls', ou 'empty'."""
+    tool_calls_by_idx: dict[int, dict] = {}
+    has_tokens = False
+
+    stream = await provider.client.chat.completions.create(
+        model=provider.model,
+        messages=messages,
+        tools=TOOL_SPECS,
+        tool_choice="auto",
+        max_tokens=2048,
+        temperature=0.1,
+        stream=True,
+        stream_options={"include_usage": True},  # token count dans le chunk final
+    )
+
+    async for chunk in stream:
+        if not chunk.choices:
+            continue  # chunk usage-only (dernier chunk du stream)
+
+        delta = chunk.choices[0].delta
+
+        if delta.tool_calls:
+            for tc in delta.tool_calls:
+                idx = tc.index
+                if idx not in tool_calls_by_idx:
+                    tool_calls_by_idx[idx] = {
+                        "id": tc.id or "",
+                        "type": "function",
+                        "function": {"name": "", "arguments": ""},
+                    }
+                # Accumulation des fragments — le nom et les arguments
+                # arrivent en plusieurs chunks
+                if tc.function:
+                    if tc.function.name:
+                        tool_calls_by_idx[idx]["function"]["name"] += tc.function.name
+                    if tc.function.arguments:
+                        tool_calls_by_idx[idx]["function"]["arguments"] += tc.function.arguments
+
+        elif delta.content:
+            has_tokens = True
+            yield {"type": "token", "chunk": delta.content}
+
+    if tool_calls_by_idx:
+        yield {"type": "tool_calls",
+               "calls": [tool_calls_by_idx[i] for i in sorted(tool_calls_by_idx)]}
+    elif not has_tokens:
+        yield {"type": "empty"}
+```
+
+L'accumulation par `idx` est nécessaire car le LLM peut demander plusieurs outils en parallèle dans le même tour — chacun a son propre index.
+
+---
+
+## La boucle d'agent avec événements typés
+
+La boucle principale produit des événements typés que le frontend consomme directement :
+
+```python
+class ToolCallEvent(TypedDict):
+    type: Literal["tool_call"]
+    name: str              # affiché dans l'UI avant l'exécution
+
+class TokenEvent(TypedDict):
+    type: Literal["token"]
+    chunk: str             # streamed directement dans l'interface
+
+class SourceEvent(TypedDict):
+    type: Literal["source"]
+    sources: list[str]     # ["db", "wiki", "web"]
+    web_urls: list[dict]   # [{title, url}] pour les liens cliquables
+
+async def stream_ai_response(...) -> AsyncIterator[AgentEvent]:
+    sources_used: set[str] = set()
+    web_urls: list[dict] = []
+
+    for iteration in range(MAX_ITERATIONS):  # max 5
+        tool_calls = []
+        got_text = False
+
+        async for ev in _stream_turn(provider, messages):
+            if ev["type"] == "token":
+                got_text = True
+                yield TokenEvent(type="token", chunk=ev["chunk"])
+            elif ev["type"] == "tool_calls":
+                tool_calls = ev["calls"]
+
+        # Réponse finale — pas d'outil demandé
+        if got_text and not tool_calls:
+            if sources_used:
+                yield SourceEvent(type="source",
+                                  sources=sorted(sources_used),
+                                  web_urls=web_urls)
+            return
+
+        # Exécuter les outils et continuer
+        messages.append({
+            "role": "assistant",
+            "tool_calls": [...],   # appels formatés pour le contexte
+        })
+
+        for tc in tool_calls:
+            name = tc["function"]["name"]
+            yield ToolCallEvent(type="tool_call", name=name)  # UI voit l'outil
+
+            # Attribution de source
+            if name in _DB_TOOLS:
+                sources_used.add("db")
+            elif name == "search_wiki":
+                sources_used.add("wiki")
+            elif name == "search_web":
+                sources_used.add("web")
+
+            args = json.loads(tc["function"]["arguments"])
+            result = await dispatch_tool(db, name, args)
+
+            # Collecter les URLs web pour le SourceEvent final
+            if name == "search_web" and result.get("results"):
+                for r in result["results"]:
+                    if r.get("url"):
+                        web_urls.append({"title": r["title"], "url": r["url"]})
+
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tc["id"],
+                "content": json.dumps(result, ensure_ascii=False),
+            })
+```
+
+Le `ToolCallEvent` est émis **avant** l'exécution de l'outil — l'interface peut afficher "🔍 Recherche dans la base..." dès que le LLM décide d'appeler l'outil, sans attendre le résultat.
+
+---
+
+## L'endpoint SSE FastAPI
+
+Chaque `AgentEvent` est sérialisé en JSON et envoyé comme ligne SSE :
+
+```python
+@router.post("/ask")
+async def ask_ai(request: AiRequest, db: Session = Depends(get_db)):
+    async def event_stream():
+        try:
+            async for event in stream_ai_response(
+                db, request.message, request.context,
+                request.history, provider
+            ):
+                yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+        except Exception:
+            yield f"data: {json.dumps({'type': 'error', 'message': 'Erreur.'})}\n\n"
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "X-Accel-Buffering": "no",   # désactive le buffering nginx
+            "Connection":      "keep-alive",
+        },
+    )
+```
+
+Le header `X-Accel-Buffering: no` est indispensable si l'app est derrière nginx — sans lui, nginx bufferise la réponse et le streaming n'arrive jamais au client.
+
+---
+
+## Cascade multi-provider : DeepSeek → OpenRouter → Ollama
+
+L'agent supporte trois providers, sélectionnés à l'initialisation selon les variables d'environnement disponibles :
+
+```python
+@functools.lru_cache(maxsize=1)
+def select_provider() -> LLMProvider | None:
+    """Premier match gagne. Cached pour réutiliser le pool httpx."""
+    if key := os.getenv("DEEPSEEK_API_KEY"):
+        return DeepSeekProvider(key)          # Cloud, qualité maximale
+
+    if key := os.getenv("OPENROUTER_API_KEY"):
+        return OpenRouterProvider(            # Cloud, free tier disponible
+            key, os.getenv("OPENROUTER_MODEL")
+        )
+
+    if url := os.getenv("OLLAMA_URL"):
+        return OllamaProvider(               # Local, aucune clé requise
+            url, os.getenv("OLLAMA_MODEL")
+        )
+
+    return None  # → 503 avec instructions de configuration
+```
+
+Les trois providers exposent la même interface OpenAI Chat Completions — le `AsyncOpenAI` de DeepSeek pointe sur `https://api.deepseek.com`, celui d'OpenRouter sur `https://openrouter.ai/api/v1`, et celui d'Ollama sur l'URL locale. Le code de l'agent ne sait jamais lequel est actif.
+
+Le `lru_cache(maxsize=1)` réutilise le pool de connexions httpx entre les requêtes — évite de créer un nouveau client à chaque appel.
+
+---
+
+## Feedback Discord sur les mauvaises réponses
+
+Un endpoint `/ai/feedback` reçoit les pouces haut/bas de l'interface. Sur un pouce bas, il poste la question et la réponse dans un webhook Discord pour review :
+
+```python
+@router.post("/feedback")
+async def submit_feedback(request: FeedbackRequest):
+    if request.rating == "down" and _DISCORD_WEBHOOK:
+        embed = {
+            "title": "👎 Mauvaise réponse — InfiniDex",
+            "color": 0xE74C3C,
+            "fields": [
+                {"name": "Question", "value": request.question[:1000]},
+                {"name": "Réponse",  "value": request.answer[:1000]},
+            ],
+        }
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            await client.post(_DISCORD_WEBHOOK, json={"embeds": [embed]})
+    return {"ok": True}
+```
+
+Le feedback est best-effort — si le webhook échoue, la réponse reste `200`. L'utilisateur ne doit jamais voir une erreur pour un simple retour.
+
+---
+
+## Ce que j'ai appris
+
+**Assembler les tool calls fragmentés est non trivial.** Le stream envoie les arguments JSON en morceaux — parfois `{"name":` dans un chunk, `" "Pikachu"}` dans le suivant. L'accumulation par index et la concaténation des chaînes sont obligatoires avant tout `json.loads`.
+
+**Émettre `ToolCallEvent` avant l'exécution.** Yield l'événement dès que le LLM décide d'appeler un outil, pas après le retour du résultat. L'utilisateur voit "Recherche en base..." pendant que l'outil tourne — la latence perçue chute drastiquement.
+
+**`X-Accel-Buffering: no` en production.** Sans ce header, tout proxy (nginx, Vercel, Cloudflare) peut bufferiser la réponse SSE. Le résultat ressemble alors à un appel bloquant — tout le texte arrive d'un coup à la fin.
+
+**La cascade multi-provider simplifie le dev local.** Ollama fonctionne sans clé — `docker compose --profile ollama up` suffit pour tester l'agent entier en local, sans consommer de tokens cloud.
+
+Le code source est disponible sur [GitHub](https://github.com/benjsant/FusionDex-IA).
