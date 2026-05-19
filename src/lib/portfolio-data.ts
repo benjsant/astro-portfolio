@@ -66,13 +66,6 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     type: 'project',
-    title: "Let's Go Dex",
-    description: "Pokédex Let's Go Pikachu/Évoli avec synthèse vocale Coqui TTS et agent RAG DeepSeek — pgvector, sentence-transformers, 3 outils (SQL, vectoriel, web).",
-    tags: ["FastAPI", "Next.js", "PostgreSQL", "pgvector", "RAG", "DeepSeek", "Scrapy"],
-    url: "/projects/lets-go-dex",
-  },
-  {
-    type: 'project',
     title: "DistroScript",
     description: "Scripts Bash pour provisionner des environnements de développement isolés via Distrobox/Podman — détection GPU NVIDIA, logs, vérification post-install.",
     tags: ["Bash", "Linux", "Distrobox", "Podman", "Automatisation", "DevOps"],
