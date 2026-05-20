@@ -1,0 +1,271 @@
+---
+title: "XGBoost, MLflow et Streamlit : pipeline ML de bout en bout"
+description: "Pipeline MLOps pour prédire les combats Pokémon : feature engineering scikit-learn, XGBoost avec GridSearchCV, suivi MLflow et promotion automatique en Production à 0.85 d'accuracy."
+publishedAt: 2026-04-14
+author: "Benjamin Santrisse"
+tags: ["XGBoost", "MLflow", "Streamlit", "scikit-learn", "MLOps", "Python", "Machine Learning"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+**PredictionDex** prédit le vainqueur d'un combat Pokémon en moins de 500 ms. Le modèle final atteint 96,26 % d'accuracy sur 135 features. Ce qui rend le pipeline intéressant, ce n'est pas le score — c'est la chaîne complète : feature engineering reproductible, tracking MLflow systématique, et promotion automatique en Production quand le seuil de qualité est atteint.
+
+---
+
+## Architecture du pipeline
+
+```
+CSV brut → PokemonFeatureEngineer → XGBoost + GridSearchCV
+                                          ↓
+                                   MLflowTracker → Model Registry
+                                          ↓
+                               Promotion auto (accuracy ≥ 0.85)
+                                          ↓
+                                  Streamlit (inference)
+```
+
+Chaque étape est indépendante — le feature engineering peut tourner sans MLflow, le tracking peut être désactivé avec une variable d'environnement. C'est utile quand on veut itérer vite sans encombrer l'UI MLflow d'expériences de debug.
+
+---
+
+## Feature engineering : le pattern fit/transform
+
+La classe `PokemonFeatureEngineer` suit l'interface scikit-learn (`fit` / `transform`) pour être composable dans un `Pipeline`. Elle construit 135 features à partir de 2 Pokémon en entrée :
+
+```python
+class PokemonFeatureEngineer:
+    def __init__(self):
+        self.scaler = StandardScaler()
+        self.feature_columns: list[str] = []
+
+    def fit_transform(self, df: pd.DataFrame) -> np.ndarray:
+        features = self._build_features(df)
+        self.feature_columns = features.columns.tolist()
+        return self.scaler.fit_transform(features)
+
+    def transform(self, df: pd.DataFrame) -> np.ndarray:
+        features = self._build_features(df)[self.feature_columns]
+        return self.scaler.transform(features)
+```
+
+`fit_transform` sur le train set ajuste le `StandardScaler` et mémorise l'ordre des colonnes. `transform` sur le test set — ou en inférence — réutilise exactement le même scaler et le même ordre. Sans ça, la moindre différence de colonne entre train et inférence produit une prédiction silencieusement fausse.
+
+### Les features construites
+
+```python
+def _build_features(self, df: pd.DataFrame) -> pd.DataFrame:
+    features = {}
+
+    # Différences brutes
+    for stat in ['hp', 'attack', 'defense', 'sp_attack', 'sp_defense', 'speed']:
+        features[f'diff_{stat}'] = df[f'p1_{stat}'] - df[f'p2_{stat}']
+
+    # Sommes (puissance totale de chaque Pokémon)
+    features['p1_total'] = sum(df[f'p1_{stat}'] for stat in STATS)
+    features['p2_total'] = sum(df[f'p2_{stat}'] for stat in STATS)
+    features['diff_total'] = features['p1_total'] - features['p2_total']
+
+    # Ratios — capturent les avantages relatifs mieux que les différences absolues
+    for stat in STATS:
+        features[f'ratio_{stat}'] = df[f'p1_{stat}'] / (df[f'p2_{stat}'] + 1)
+
+    # One-hot encoding des types
+    features.update(self._encode_types(df))
+
+    return pd.DataFrame(features)
+```
+
+Le `+ 1` dans les ratios évite les divisions par zéro sans changer significativement les ratios élevés. Le one-hot encoding des types produit 2×18 colonnes supplémentaires — c'est la majorité des 135 features.
+
+---
+
+## Entraînement : deux modes selon le temps disponible
+
+```python
+FAST_GRID = {
+    'n_estimators': [100, 200],
+    'max_depth': [4, 6],
+    'learning_rate': [0.1, 0.05],
+}
+
+EXTENDED_GRID = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [4, 6, 8],
+    'learning_rate': [0.1, 0.05, 0.01],
+    'subsample': [0.8, 1.0],
+    'colsample_bytree': [0.8, 1.0],
+}
+
+def train_model(X_train, y_train, mode: str = 'fast') -> XGBClassifier:
+    grid = FAST_GRID if mode == 'fast' else EXTENDED_GRID
+
+    search = GridSearchCV(
+        XGBClassifier(
+            use_label_encoder=False,
+            eval_metric='logloss',
+            early_stopping_rounds=10,
+            random_state=42,
+        ),
+        param_grid=grid,
+        cv=StratifiedKFold(n_splits=3, shuffle=True, random_state=42),
+        scoring='accuracy',
+        n_jobs=-1,
+        verbose=1,
+    )
+
+    search.fit(
+        X_train, y_train,
+        eval_set=[(X_train, y_train)],
+        verbose=False,
+    )
+
+    return search.best_estimator_
+```
+
+`StratifiedKFold` garantit que chaque fold a la même proportion de victoires P1/P2 — indispensable si le dataset n'est pas parfaitement équilibré. `n_jobs=-1` utilise tous les cœurs disponibles.
+
+L'`early_stopping_rounds=10` est passé au constructeur XGBoost (XGBoost ≥ 2.0) et non à `.fit()` — c'est un breaking change de l'API que beaucoup de tutoriels ratent encore.
+
+---
+
+## Évaluation multi-métriques
+
+```python
+def evaluate_model(model, X_test, y_test) -> dict:
+    y_pred = model.predict(X_test)
+    y_proba = model.predict_proba(X_test)[:, 1]
+
+    return {
+        'accuracy':  accuracy_score(y_test, y_pred),
+        'precision': precision_score(y_test, y_pred),
+        'recall':    recall_score(y_test, y_pred),
+        'f1':        f1_score(y_test, y_pred),
+        'roc_auc':   roc_auc_score(y_test, y_proba),
+        'overfit_delta': (
+            accuracy_score(y_train_cached, model.predict(X_train_cached))
+            - accuracy_score(y_test, y_pred)
+        ),
+    }
+```
+
+L'`overfit_delta` (accuracy train − accuracy test) est la métrique la plus utile pour détecter le surapprentissage. Un delta > 0.05 déclenche un warning dans le tracker. Un modèle à 99 % sur le train et 85 % sur le test n'est pas bon même si l'accuracy test semble acceptable.
+
+---
+
+## MLflowTracker : tracking et promotion automatique
+
+```python
+class MLflowTracker:
+    def __init__(self, experiment_name: str):
+        # Auto-détection Docker vs localhost
+        uri = (
+            'http://mlflow:5000'
+            if os.getenv('RUNNING_IN_DOCKER')
+            else 'http://localhost:5000'
+        )
+        mlflow.set_tracking_uri(uri)
+        mlflow.set_experiment(experiment_name)
+        self.client = MlflowClient()
+
+    def log_run(self, model, params: dict, metrics: dict, artifacts: dict):
+        with mlflow.start_run() as run:
+            mlflow.log_params(params)
+            mlflow.log_metrics(metrics)
+
+            mlflow.xgboost.log_model(
+                model,
+                artifact_path='model',
+                registered_model_name='predictiondex',
+            )
+
+            for name, path in artifacts.items():
+                mlflow.log_artifact(path, artifact_path=name)
+
+            self._maybe_promote(run.info.run_id, metrics['accuracy'])
+
+    def _maybe_promote(self, run_id: str, accuracy: float):
+        if accuracy < 0.85:
+            return
+
+        # Récupérer la version enregistrée pour ce run
+        versions = self.client.search_model_versions(
+            f"run_id='{run_id}'"
+        )
+        if not versions:
+            return
+
+        version = versions[0].version
+
+        # Archiver les anciennes versions Production
+        for v in self.client.get_latest_versions('predictiondex', stages=['Production']):
+            self.client.transition_model_version_stage(
+                name='predictiondex',
+                version=v.version,
+                stage='Archived',
+            )
+
+        # Promouvoir la nouvelle version
+        self.client.transition_model_version_stage(
+            name='predictiondex',
+            version=version,
+            stage='Production',
+        )
+```
+
+La promotion est entièrement automatique — si le modèle dépasse 85 % d'accuracy, il remplace l'ancienne version Production sans intervention manuelle. L'ancienne version passe en `Archived` (pas `Deleted`) pour garder la traçabilité.
+
+Si `DISABLE_MLFLOW_TRACKING=true`, le `MLflowTracker` est remplacé par un no-op — utile en CI ou en dev rapide pour ne pas avoir MLflow en dépendance d'exécution.
+
+---
+
+## Interface Streamlit
+
+```python
+# Chargement du modèle Production depuis le registry
+@st.cache_resource
+def load_model():
+    client = MlflowClient()
+    versions = client.get_latest_versions('predictiondex', stages=['Production'])
+    if not versions:
+        st.error("Aucun modèle en Production dans MLflow.")
+        st.stop()
+
+    run_id = versions[0].run_id
+    return mlflow.xgboost.load_model(f'runs:/{run_id}/model')
+
+model = load_model()
+engineer = load_feature_engineer()  # pickle depuis les artifacts MLflow
+
+p1 = st.selectbox("Pokémon 1", pokemon_list)
+p2 = st.selectbox("Pokémon 2", pokemon_list)
+
+if st.button("Prédire"):
+    df = build_matchup_df(p1, p2)
+    X = engineer.transform(df)
+    proba = model.predict_proba(X)[0]
+
+    winner = p1 if proba[1] > 0.5 else p2
+    confidence = max(proba) * 100
+
+    st.metric("Vainqueur prédit", winner)
+    st.progress(confidence / 100, f"{confidence:.1f}% de confiance")
+```
+
+`@st.cache_resource` évite de recharger le modèle MLflow à chaque interaction — le modèle est chargé une fois et réutilisé. Sans ça, chaque clic sur "Prédire" re-télécharge les artefacts MLflow, ce qui prend 2-3 secondes.
+
+Le `engineer.transform(df)` utilise le même `StandardScaler` ajusté sur le train set — le scaler est sérialisé avec pickle comme artifact MLflow lors de l'entraînement, chargé ici.
+
+---
+
+## Ce que j'ai appris
+
+**Le `fit`/`transform` séparé est non négociable.** Appeler `fit_transform` sur le test set est l'erreur la plus fréquente en ML — elle donne des métriques optimistes et un modèle qui sous-performe en production. Le pattern `fit_transform` sur train + `transform` sur test (et inférence) l'empêche structurellement.
+
+**`early_stopping_rounds` au constructeur, pas à `.fit()`.** Depuis XGBoost 2.0, passer `early_stopping_rounds` à `.fit()` est déprécié et produit un warning. Beaucoup de code en ligne est encore à l'ancienne API.
+
+**L'`overfit_delta` comme métrique de production.** L'accuracy seule ne suffit pas pour décider de promouvoir. Un delta train/test > 0.05 signale un modèle qui a mémorisé les données plutôt que généralisé, même si l'accuracy test paraît correcte.
+
+**MLflow en Docker avec auto-détection d'URI.** En local, MLflow tourne sur `localhost:5000`. Dans Docker Compose, le service s'appelle `mlflow`. Détecter `RUNNING_IN_DOCKER` et switcher l'URI évite de paramétrer manuellement la connexion selon l'environnement.
+
+Le code source est disponible sur [GitHub](https://github.com/benjsant/lets-go-predictiondex).

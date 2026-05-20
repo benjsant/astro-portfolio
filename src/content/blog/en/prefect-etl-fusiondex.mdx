@@ -1,0 +1,250 @@
+---
+title: "Orchestration ETL avec Prefect : détection de changements par SHA"
+description: "Deux flows Prefect pour surveiller un Pokédex de 168 000+ fusions : détection de changements par SHA sur GitHub et wiki, retries automatiques, alertes Discord et déploiements cron via prefect.yaml."
+publishedAt: 2026-04-21
+author: "Benjamin Santrisse"
+tags: ["Prefect", "ETL", "Python", "Data Engineering", "Docker", "Automatisation"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+La base de données de **FusionDex-IA** couvre 168 000+ fusions de Pokémon Infinite Fusion — un jeu communautaire dont la base de données évolue en permanence. Plutôt que de rejouer l'ETL complet chaque nuit, deux flows Prefect surveillent les sources amont et ne déclenchent une mise à jour que si quelque chose a vraiment changé. La détection repose sur des SHA de fichiers GitHub plutôt que sur des timestamps.
+
+---
+
+## Pourquoi Prefect plutôt qu'un simple cron
+
+Un `cron` basique exécute un script Python — il ne sait pas si le script a échoué, ne réessaie pas, et n'alerte pas. Prefect ajoute trois choses concrètes :
+
+1. **Retries déclaratifs** — un `@task(retries=3)` réessaie automatiquement si l'API GitHub répond 503
+2. **Observabilité** — chaque run est visible dans l'UI Prefect avec durée, logs, statut
+3. **Déploiements découplés du code** — `prefect.yaml` définit les schedules sans toucher au code Python
+
+---
+
+## Architecture des flows
+
+```
+pokedex-watcher (06:00 UTC)
+  fetch_wiki_data    → SHA wiki API
+  fetch_pbs_data     → SHA fichier GitHub
+  detect_changes     → compare avec snapshot
+  run_etl_pipeline   → upsert PostgreSQL (si changement)
+  notify_discord     → embed avec stats
+
+sprite-watcher (06:30 UTC)
+  fetch_github_sha   → arbre repo sprites
+  detect_version     → Settings.rb version string
+  sync_sprites       → téléchargement diff
+  notify_discord
+```
+
+Les deux flows tournent à des heures légèrement décalées pour ne pas saturer les API GitHub simultanément.
+
+---
+
+## Le pattern `@task` avec retries
+
+```python
+from prefect import task, flow
+from prefect.tasks import task_input_hash
+from datetime import timedelta
+
+@task(
+    retries=3,
+    retry_delay_seconds=30,
+    cache_key_fn=task_input_hash,
+    cache_expiration=timedelta(hours=1),
+)
+async def fetch_wiki_data(url: str) -> dict:
+    """Fetch Pokémon data from Infinite Fusion wiki API."""
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.get(url)
+        response.raise_for_status()
+        return response.json()
+```
+
+`retry_delay_seconds=30` avec `retries=3` signifie que Prefect attend 30 s entre chaque tentative. Si l'API wiki est temporairement indisponible, le flow tente 4 fois sur ~90 secondes avant d'échouer.
+
+`cache_key_fn=task_input_hash` + `cache_expiration=1h` : si le même URL est appelé deux fois dans la même heure (par exemple lors d'un re-run manuel), Prefect renvoie le résultat mis en cache plutôt que de refaire la requête. Utile pour les re-runs de debug sans consommer de quota API.
+
+---
+
+## Détection de changements par SHA
+
+Le SHA de fichier GitHub est plus fiable qu'un timestamp pour détecter des changements réels :
+
+```python
+@task(retries=2, retry_delay_seconds=15)
+async def fetch_github_sha(repo: str, path: str, token: str) -> str:
+    """Retourne le SHA du fichier path dans le repo GitHub."""
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    async with httpx.AsyncClient(
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=15.0,
+    ) as client:
+        r = await client.get(url)
+        r.raise_for_status()
+        return r.json()["sha"]
+
+
+@task
+def detect_changes(
+    current_sha: str,
+    snapshot_path: Path,
+) -> tuple[bool, str | None]:
+    """Compare le SHA actuel avec le snapshot persisté."""
+    if not snapshot_path.exists():
+        return True, None  # Premier run — toujours traiter
+
+    saved = json.loads(snapshot_path.read_text())
+    previous_sha = saved.get("sha")
+
+    return current_sha != previous_sha, previous_sha
+
+
+@task
+def save_snapshot(sha: str, snapshot_path: Path, metadata: dict):
+    snapshot_path.write_text(json.dumps({
+        "sha": sha,
+        "updated_at": datetime.utcnow().isoformat(),
+        **metadata,
+    }))
+```
+
+Le snapshot est un simple fichier JSON persisté sur le volume Docker. Si le SHA GitHub du fichier PBS n'a pas changé depuis la dernière exécution, `detect_changes` retourne `False` et le flow saute l'ETL complet — zéro requête PostgreSQL inutile.
+
+Un timestamp aurait le défaut inverse : le fichier peut avoir la même heure de modification sur un fork/mirror même si le contenu a changé, ou inversement avoir un timestamp différent sans changement de contenu (rechargement de CDN, par exemple).
+
+---
+
+## Le flow principal `pokedex_watcher`
+
+```python
+@flow(
+    name="pokedex-watcher",
+    description="Surveille les changements du Pokédex Infinite Fusion",
+    log_prints=True,
+)
+async def pokedex_watcher_flow(
+    force_run: bool = False,
+    notify: bool = True,
+):
+    settings = Settings()  # Pydantic settings, lit .env
+
+    # Fetch parallèle des deux sources
+    wiki_data, pbs_sha = await asyncio.gather(
+        fetch_wiki_data(settings.wiki_api_url),
+        fetch_github_sha(
+            settings.pbs_repo,
+            settings.pbs_path,
+            settings.github_token,
+        ),
+    )
+
+    # Détecter les changements
+    wiki_changed, _ = detect_changes(
+        _hash_wiki_data(wiki_data), settings.wiki_snapshot
+    )
+    pbs_changed, _ = detect_changes(pbs_sha, settings.pbs_snapshot)
+
+    if not (wiki_changed or pbs_changed or force_run):
+        print("Aucun changement détecté — ETL ignoré.")
+        return {"status": "skipped", "reason": "no_changes"}
+
+    # ETL uniquement si changement
+    stats = await run_etl_pipeline(wiki_data, pbs_sha, settings)
+
+    # Persister les snapshots après succès
+    save_snapshot(pbs_sha, settings.pbs_snapshot, {"source": "pbs"})
+    save_snapshot(
+        _hash_wiki_data(wiki_data),
+        settings.wiki_snapshot,
+        {"pokemon_count": stats["total"]},
+    )
+
+    if notify:
+        await notify_discord(stats, settings.discord_webhook)
+
+    return stats
+```
+
+`asyncio.gather` sur les deux fetches parallélise les appels réseau — le wiki et GitHub répondent indépendamment, inutile de les séquencer.
+
+Le snapshot n'est sauvegardé qu'**après** le succès de l'ETL. Si l'ETL échoue à mi-chemin, le snapshot conserve l'ancien SHA — le prochain run retraitera les données. C'est la garantie d'idempotence : mieux vaut re-traiter que manquer une mise à jour.
+
+---
+
+## Notification Discord avec embed
+
+```python
+@task(retries=1)
+async def notify_discord(stats: dict, webhook_url: str):
+    color = 0x2ECC71 if stats.get("errors") == 0 else 0xE74C3C
+
+    embed = {
+        "title": "🔄 Pokédex mis à jour",
+        "color": color,
+        "fields": [
+            {"name": "Pokémon traités", "value": str(stats["total"]),    "inline": True},
+            {"name": "Nouveaux",         "value": str(stats["inserted"]), "inline": True},
+            {"name": "Mis à jour",       "value": str(stats["updated"]),  "inline": True},
+            {"name": "Durée",            "value": f"{stats['duration_s']:.1f}s", "inline": True},
+            {"name": "Erreurs",          "value": str(stats["errors"]),   "inline": True},
+        ],
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        await client.post(webhook_url, json={"embeds": [embed]})
+```
+
+`retries=1` sur la notification : si Discord répond 429 (rate limit), on réessaie une fois. Si ça échoue encore, la notification est perdue mais l'ETL a réussi — ce n'est pas une raison de marquer le flow en erreur.
+
+---
+
+## Déploiements dans `prefect.yaml`
+
+```yaml
+deployments:
+  - name: pokedex-watcher-daily
+    flow: etl/flows/pokedex_watcher.py:pokedex_watcher_flow
+    work_pool:
+      name: fusiondex-pool
+    schedules:
+      - cron: "0 6 * * *"
+        timezone: "UTC"
+    parameters:
+      force_run: false
+      notify: true
+    pull:
+      - prefect.deployments.steps.git_clone:
+          repository: "{{ prefect.variables.repo_url }}"
+
+  - name: sprite-watcher-daily
+    flow: etl/flows/sprite_watcher.py:sprite_watcher_flow
+    work_pool:
+      name: fusiondex-pool
+    schedules:
+      - cron: "30 6 * * *"
+        timezone: "UTC"
+```
+
+`prefect deploy --all` enregistre les deux déploiements dans Prefect Cloud. Le work pool `fusiondex-pool` est un pool de type `process` — un worker Prefect tourne sur le serveur Docker et poll le serveur pour les runs à exécuter.
+
+Le paramètre `force_run: false` peut être surchargé manuellement depuis l'UI Prefect ou via `prefect deployment run pokedex-watcher-daily --params '{"force_run": true}'` — pratique pour forcer un re-traitement sans modifier le code.
+
+---
+
+## Ce que j'ai appris
+
+**SHA plutôt que timestamp pour la détection de changements.** Les timestamps sont fragiles — ils changent lors d'un rebuild ou d'un mirror, sans que le contenu ait bougé. Le SHA de l'API GitHub Contents est une empreinte du contenu réel du fichier.
+
+**Sauvegarder le snapshot après succès, pas avant.** Inverser l'ordre garantit qu'un ETL partiel ne masque pas un changement. Le prochain run rejoue toujours à partir d'un état cohérent.
+
+**`asyncio.gather` pour les fetches indépendants.** Deux appels réseau séquentiels qui n'ont pas de dépendance entre eux, c'est du temps perdu. `gather` les parallélise sans effort supplémentaire dans un contexte async.
+
+**`force_run` comme paramètre de déploiement.** Tester un flow sans modifier le code de détection de changements — passer `force_run=True` depuis l'UI ou le CLI suffit. C'est plus propre qu'une variable d'environnement ou un flag commenté dans le code.
+
+Le code source est disponible sur [GitHub](https://github.com/benjsant/FusionDex-IA).

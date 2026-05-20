@@ -128,6 +128,27 @@ export const portfolioItems: PortfolioItem[] = [
     tags: ["Distrobox", "Podman", "Docker", "Linux", "Conteneurs"],
     url: "/blog/distrobox",
   },
+  {
+    type: 'article',
+    title: "XGBoost, MLflow et Streamlit : pipeline ML de bout en bout",
+    description: "Pipeline MLOps pour prédire les combats Pokémon : feature engineering scikit-learn, XGBoost avec GridSearchCV, suivi MLflow et promotion automatique en Production à 0.85 d'accuracy.",
+    tags: ["XGBoost", "MLflow", "Streamlit", "scikit-learn", "MLOps", "Python", "Machine Learning"],
+    url: "/blog/xgboost-mlflow-streamlit-predictiondex",
+  },
+  {
+    type: 'article',
+    title: "Orchestration ETL avec Prefect : détection de changements par SHA",
+    description: "Deux flows Prefect pour surveiller un Pokédex de 168 000+ fusions : détection par SHA GitHub, retries automatiques, alertes Discord et déploiements cron via prefect.yaml.",
+    tags: ["Prefect", "ETL", "Python", "Data Engineering", "Docker", "Automatisation"],
+    url: "/blog/prefect-etl-fusiondex",
+  },
+  {
+    type: 'article',
+    title: "Logs en temps réel avec SSE dans Flask : CinnamonForge",
+    description: "Streaming de logs d'installation via Server-Sent Events dans Flask : queue thread-safe, blueprints, rollback avec state.json et validation Pydantic v2.",
+    tags: ["Flask", "SSE", "Python", "Linux", "Pydantic", "Bash", "Automatisation"],
+    url: "/blog/flask-sse-logs-cinnamonforge",
+  },
 ];
 
 export function searchPortfolio(query: string, limit = 4): PortfolioItem[] {

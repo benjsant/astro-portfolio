@@ -13,7 +13,58 @@ const contactSchema = z.object({
   honeypot: z.string().max(0), // Anti-spam: must be empty
 });
 
+// ── Rate limiting ─────────────────────────────────────────────────────────────
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1h
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function getIp(request: Request): string {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    request.headers.get('x-real-ip') ||
+    'unknown'
+  );
+}
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
+// ── Origin check ──────────────────────────────────────────────────────────────
+function isAllowedOrigin(request: Request): boolean {
+  if (import.meta.env.DEV) return true;
+  const origin = request.headers.get('origin');
+  const referer = request.headers.get('referer');
+  const siteUrl = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
+  if (!siteUrl) return true;
+  if (origin) return origin.startsWith(siteUrl);
+  if (referer) return referer.startsWith(siteUrl);
+  return false;
+}
+
 export const POST: APIRoute = async ({ request }) => {
+  if (!isAllowedOrigin(request)) {
+    return new Response(JSON.stringify({ success: false, errors: { form: ['Accès refusé.'] } }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (!checkRateLimit(getIp(request))) {
+    return new Response(
+      JSON.stringify({ success: false, errors: { form: ['Trop de messages. Réessaie dans 1 heure.'] } }),
+      { status: 429, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const formData = await request.formData();
 

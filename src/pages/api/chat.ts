@@ -34,19 +34,24 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number; rese
 }
 
 // ── System prompt ────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `Tu es l'assistant personnel de Benjamin Santrisse, développeur IA/Data en recherche d'emploi. Tu réponds aux questions des visiteurs de son portfolio de façon concise et professionnelle (3-5 phrases max).
+const SYSTEM_PROMPT = `Tu es l'assistant dédié au portfolio de Benjamin Santrisse, développeur IA/Data. Ton unique rôle est d'aider les visiteurs à découvrir son profil, ses projets et ses articles.
 
-## Profil
+## Règle absolue
+Tu ne réponds QU'aux questions concernant Benjamin Santrisse : son profil, ses compétences, ses projets, ses articles de blog, sa disponibilité, ses coordonnées.
+Si la question ne porte pas sur Benjamin ou son portfolio (culture générale, code générique, actualités, etc.), réponds UNIQUEMENT : "Je suis uniquement disponible pour répondre aux questions sur le portfolio de Benjamin. N'hésite pas à le contacter directement : santrissebenjamin@gmail.com"
+
+## Profil de Benjamin
 - Certifié Développeur IA (Simplon, RNCP Niveau 6, 2026)
 - Spécialités : Python, FastAPI, LLMs, RAG, ETL, MLOps, Docker
 - Disponible immédiatement pour un poste IA/Data/ML Engineering
 - Localisation : Marly (Nord), mobilité totale, télétravail
 - Contact : santrissebenjamin@gmail.com
 
-## Outil disponible
-Tu peux appeler search_portfolio pour chercher dans les projets et articles de Benjamin avant de répondre. Utilise-le quand la question porte sur un projet, une technologie, ou un article spécifique.
-
-Réponds toujours en français. Si tu mentionnes un projet ou un article, inclus son URL sous la forme [Titre](url).`;
+## Instructions
+- Réponds en 3-5 phrases max, de façon concise et professionnelle
+- Utilise search_portfolio dès qu'une question porte sur un projet ou une technologie spécifique
+- Réponds toujours en français
+- Si tu mentionnes un projet ou un article, inclus son URL : [Titre](url)`;
 
 // ── DeepSeek tools definition ─────────────────────────────────────────────────
 const TOOLS = [
@@ -150,8 +155,33 @@ async function runAgent(userMessage: string, apiKey: string): Promise<string> {
   return "Désolé, je n'ai pas pu générer de réponse.";
 }
 
+// ── Origin check ─────────────────────────────────────────────────────────────
+function isAllowedOrigin(request: Request): boolean {
+  // En dev Astro (import.meta.env.DEV), on bypass pour ne pas bloquer localhost
+  if (import.meta.env.DEV) return true;
+
+  const origin = request.headers.get('origin');
+  const referer = request.headers.get('referer');
+  const siteUrl = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
+
+  if (!siteUrl) return true;
+
+  if (origin) return origin.startsWith(siteUrl);
+  if (referer) return referer.startsWith(siteUrl);
+
+  // Pas d'Origin ni de Referer → curl/Postman brut → rejeter
+  return false;
+}
+
 // ── Route handler ─────────────────────────────────────────────────────────────
 export const POST: APIRoute = async ({ request }) => {
+  if (!isAllowedOrigin(request)) {
+    return new Response(JSON.stringify({ error: 'Accès refusé.' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const ip = getRateLimitKey(request);
   const { allowed, remaining, resetIn } = checkRateLimit(ip);
 

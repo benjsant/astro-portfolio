@@ -57,7 +57,9 @@ export default defineConfig({
   integrations: [
     react(),
     mdx(),
-    sitemap(),
+    sitemap({
+      filter: (page) => !page.includes('/components'),
+    }),
     icon(),
   ],
 

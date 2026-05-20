@@ -110,7 +110,7 @@ const siteConfig: SiteConfig = {
     'Développeur spécialisé en Intelligence Artificielle et Data Engineering — pipelines ML, APIs FastAPI, orchestration Airflow, LLMs. Disponible pour de nouvelles opportunités.',
   url: SITE_URL || 'https://example.com',
   ogImage: '/og-default.svg',
-  author: 'Benjamin Santris',
+  author: 'Benjamin Santrisse',
   email: 'santrissebenjamin@gmail.com',
   address: {
     street: '',
@@ -157,15 +157,15 @@ const siteConfig: SiteConfig = {
   },
   branding: {
     logo: {
-      alt: 'Benjamin Santris',
+      alt: 'Benjamin Santrisse',
       imageUrl: '/favicon.svg',
     },
     favicon: {
       svg: '/favicon.svg',
     },
     colors: {
-      themeColor: '#3b82f6',
-      backgroundColor: '#ffffff',
+      themeColor: '#0ea5c8',
+      backgroundColor: '#0a1520',
     },
   },
 };
