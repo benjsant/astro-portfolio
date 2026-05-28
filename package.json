@@ -1,29 +1,29 @@
 {
-  "name": "astro-rocket",
-  "version": "1.1.0",
-  "description": "Astro Rocket — A production-ready Astro 6 theme built on Tailwind CSS v4",
+  "name": "benjamin-santrisse-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio et blog personnel de Benjamin Santrisse — Développeur IA & Data. Construit avec Astro 6 et Tailwind CSS v4.",
   "type": "module",
-  "author": "Hans Martens",
+  "author": "Benjamin Santrisse <santrissebenjamin@gmail.com>",
   "license": "MIT",
   "keywords": [
+    "portfolio",
+    "blog",
     "astro",
-    "astro-theme",
-    "theme",
-    "tailwind",
     "tailwindcss",
     "typescript",
-    "blog",
-    "starter",
-    "boilerplate",
-    "seo"
+    "ia",
+    "machine-learning",
+    "data-engineering",
+    "mlops",
+    "fastapi"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/hansmartens68/astro-rocket"
+    "url": "https://github.com/benjsant/astro-portfolio"
   },
-  "homepage": "https://github.com/hansmartens68/astro-rocket#readme",
+  "homepage": "https://github.com/benjsant/astro-portfolio#readme",
   "bugs": {
-    "url": "https://github.com/hansmartens68/astro-rocket/issues"
+    "url": "https://github.com/benjsant/astro-portfolio/issues"
   },
   "scripts": {
     "dev": "astro dev",

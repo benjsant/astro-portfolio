@@ -1,0 +1,168 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg     { fill: var(--brand-500); }
+    .ico    { stroke: var(--brand-50);  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .txt    { fill: var(--brand-50); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 800; }
+    .sub    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 500; fill-opacity: 0.85; }
+    .mono   { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .ln     { stroke: var(--brand-300); stroke-width: 1; stroke-opacity: 0.3; }
+    .pil    { fill: var(--brand-400); fill-opacity: 0.28; stroke: var(--brand-200); stroke-opacity: 0.5; stroke-width: 1; }
+    .ptx    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 600; }
+    .cor    { stroke: var(--brand-300); stroke-width: 1.5; fill: none; stroke-opacity: 0.45; }
+    .panel  { fill: var(--brand-400); fill-opacity: 0.22; stroke: var(--brand-100); stroke-opacity: 0.7; stroke-width: 2; }
+    .panel-bar { fill: var(--brand-400); fill-opacity: 0.45; }
+    .log-line { fill: var(--brand-50); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; }
+    .log-time { fill: var(--brand-200); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .log-ok   { fill: var(--brand-100); }
+    .progress-bg { fill: var(--brand-400); fill-opacity: 0.3; }
+    .progress-fg { fill: var(--brand-50); }
+    .sse-pulse { fill: var(--brand-50); }
+    .profile-card { fill: var(--brand-400); fill-opacity: 0.16; stroke: var(--brand-200); stroke-opacity: 0.3; stroke-width: 1; }
+    .profile-label { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; fill-opacity: 0.7; }
+    .dot    { fill: var(--brand-200); }
+  </style>
+
+  <!-- Background -->
+  <rect width="1200" height="630" class="bg"/>
+
+  <!-- Dotted grid -->
+  <g class="ln">
+    <line x1="0" y1="120" x2="1200" y2="120" stroke-dasharray="2 14"/>
+    <line x1="0" y1="510" x2="1200" y2="510" stroke-dasharray="2 14"/>
+    <line x1="160" y1="0" x2="160" y2="630" stroke-dasharray="2 14"/>
+    <line x1="1040" y1="0" x2="1040" y2="630" stroke-dasharray="2 14"/>
+  </g>
+
+  <!-- Background profile chips (left) -->
+  <g transform="translate(60, 175)">
+    <rect width="180" height="34" rx="8" class="profile-card"/>
+    <circle cx="18" cy="17" r="5" fill="var(--brand-100)" fill-opacity="0.45"/>
+    <text x="32" y="21" font-size="12" class="profile-label" letter-spacing="1">profile: base</text>
+  </g>
+  <g transform="translate(60, 220)">
+    <rect width="180" height="34" rx="8" class="profile-card"/>
+    <circle cx="18" cy="17" r="5" fill="var(--brand-100)" fill-opacity="0.45"/>
+    <text x="32" y="21" font-size="12" class="profile-label" letter-spacing="1">profile: dev</text>
+  </g>
+  <g transform="translate(60, 265)">
+    <rect width="180" height="34" rx="8" class="profile-card"/>
+    <circle cx="18" cy="17" r="5" fill="var(--brand-100)" fill-opacity="0.45"/>
+    <text x="32" y="21" font-size="12" class="profile-label" letter-spacing="1">profile: gaming</text>
+  </g>
+  <g transform="translate(60, 310)">
+    <rect width="180" height="34" rx="8" class="profile-card"/>
+    <circle cx="18" cy="17" r="5" fill="var(--brand-100)" fill-opacity="0.45"/>
+    <text x="32" y="21" font-size="12" class="profile-label" letter-spacing="1">profile: docker</text>
+  </g>
+
+  <!-- Background SSE pulse markers (right) -->
+  <g transform="translate(990, 200)">
+    <text x="0" y="0" font-size="12" class="profile-label" letter-spacing="1">SSE STREAM</text>
+    <g transform="translate(0, 22)">
+      <rect x="0"   y="0" width="3" height="14" rx="1" class="sse-pulse" fill-opacity="0.85"/>
+      <rect x="10"  y="3" width="3" height="8"  rx="1" class="sse-pulse" fill-opacity="0.55"/>
+      <rect x="20"  y="-3" width="3" height="20" rx="1" class="sse-pulse" fill-opacity="0.9"/>
+      <rect x="30"  y="2" width="3" height="10" rx="1" class="sse-pulse" fill-opacity="0.55"/>
+      <rect x="40"  y="0" width="3" height="14" rx="1" class="sse-pulse" fill-opacity="0.7"/>
+      <rect x="50"  y="-5" width="3" height="22" rx="1" class="sse-pulse" fill-opacity="0.9"/>
+      <rect x="60"  y="3" width="3" height="8"  rx="1" class="sse-pulse" fill-opacity="0.55"/>
+      <rect x="70"  y="0" width="3" height="14" rx="1" class="sse-pulse" fill-opacity="0.7"/>
+      <rect x="80"  y="-3" width="3" height="20" rx="1" class="sse-pulse" fill-opacity="0.85"/>
+      <rect x="90"  y="2" width="3" height="10" rx="1" class="sse-pulse" fill-opacity="0.55"/>
+      <rect x="100" y="0" width="3" height="14" rx="1" class="sse-pulse" fill-opacity="0.7"/>
+      <rect x="110" y="-5" width="3" height="22" rx="1" class="sse-pulse" fill-opacity="0.9"/>
+      <rect x="120" y="3" width="3" height="8"  rx="1" class="sse-pulse" fill-opacity="0.55"/>
+      <rect x="130" y="0" width="3" height="14" rx="1" class="sse-pulse" fill-opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- Center: install panel (web UI mockup) with live logs -->
+  <g transform="translate(330, 150)">
+    <!-- Panel frame -->
+    <rect x="0" y="0" width="540" height="240" rx="14" class="panel"/>
+    <!-- Top bar -->
+    <rect x="0" y="0" width="540" height="34" rx="14" class="panel-bar"/>
+    <rect x="0" y="22" width="540" height="12" class="panel-bar"/>
+    <circle cx="18" cy="17" r="5" class="sse-pulse" fill-opacity="0.85"/>
+    <circle cx="36" cy="17" r="5" class="sse-pulse" fill-opacity="0.55"/>
+    <circle cx="54" cy="17" r="5" class="sse-pulse" fill-opacity="0.3"/>
+    <text x="270" y="22" font-size="12" text-anchor="middle" class="profile-label" letter-spacing="2">cinnamonforge · localhost:5000</text>
+
+    <!-- Progress bar -->
+    <g transform="translate(24, 56)">
+      <text x="0" y="0" font-size="12" class="log-time" letter-spacing="1">INSTALLATION · profile: dev</text>
+      <rect x="0" y="12" width="492" height="10" rx="5" class="progress-bg"/>
+      <rect x="0" y="12" width="335" height="10" rx="5" class="progress-fg"/>
+      <text x="492" y="9" font-size="11" text-anchor="end" class="log-ok" letter-spacing="1">68%</text>
+    </g>
+
+    <!-- Live logs -->
+    <g transform="translate(24, 108)">
+      <text x="0" y="0" font-size="12" class="log-time">12:34:01</text>
+      <text x="70" y="0" font-size="13" class="log-line">apt-get install build-essential</text>
+    </g>
+    <g transform="translate(24, 132)">
+      <text x="0" y="0" font-size="12" class="log-time">12:34:18</text>
+      <text x="70" y="0" font-size="13" class="log-line">→ adding flatpak repository</text>
+    </g>
+    <g transform="translate(24, 156)">
+      <text x="0" y="0" font-size="12" class="log-time">12:34:34</text>
+      <text x="70" y="0" font-size="13" class="log-line">→ configuring gsettings</text>
+    </g>
+    <g transform="translate(24, 180)">
+      <text x="0" y="0" font-size="12" class="log-time">12:34:51</text>
+      <text x="70" y="0" font-size="13" class="log-line">→ installing GTK theme</text>
+    </g>
+    <g transform="translate(24, 204)">
+      <text x="0" y="0" font-size="12" class="log-time">12:34:53</text>
+      <text x="70" y="0" font-size="13" class="log-line" fill-opacity="0.95">▌ writing state.json...</text>
+    </g>
+  </g>
+
+  <!-- Tag pills -->
+  <g transform="translate(0, 410)">
+    <g transform="translate(440, 0)">
+      <rect width="80" height="32" rx="16" class="pil"/>
+      <text x="40" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">FLASK</text>
+    </g>
+    <g transform="translate(535, 0)">
+      <rect width="90" height="32" rx="16" class="pil"/>
+      <text x="45" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">SSE</text>
+    </g>
+    <g transform="translate(640, 0)">
+      <rect width="120" height="32" rx="16" class="pil"/>
+      <text x="60" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">FEDORA</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="490" font-size="92" text-anchor="middle" letter-spacing="-3" class="txt">CinnamonForge</text>
+
+  <!-- Subtitle -->
+  <g transform="translate(600, 535)" text-anchor="middle">
+    <text x="0" y="0" font-size="18" class="mono" letter-spacing="2" fill-opacity="0.85">
+      <tspan class="sub">POST-INSTALL FEDORA CINNAMON</tspan>
+      <tspan class="mono" dx="18" fill-opacity="0.6">·</tspan>
+      <tspan class="sub" dx="18">STREAMING SSE</tspan>
+    </text>
+  </g>
+
+  <!-- Top-left meta tag -->
+  <g transform="translate(80, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <text x="14" y="5" font-size="14" class="mono" letter-spacing="2">PROJECT · LINUX</text>
+  </g>
+
+  <!-- Top-right status dots -->
+  <g transform="translate(1100, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <circle cx="14" cy="0" r="4" class="dot" fill-opacity="0.6"/>
+    <circle cx="28" cy="0" r="4" class="dot" fill-opacity="0.3"/>
+  </g>
+
+  <!-- Corner brackets -->
+  <path d="M 36 60 L 36 36 L 60 36" class="cor"/>
+  <path d="M 1140 36 L 1164 36 L 1164 60" class="cor"/>
+  <path d="M 36 570 L 36 594 L 60 594" class="cor"/>
+  <path d="M 1140 594 L 1164 594 L 1164 570" class="cor"/>
+</svg>

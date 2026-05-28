@@ -86,7 +86,7 @@ const {
   socialLinks = [],
   showSocial = true,
   showCopyright = true,
-  copyright = '© {year} {siteName}. Designed by <a href="https://hansmartens.dev" class="underline hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">Hans Martens</a>.',
+  copyright = '© {year} {siteName}. Tous droits réservés.',
   legalLinks,
   hideLogo = false,
   tagline,
@@ -188,7 +188,7 @@ function getSocialIcon(platform: string): string {
                   class="transition-colors text-foreground-muted hover:text-foreground"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={social.label || `Follow us on ${social.platform}`}
+                  aria-label={social.label || `Me suivre sur ${social.platform}`}
                 >
                   <Icon name={getSocialIcon(social.platform)} size="md" />
                 </a>
@@ -235,7 +235,7 @@ function getSocialIcon(platform: string): string {
                       class="transition-colors text-foreground-muted hover:text-foreground"
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={social.label || `Follow us on ${social.platform}`}
+                      aria-label={social.label || `Me suivre sur ${social.platform}`}
                     >
                       <Icon name={getSocialIcon(social.platform)} size="md" />
                     </a>
@@ -356,7 +356,7 @@ function getSocialIcon(platform: string): string {
                 class="transition-colors text-foreground-muted hover:text-foreground"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={social.label || `Follow us on ${social.platform}`}
+                aria-label={social.label || `Me suivre sur ${social.platform}`}
               >
                 <Icon name={getSocialIcon(social.platform)} size="md" />
               </a>

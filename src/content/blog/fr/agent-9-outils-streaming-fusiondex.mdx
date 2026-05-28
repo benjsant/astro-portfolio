@@ -1,15 +1,16 @@
 ---
 title: "Agent DeepSeek à 9 outils avec streaming SSE réel"
-description: "Architecture d'un agent tool-calling avec streaming token par token, cascade multi-provider (DeepSeek/OpenRouter/Ollama), attribution de sources et feedback Discord — dans FusionDex-IA."
+description: "Architecture d'un agent tool-calling avec streaming token par token, cascade multi-provider (DeepSeek/OpenRouter/Ollama), attribution de sources et feedback Discord — dans InfiniDex."
 publishedAt: 2026-05-12
 author: "Benjamin Santrisse"
 tags: ["DeepSeek", "Agent IA", "SSE", "FastAPI", "Python", "LLM", "Tool Calling"]
+svgSlug: "infinidex"
 draft: false
 featured: true
 locale: "fr"
 ---
 
-La plupart des agents LLM ont le même défaut : l'utilisateur voit une réponse complète apparaître d'un coup, sans savoir ce que le modèle fait pendant les 5 secondes d'attente. Dans **FusionDex-IA** — un Pokédex pour Pokémon Infinite Fusion avec 168 000+ fusions — j'ai implémenté un agent à 9 outils qui streame les tokens en temps réel *et* notifie l'interface de chaque appel d'outil avant son exécution.
+La plupart des agents LLM ont le même défaut : l'utilisateur voit une réponse complète apparaître d'un coup, sans savoir ce que le modèle fait pendant les 5 secondes d'attente. Dans **InfiniDex** (ex-FusionDex-IA) — un Pokédex pour Pokémon Infinite Fusion avec 168 000+ fusions — j'ai implémenté un agent à 9 outils qui streame les tokens en temps réel *et* notifie l'interface de chaque appel d'outil avant son exécution.
 
 Voici comment ça fonctionne de bout en bout.
 
@@ -312,4 +313,4 @@ Le feedback est best-effort — si le webhook échoue, la réponse reste `200`. 
 
 **La cascade multi-provider simplifie le dev local.** Ollama fonctionne sans clé — `docker compose --profile ollama up` suffit pour tester l'agent entier en local, sans consommer de tokens cloud.
 
-Le code source est disponible sur [GitHub](https://github.com/benjsant/FusionDex-IA).
+Le code source est disponible sur [GitHub](https://github.com/benjsant/InfiniDex).

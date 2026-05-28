@@ -13,9 +13,9 @@ interface Props {
 
 const {
   action = '/api/newsletter',
-  placeholder = 'Enter your email',
-  buttonText = 'Subscribe',
-  successMessage = 'Thanks for subscribing!',
+  placeholder = 'Ton adresse email',
+  buttonText = 'S’abonner',
+  successMessage = 'Merci pour ton inscription !',
   class: className,
 } = Astro.props;
 ---
@@ -54,14 +54,14 @@ const {
 
       if (!button || !message) return;
 
-      const successMessage = form.dataset.successMessage || 'Thanks for subscribing!';
-      const originalText = button.textContent || 'Subscribe';
+      const successMessage = form.dataset.successMessage || 'Merci pour ton inscription !';
+      const originalText = button.textContent || 'S’abonner';
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         button.disabled = true;
-        button.textContent = 'Subscribing...';
+        button.textContent = 'Inscription...';
         message.classList.add('hidden');
 
         try {
@@ -78,11 +78,11 @@ const {
             message.className = 'newsletter-message mt-3 text-sm text-success';
             form.reset();
           } else {
-            message.textContent = data.error || 'Something went wrong';
+            message.textContent = data.error || 'Une erreur est survenue';
             message.className = 'newsletter-message mt-3 text-sm text-destructive';
           }
         } catch {
-          message.textContent = 'Subscription failed. Please try again.';
+          message.textContent = 'Inscription échouée. Réessaie.';
           message.className = 'newsletter-message mt-3 text-sm text-destructive';
         } finally {
           button.disabled = false;

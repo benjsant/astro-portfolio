@@ -1,0 +1,36 @@
+---
+title: "InfiniDex"
+description: "Pokédex intelligent pour Pokémon Infinite Fusion — 572 Pokémon, 168 000+ fusions, agent IA à 9 outils, pipeline ETL Prefect, API FastAPI et frontend Next.js 15."
+repo: "https://github.com/benjsant/InfiniDex"
+url: "https://benjsant.github.io/InfiniDex/"
+tags: ["Python", "FastAPI", "Next.js", "PostgreSQL", "DeepSeek", "Prefect", "Docker"]
+featured: true
+order: 1
+year: 2026
+role: "Développeur Full Stack IA"
+services: ["Data Engineering", "Agent IA", "API REST", "Frontend"]
+---
+
+## À propos du projet
+
+InfiniDex (ex-FusionDex-IA) est un Pokédex complet pour Pokémon Infinite Fusion — 572 Pokémon (Kanto + Hoenn), 168 000+ fusions calculées, movepools, types et triple-fusions. Une API officielle n'existe pas : tout est reconstruit depuis le wiki communautaire et PokeAPI.
+
+## Choix d'archi notables
+
+- **Agent LLM multi-provider, sans LangChain.** `select_provider()` choisit à runtime entre DeepSeek, OpenRouter et Ollama. Code inspectable de bout en bout, pas de vendor lock-in.
+- **Cascade fail-closed.** L'agent priorise la DB structurée (9 outils SQL/HTTP), puis le wiki Infinite Fusion, puis le web. Si rien ne répond → *« je n'ai pas trouvé »*, jamais d'hallucination.
+- **PII redactor en pré-traitement.** Tous les messages partant vers le LLM passent par un redactor qui supprime emails, numéros, Discord tags.
+- **SSE streaming + transparence agent.** Chaque `tool_call` arrive au frontend en temps réel. `GET /ai/prompt` expose le system prompt complet pour audit utilisateur.
+- **ETL Prefect 3 self-hosté.** Deux watchers daily détectent les changements upstream par SHA GitHub et alertent Discord. Drift snapshot sur 3 niveaux (compile + tests + diff).
+- **Cache-aware backend.** `_pokemon_cache` warm au startup (572 entrées) + `_fusion_cache` borné à 4096 ≈ 80 % des appels API ne touchent jamais la DB.
+
+## Stack technique
+
+| Couche     | Stack                                                       |
+| ---------- | ----------------------------------------------------------- |
+| ETL        | Python 3.12 + `uv` + MediaWiki API + PokeAPI + Prefect 3    |
+| Base       | PostgreSQL 16 (relationnelle + `INTEGER[]`)                 |
+| Backend    | FastAPI + SQLAlchemy 2 + Pydantic — 54 endpoints            |
+| Frontend   | Next.js 15 App Router + TypeScript + PWA — 23 pages         |
+| IA         | Agent tool-calling — DeepSeek / OpenRouter / Ollama         |
+| Infra      | Docker Compose (5 profils) + 4 lanes CI GitHub Actions      |

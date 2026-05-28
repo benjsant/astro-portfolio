@@ -4,12 +4,13 @@ description: "Deux flows Prefect pour surveiller un Pokédex de 168 000+ fusions
 publishedAt: 2026-04-21
 author: "Benjamin Santrisse"
 tags: ["Prefect", "ETL", "Python", "Data Engineering", "Docker", "Automatisation"]
+svgSlug: "infinidex"
 draft: false
 featured: false
 locale: "fr"
 ---
 
-La base de données de **FusionDex-IA** couvre 168 000+ fusions de Pokémon Infinite Fusion — un jeu communautaire dont la base de données évolue en permanence. Plutôt que de rejouer l'ETL complet chaque nuit, deux flows Prefect surveillent les sources amont et ne déclenchent une mise à jour que si quelque chose a vraiment changé. La détection repose sur des SHA de fichiers GitHub plutôt que sur des timestamps.
+La base de données d'**InfiniDex** (ex-FusionDex-IA) couvre 168 000+ fusions de Pokémon Infinite Fusion — un jeu communautaire dont la base de données évolue en permanence. Plutôt que de rejouer l'ETL complet chaque nuit, deux flows Prefect surveillent les sources amont et ne déclenchent une mise à jour que si quelque chose a vraiment changé. La détection repose sur des SHA de fichiers GitHub plutôt que sur des timestamps.
 
 ---
 
@@ -247,4 +248,4 @@ Le paramètre `force_run: false` peut être surchargé manuellement depuis l'UI 
 
 **`force_run` comme paramètre de déploiement.** Tester un flow sans modifier le code de détection de changements — passer `force_run=True` depuis l'UI ou le CLI suffit. C'est plus propre qu'une variable d'environnement ou un flag commenté dans le code.
 
-Le code source est disponible sur [GitHub](https://github.com/benjsant/FusionDex-IA).
+Le code source est disponible sur [GitHub](https://github.com/benjsant/InfiniDex).

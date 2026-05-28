@@ -13,7 +13,7 @@ interface Props {
 
 const {
   action = '/api/contact',
-  successMessage = 'Message sent successfully!',
+  successMessage = 'Message envoyé avec succès !',
   class: className,
 } = Astro.props;
 ---
@@ -28,7 +28,7 @@ const {
   <!-- Name + Email side by side on sm+ -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <Input
-      label="Name"
+      label="Nom"
       name="name"
       type="text"
       required
@@ -44,7 +44,7 @@ const {
   </div>
 
   <Input
-    label="Subject"
+    label="Sujet"
     name="subject"
     type="text"
   />
@@ -65,7 +65,7 @@ const {
 
   <div class="flex justify-center">
     <Button type="submit" id="submit-button" class="gap-2">
-      Send message
+      Envoyer le message
       <Icon name="arrow-right" size="sm" />
     </Button>
   </div>
@@ -79,13 +79,13 @@ const {
 
     if (!form || !button || !message) return;
 
-    const successMessage = form.dataset.successMessage || 'Message sent successfully!';
+    const successMessage = form.dataset.successMessage || 'Message envoyé avec succès !';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       button.disabled = true;
-      button.textContent = 'Sending…';
+      button.textContent = 'Envoi…';
       message.classList.add('hidden');
 
       try {
@@ -104,16 +104,16 @@ const {
         } else {
           const errors = data.errors
             ? Object.values(data.errors).flat().join(', ')
-            : 'Something went wrong';
+            : 'Une erreur est survenue';
           message.textContent = errors as string;
           message.className = 'text-sm text-destructive';
         }
       } catch {
-        message.textContent = 'Failed to send message. Please try again.';
+        message.textContent = 'Envoi du message échoué. Réessaie.';
         message.className = 'text-sm text-destructive';
       } finally {
         button.disabled = false;
-        button.textContent = 'Send message';
+        button.textContent = 'Envoyer le message';
         message.classList.remove('hidden');
       }
     });

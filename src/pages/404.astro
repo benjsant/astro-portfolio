@@ -5,8 +5,8 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 ---
 
 <LandingLayout
-  title="Page not found"
-  description="The page you're looking for has either been moved, deleted, or never existed in the first place."
+  title="Page introuvable"
+  description="La page que tu cherches a été déplacée, supprimée, ou n'a jamais existé."
   noindex
 >
   <section class="relative min-h-[calc(100vh-8rem)] flex items-center justify-center overflow-hidden pt-16">
@@ -32,39 +32,39 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 
         <!-- Copy -->
         <h1 class="font-display text-2xl md:text-3xl font-bold text-foreground mb-4">
-          Looks like you've drifted off course
+          On dirait que tu t'es perdu en route
         </h1>
 
         <p class="text-lg text-foreground-muted max-w-md mx-auto mb-10">
-          The page you're looking for has either been moved, deleted, or never existed in the first place.
+          La page que tu cherches a été déplacée, supprimée, ou n'a jamais existé.
         </p>
 
         <!-- CTAs -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
           <Button href="/" size="lg">
             <Icon name="arrow-left" size="sm" />
-            Back to home
+            Retour à l'accueil
           </Button>
           <Button href="/blog" variant="outline" size="lg">
-            Browse blog
+            Parcourir le blog
           </Button>
         </div>
 
         <!-- Quick Links -->
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 border border-border">
-          <span class="text-sm text-foreground-muted">Quick Links:</span>
+          <span class="text-sm text-foreground-muted">Liens rapides :</span>
           <a
-            href="/#features"
+            href="/projects"
             class="text-sm font-medium text-foreground hover:text-brand-500 transition-colors"
           >
-            Features
+            Projets
           </a>
           <span class="text-foreground-subtle">|</span>
           <a
-            href="/components"
+            href="/about"
             class="text-sm font-medium text-foreground hover:text-brand-500 transition-colors"
           >
-            Components
+            À propos
           </a>
         </div>
       </div>

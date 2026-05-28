@@ -43,8 +43,8 @@ const {
 const ogImage = image?.src || siteConfig.ogImage;
 
 const breadcrumbs = [
-  { label: 'Home', href: '/' },
-  { label: 'Projects', href: '/projects' },
+  { label: 'Accueil', href: '/' },
+  { label: 'Projets', href: '/projects' },
   { label: title },
 ];
 ---
@@ -96,7 +96,7 @@ const breadcrumbs = [
             <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Back to Projects
+            Retour aux projets
           </a>
         </footer>
       </div>
@@ -105,7 +105,7 @@ const breadcrumbs = [
     {related.length > 0 && (
       <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border" data-reveal>
         <div class="mx-auto max-w-4xl px-6">
-          <h2 class="font-display text-2xl font-bold text-foreground mb-6">More projects</h2>
+          <h2 class="font-display text-2xl font-bold text-foreground mb-6">Autres projets</h2>
           <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((project) => (
               <Card

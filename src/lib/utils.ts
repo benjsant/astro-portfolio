@@ -1,7 +1,7 @@
 /**
  * Format a date for display
  */
-export function formatDate(date: Date, locale = 'en-US'): string {
+export function formatDate(date: Date, locale = 'fr-FR'): string {
   return new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'long',

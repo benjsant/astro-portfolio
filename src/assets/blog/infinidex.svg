@@ -1,0 +1,148 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg     { fill: var(--brand-500); }
+    .ico    { stroke: var(--brand-50);  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .ico-fill { fill: var(--brand-50); }
+    .txt    { fill: var(--brand-50); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 800; }
+    .sub    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 500; fill-opacity: 0.85; }
+    .mono   { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .ln     { stroke: var(--brand-300); stroke-width: 1; stroke-opacity: 0.3; }
+    .pil    { fill: var(--brand-400); fill-opacity: 0.28; stroke: var(--brand-200); stroke-opacity: 0.5; stroke-width: 1; }
+    .ptx    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 600; }
+    .cor    { stroke: var(--brand-300); stroke-width: 1.5; fill: none; stroke-opacity: 0.45; }
+    .card   { fill: var(--brand-400); fill-opacity: 0.12; stroke: var(--brand-200); stroke-opacity: 0.18; stroke-width: 1; }
+    .card-dot { fill: var(--brand-100); fill-opacity: 0.25; }
+    .ball-outer { stroke: var(--brand-50); stroke-width: 6; fill: var(--brand-400); fill-opacity: 0.25; }
+    .ball-band  { stroke: var(--brand-50); stroke-width: 6; fill: none; }
+    .ball-center-outer { fill: var(--brand-500); stroke: var(--brand-50); stroke-width: 5; }
+    .dot    { fill: var(--brand-200); }
+  </style>
+
+  <!-- Background -->
+  <rect width="1200" height="630" class="bg"/>
+
+  <!-- Dotted grid pattern (data-viz feel) -->
+  <g class="ln">
+    <line x1="0" y1="120" x2="1200" y2="120" stroke-dasharray="2 14"/>
+    <line x1="0" y1="510" x2="1200" y2="510" stroke-dasharray="2 14"/>
+    <line x1="160" y1="0" x2="160" y2="630" stroke-dasharray="2 14"/>
+    <line x1="1040" y1="0" x2="1040" y2="630" stroke-dasharray="2 14"/>
+  </g>
+
+  <!-- Pokédex card grid (faint, 7 cards) -->
+  <g>
+    <g transform="translate(60, 180)">
+      <rect width="120" height="170" rx="10" class="card"/>
+      <circle cx="60" cy="55" r="22" class="card-dot"/>
+      <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+      <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+      <rect x="32" y="124" width="56" height="4" rx="2" class="card-dot"/>
+      <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#001</text>
+    </g>
+    <g transform="translate(200, 220)">
+      <rect width="120" height="170" rx="10" class="card"/>
+      <circle cx="60" cy="55" r="22" class="card-dot"/>
+      <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+      <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+      <rect x="32" y="124" width="56" height="4" rx="2" class="card-dot"/>
+      <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#025</text>
+    </g>
+    <g transform="translate(60, 410)">
+      <rect width="120" height="170" rx="10" class="card"/>
+      <circle cx="60" cy="55" r="22" class="card-dot"/>
+      <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+      <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+      <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#149</text>
+    </g>
+    <g transform="translate(880, 180)">
+      <rect width="120" height="170" rx="10" class="card"/>
+      <circle cx="60" cy="55" r="22" class="card-dot"/>
+      <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+      <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+      <rect x="32" y="124" width="56" height="4" rx="2" class="card-dot"/>
+      <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#150</text>
+    </g>
+    <g transform="translate(1020, 220)">
+      <rect width="120" height="170" rx="10" class="card"/>
+      <circle cx="60" cy="55" r="22" class="card-dot"/>
+      <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+      <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+      <rect x="32" y="124" width="56" height="4" rx="2" class="card-dot"/>
+      <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#572</text>
+    </g>
+    <g transform="translate(1020, 410)">
+      <rect width="120" height="170" rx="10" class="card"/>
+      <circle cx="60" cy="55" r="22" class="card-dot"/>
+      <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+      <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+      <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#321</text>
+    </g>
+  </g>
+
+  <!-- Center: Pokéball-inspired logo with infinity in the center band -->
+  <g transform="translate(600, 240)">
+    <!-- Outer ball -->
+    <circle cx="0" cy="0" r="92" class="ball-outer"/>
+    <!-- Equatorial band -->
+    <line x1="-92" y1="0" x2="-32" y2="0" class="ball-band"/>
+    <line x1="32" y1="0" x2="92" y2="0" class="ball-band"/>
+    <!-- Center button -->
+    <circle cx="0" cy="0" r="32" class="ball-center-outer"/>
+    <!-- Infinity inside the center button -->
+    <g transform="translate(-20, -10) scale(1.7)" class="ico">
+      <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/>
+    </g>
+  </g>
+
+  <!-- Tag pills above title -->
+  <g transform="translate(0, 380)">
+    <g transform="translate(425, 0)">
+      <rect width="100" height="32" rx="16" class="pil"/>
+      <text x="50" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">POKÉDEX</text>
+    </g>
+    <g transform="translate(540, 0)">
+      <rect width="120" height="32" rx="16" class="pil"/>
+      <text x="60" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">AGENT IA</text>
+    </g>
+    <g transform="translate(675, 0)">
+      <rect width="100" height="32" rx="16" class="pil"/>
+      <text x="50" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">ETL</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="475" font-size="92" text-anchor="middle" letter-spacing="-3" class="txt">InfiniDex</text>
+
+  <!-- Stats bar (mono, data-viz feel) -->
+  <g transform="translate(600, 525)" text-anchor="middle">
+    <text x="0" y="0" font-size="18" class="mono" letter-spacing="2">
+      <tspan class="mono">572</tspan>
+      <tspan class="sub" dx="6">POKÉMON</tspan>
+      <tspan class="mono" dx="18">·</tspan>
+      <tspan class="mono" dx="18">168K</tspan>
+      <tspan class="sub" dx="6">FUSIONS</tspan>
+      <tspan class="mono" dx="18">·</tspan>
+      <tspan class="mono" dx="18">9</tspan>
+      <tspan class="sub" dx="6">TOOLS</tspan>
+    </text>
+  </g>
+
+  <!-- Top-left meta tag -->
+  <g transform="translate(80, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <text x="14" y="5" font-size="14" class="mono" letter-spacing="2">PROJECT · IA</text>
+  </g>
+
+  <!-- Top-right status dots -->
+  <g transform="translate(1100, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <circle cx="14" cy="0" r="4" class="dot" fill-opacity="0.6"/>
+    <circle cx="28" cy="0" r="4" class="dot" fill-opacity="0.3"/>
+  </g>
+
+  <!-- Corner brackets -->
+  <path d="M 36 60 L 36 36 L 60 36" class="cor"/>
+  <path d="M 1140 36 L 1164 36 L 1164 60" class="cor"/>
+  <path d="M 36 570 L 36 594 L 60 594" class="cor"/>
+  <path d="M 1140 594 L 1164 594 L 1164 570" class="cor"/>
+</svg>

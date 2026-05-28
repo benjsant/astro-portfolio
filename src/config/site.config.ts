@@ -151,7 +151,7 @@ const siteConfig: SiteConfig = {
         emitMetadata: false,
         inputPosition: 'bottom',
         theme: 'preferred_color_scheme',
-        lang: 'en',
+        lang: 'fr',
       },
     },
   },

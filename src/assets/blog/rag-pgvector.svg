@@ -1,0 +1,181 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg     { fill: var(--brand-500); }
+    .ico    { stroke: var(--brand-50);  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .txt    { fill: var(--brand-50); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 800; }
+    .sub    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 500; fill-opacity: 0.85; }
+    .mono   { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .ln     { stroke: var(--brand-300); stroke-width: 1; stroke-opacity: 0.3; }
+    .pil    { fill: var(--brand-400); fill-opacity: 0.28; stroke: var(--brand-200); stroke-opacity: 0.5; stroke-width: 1; }
+    .ptx    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 600; }
+    .cor    { stroke: var(--brand-300); stroke-width: 1.5; fill: none; stroke-opacity: 0.45; }
+    .vector-cell { fill: var(--brand-400); fill-opacity: 0.28; stroke: var(--brand-200); stroke-opacity: 0.55; stroke-width: 1; }
+    .vector-cell-hot { fill: var(--brand-50); fill-opacity: 0.9; stroke: var(--brand-50); stroke-opacity: 0.9; stroke-width: 1; }
+    .vector-cell-warm { fill: var(--brand-100); fill-opacity: 0.7; stroke: var(--brand-100); stroke-opacity: 0.7; stroke-width: 1; }
+    .embed-num { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; }
+    .query-bg { fill: var(--brand-400); fill-opacity: 0.22; stroke: var(--brand-100); stroke-opacity: 0.7; stroke-width: 2; }
+    .query-text { fill: var(--brand-50); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .query-prompt { fill: var(--brand-200); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+    .arrow { stroke: var(--brand-50); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 0.85; }
+    .similarity-line { stroke: var(--brand-100); stroke-width: 1.5; fill: none; stroke-opacity: 0.45; stroke-dasharray: 3 5; }
+    .result-card { fill: var(--brand-400); fill-opacity: 0.18; stroke: var(--brand-200); stroke-opacity: 0.4; stroke-width: 1.2; }
+    .result-text { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .dot    { fill: var(--brand-200); }
+  </style>
+
+  <!-- Background -->
+  <rect width="1200" height="630" class="bg"/>
+
+  <!-- Dotted grid -->
+  <g class="ln">
+    <line x1="0" y1="120" x2="1200" y2="120" stroke-dasharray="2 14"/>
+    <line x1="0" y1="510" x2="1200" y2="510" stroke-dasharray="2 14"/>
+    <line x1="160" y1="0" x2="160" y2="630" stroke-dasharray="2 14"/>
+    <line x1="1040" y1="0" x2="1040" y2="630" stroke-dasharray="2 14"/>
+  </g>
+
+  <!-- Background floating embedding numbers (left) -->
+  <g transform="translate(60, 175)">
+    <text x="0" y="0" font-size="11" class="mono" letter-spacing="1" fill-opacity="0.55">EMBEDDINGS · 384d</text>
+    <text x="0" y="22" font-size="12" class="embed-num" fill-opacity="0.45">[0.234, -0.198,</text>
+    <text x="0" y="40" font-size="12" class="embed-num" fill-opacity="0.45">0.872, -0.054,</text>
+    <text x="0" y="58" font-size="12" class="embed-num" fill-opacity="0.45">0.421, 0.667,</text>
+    <text x="0" y="76" font-size="12" class="embed-num" fill-opacity="0.45">-0.312, ...]</text>
+  </g>
+
+  <!-- Background result cards (right) -->
+  <g transform="translate(960, 195)">
+    <rect width="180" height="36" rx="8" class="result-card"/>
+    <circle cx="18" cy="18" r="5" fill="var(--brand-100)" fill-opacity="0.45"/>
+    <text x="32" y="22" font-size="11" class="result-text" letter-spacing="1" fill-opacity="0.6">0.94 · pikachu</text>
+  </g>
+  <g transform="translate(960, 240)">
+    <rect width="180" height="36" rx="8" class="result-card"/>
+    <circle cx="18" cy="18" r="5" fill="var(--brand-100)" fill-opacity="0.45"/>
+    <text x="32" y="22" font-size="11" class="result-text" letter-spacing="1" fill-opacity="0.6">0.87 · pichu</text>
+  </g>
+  <g transform="translate(960, 285)">
+    <rect width="180" height="36" rx="8" class="result-card"/>
+    <circle cx="18" cy="18" r="5" fill="var(--brand-100)" fill-opacity="0.45"/>
+    <text x="32" y="22" font-size="11" class="result-text" letter-spacing="1" fill-opacity="0.6">0.81 · raichu</text>
+  </g>
+
+  <!-- Center composition: query box → vector grid → results -->
+
+  <!-- Query input (left) -->
+  <g transform="translate(280, 215)">
+    <rect width="220" height="60" rx="12" class="query-bg"/>
+    <text x="16" y="25" font-size="12" class="query-prompt" letter-spacing="2">QUERY</text>
+    <text x="16" y="48" font-size="14" class="query-text">"électrique rapide"</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 510 245 L 545 245 M 540 240 L 545 245 L 540 250" class="arrow"/>
+
+  <!-- Vector grid (heatmap-style, 8x4 = 32 cells) -->
+  <g transform="translate(560, 200)">
+    <text x="0" y="-5" font-size="11" class="mono" letter-spacing="1" fill-opacity="0.65">VECTOR · pgvector</text>
+    <!-- Row 1 -->
+    <g transform="translate(0, 6)">
+      <rect x="0"   y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="20"  y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="40"  y="0" width="16" height="16" rx="2" class="vector-cell-hot"/>
+      <rect x="60"  y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="80"  y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="100" y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="120" y="0" width="16" height="16" rx="2" class="vector-cell-hot"/>
+      <rect x="140" y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+    </g>
+    <!-- Row 2 -->
+    <g transform="translate(0, 26)">
+      <rect x="0"   y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="20"  y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="40"  y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="60"  y="0" width="16" height="16" rx="2" class="vector-cell-hot"/>
+      <rect x="80"  y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="100" y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="120" y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="140" y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+    </g>
+    <!-- Row 3 -->
+    <g transform="translate(0, 46)">
+      <rect x="0"   y="0" width="16" height="16" rx="2" class="vector-cell-hot"/>
+      <rect x="20"  y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="40"  y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="60"  y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="80"  y="0" width="16" height="16" rx="2" class="vector-cell-hot"/>
+      <rect x="100" y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="120" y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="140" y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+    </g>
+    <!-- Row 4 -->
+    <g transform="translate(0, 66)">
+      <rect x="0"   y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="20"  y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="40"  y="0" width="16" height="16" rx="2" class="vector-cell"/>
+      <rect x="60"  y="0" width="16" height="16" rx="2" class="vector-cell-hot"/>
+      <rect x="80"  y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="100" y="0" width="16" height="16" rx="2" class="vector-cell-hot"/>
+      <rect x="120" y="0" width="16" height="16" rx="2" class="vector-cell-warm"/>
+      <rect x="140" y="0" width="16" height="16" rx="2" class="vector-cell"/>
+    </g>
+    <text x="78" y="103" font-size="10" text-anchor="middle" class="mono" letter-spacing="2" fill-opacity="0.6">cosine &lt;=&gt;</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 730 245 L 765 245 M 760 240 L 765 245 L 760 250" class="arrow"/>
+
+  <!-- Top-k results -->
+  <g transform="translate(780, 215)">
+    <rect width="160" height="60" rx="12" class="query-bg"/>
+    <text x="16" y="25" font-size="12" class="query-prompt" letter-spacing="2">TOP-K</text>
+    <text x="16" y="48" font-size="14" class="query-text">k = 5 · DeepSeek</text>
+  </g>
+
+  <!-- Tag pills -->
+  <g transform="translate(0, 410)">
+    <g transform="translate(450, 0)">
+      <rect width="70" height="32" rx="16" class="pil"/>
+      <text x="35" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">RAG</text>
+    </g>
+    <g transform="translate(535, 0)">
+      <rect width="110" height="32" rx="16" class="pil"/>
+      <text x="55" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">PGVECTOR</text>
+    </g>
+    <g transform="translate(660, 0)">
+      <rect width="110" height="32" rx="16" class="pil"/>
+      <text x="55" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">DEEPSEEK</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="490" font-size="92" text-anchor="middle" letter-spacing="-3" class="txt">RAG · pgvector</text>
+
+  <!-- Subtitle -->
+  <g transform="translate(600, 535)" text-anchor="middle">
+    <text x="0" y="0" font-size="18" class="mono" letter-spacing="2" fill-opacity="0.85">
+      <tspan class="sub">RECHERCHE SÉMANTIQUE</tspan>
+      <tspan class="mono" dx="18" fill-opacity="0.6">·</tspan>
+      <tspan class="sub" dx="18">EMBEDDINGS POSTGRESQL</tspan>
+    </text>
+  </g>
+
+  <!-- Top-left meta tag -->
+  <g transform="translate(80, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <text x="14" y="5" font-size="14" class="mono" letter-spacing="2">ARTICLE · IA</text>
+  </g>
+
+  <!-- Top-right status dots -->
+  <g transform="translate(1100, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <circle cx="14" cy="0" r="4" class="dot" fill-opacity="0.6"/>
+    <circle cx="28" cy="0" r="4" class="dot" fill-opacity="0.3"/>
+  </g>
+
+  <!-- Corner brackets -->
+  <path d="M 36 60 L 36 36 L 60 36" class="cor"/>
+  <path d="M 1140 36 L 1164 36 L 1164 60" class="cor"/>
+  <path d="M 36 570 L 36 594 L 60 594" class="cor"/>
+  <path d="M 1140 594 L 1164 594 L 1164 570" class="cor"/>
+</svg>

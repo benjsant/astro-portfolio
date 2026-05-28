@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type ReactNode } from 'react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -11,12 +11,79 @@ const SUGGESTIONS = [
   'Tu es disponible quand ?',
 ];
 
+// ── Minimal safe markdown renderer ────────────────────────────────────────────
+// Supports: **bold**, [text](url), - bullets, paragraph breaks.
+// No HTML injection (returns JSX, never uses dangerouslySetInnerHTML).
+function renderInline(text: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  // Token order: link [text](url) > bold **xxx**
+  const pattern = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index));
+    }
+    if (match[1] && match[2]) {
+      const href = match[2];
+      const isExternal = /^https?:\/\//.test(href);
+      nodes.push(
+        <a
+          key={key++}
+          href={href}
+          target={isExternal ? '_blank' : undefined}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
+          className="underline underline-offset-2 text-white hover:text-white/80"
+        >
+          {match[1]}
+        </a>,
+      );
+    } else if (match[3]) {
+      nodes.push(<strong key={key++} className="font-semibold text-white">{match[3]}</strong>);
+    }
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) nodes.push(text.slice(lastIndex));
+  return nodes;
+}
+
+function renderMarkdown(content: string): ReactNode {
+  // Split into blocks on blank lines
+  const blocks = content.split(/\n\n+/);
+  return blocks.map((block, bi) => {
+    const lines = block.split('\n');
+    // Bullet list if every non-empty line starts with "- " or "* "
+    const bulletLines = lines.filter((l) => l.trim().length > 0);
+    const isList = bulletLines.length > 0 && bulletLines.every((l) => /^\s*[-*]\s+/.test(l));
+    if (isList) {
+      return (
+        <ul key={bi} className="list-disc pl-4 space-y-1 my-1">
+          {bulletLines.map((line, li) => (
+            <li key={li}>{renderInline(line.replace(/^\s*[-*]\s+/, ''))}</li>
+          ))}
+        </ul>
+      );
+    }
+    return (
+      <p key={bi} className={bi === 0 ? '' : 'mt-2'}>
+        {lines.map((line, li) => (
+          <span key={li}>
+            {renderInline(line)}
+            {li < lines.length - 1 && <br />}
+          </span>
+        ))}
+      </p>
+    );
+  });
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Bonjour ! Je suis l\'assistant de Benjamin. Posez-moi vos questions sur son profil, ses projets ou ses compétences. 👋',
+      content: 'Salut ! Je suis l\'assistant de Benjamin. Pose-moi tes questions sur son profil, ses projets ou sa stack technique. 👋',
     },
   ]);
   const [input, setInput] = useState('');
@@ -100,7 +167,7 @@ export default function ChatWidget() {
                       : 'bg-white/10 text-white/90'
                   }`}
                 >
-                  {msg.content}
+                  {msg.role === 'assistant' ? renderMarkdown(msg.content) : msg.content}
                 </div>
               </div>
             ))}
@@ -160,7 +227,7 @@ export default function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Posez votre question…"
+                placeholder="Pose ta question…"
                 maxLength={500}
                 disabled={loading}
                 className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:ring-1 focus:ring-white/20 disabled:opacity-50"

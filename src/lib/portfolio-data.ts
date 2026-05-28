@@ -10,10 +10,10 @@ export const portfolioItems: PortfolioItem[] = [
   // ── Projects ──────────────────────────────────────────────────────────────
   {
     type: 'project',
-    title: "FusionDex-IA",
-    description: "Pokédex pour Pokémon Infinite Fusion — 572 Pokémon, 168 000+ fusions, agent DeepSeek à 9 outils. Stack : FastAPI, Next.js 15, PostgreSQL, ETL Python, Docker.",
-    tags: ["FastAPI", "Next.js", "PostgreSQL", "DeepSeek", "ETL", "Docker", "Agent IA"],
-    url: "/projects/fusiondex-ia",
+    title: "InfiniDex",
+    description: "Pokédex pour Pokémon Infinite Fusion — 572 Pokémon, 168 000+ fusions, agent DeepSeek à 9 outils. Stack : FastAPI, Next.js 15, PostgreSQL, ETL Prefect, Docker.",
+    tags: ["FastAPI", "Next.js", "PostgreSQL", "DeepSeek", "Prefect", "Docker", "Agent IA"],
+    url: "/projects/infinidex",
   },
   {
     type: 'project',

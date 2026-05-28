@@ -1,0 +1,160 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg     { fill: var(--brand-500); }
+    .ico    { stroke: var(--brand-50);  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .txt    { fill: var(--brand-50); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 800; }
+    .sub    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 500; fill-opacity: 0.85; }
+    .mono   { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .ln     { stroke: var(--brand-300); stroke-width: 1; stroke-opacity: 0.3; }
+    .pil    { fill: var(--brand-400); fill-opacity: 0.28; stroke: var(--brand-200); stroke-opacity: 0.5; stroke-width: 1; }
+    .ptx    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 600; }
+    .cor    { stroke: var(--brand-300); stroke-width: 1.5; fill: none; stroke-opacity: 0.45; }
+    .card   { fill: var(--brand-400); fill-opacity: 0.12; stroke: var(--brand-200); stroke-opacity: 0.18; stroke-width: 1; }
+    .card-dot { fill: var(--brand-100); fill-opacity: 0.25; }
+    .ball-outer { stroke: var(--brand-50); stroke-width: 5; fill: var(--brand-400); fill-opacity: 0.25; }
+    .ball-band  { stroke: var(--brand-50); stroke-width: 5; fill: none; }
+    .ball-center-outer { fill: var(--brand-500); stroke: var(--brand-50); stroke-width: 4; }
+    .vs-bg  { fill: var(--brand-500); stroke: var(--brand-50); stroke-width: 3; }
+    .vs-txt { fill: var(--brand-50); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 900; }
+    .curve  { stroke: var(--brand-100); stroke-width: 2; fill: none; stroke-opacity: 0.45; }
+    .curve-fill { fill: var(--brand-200); fill-opacity: 0.08; }
+    .scatter { fill: var(--brand-100); fill-opacity: 0.35; }
+    .bar    { fill: var(--brand-400); fill-opacity: 0.45; stroke: var(--brand-200); stroke-opacity: 0.4; stroke-width: 1; }
+    .winner-bar { fill: var(--brand-100); fill-opacity: 0.95; }
+    .loser-bar  { fill: var(--brand-300); fill-opacity: 0.45; }
+    .dot    { fill: var(--brand-200); }
+  </style>
+
+  <!-- Background -->
+  <rect width="1200" height="630" class="bg"/>
+
+  <!-- Dotted grid -->
+  <g class="ln">
+    <line x1="0" y1="120" x2="1200" y2="120" stroke-dasharray="2 14"/>
+    <line x1="0" y1="510" x2="1200" y2="510" stroke-dasharray="2 14"/>
+    <line x1="160" y1="0" x2="160" y2="630" stroke-dasharray="2 14"/>
+    <line x1="1040" y1="0" x2="1040" y2="630" stroke-dasharray="2 14"/>
+  </g>
+
+  <!-- Background ML loss curve (left side) -->
+  <g transform="translate(60, 380)">
+    <path d="M 0 80 Q 30 60 60 50 T 120 30 T 180 18 T 240 12 T 300 9 T 360 7" class="curve"/>
+    <path d="M 0 80 Q 30 60 60 50 T 120 30 T 180 18 T 240 12 T 300 9 T 360 7 L 360 100 L 0 100 Z" class="curve-fill"/>
+    <text x="0" y="115" font-size="11" class="mono" letter-spacing="1" fill-opacity="0.5">LOSS · EPOCH</text>
+  </g>
+
+  <!-- Background scatter plot (right side) -->
+  <g transform="translate(820, 380)">
+    <circle cx="20" cy="80" r="3" class="scatter"/>
+    <circle cx="55" cy="62" r="3" class="scatter"/>
+    <circle cx="80" cy="48" r="3" class="scatter"/>
+    <circle cx="105" cy="55" r="3" class="scatter"/>
+    <circle cx="130" cy="35" r="3" class="scatter"/>
+    <circle cx="165" cy="25" r="3" class="scatter"/>
+    <circle cx="195" cy="20" r="3" class="scatter"/>
+    <circle cx="225" cy="12" r="3" class="scatter"/>
+    <circle cx="255" cy="18" r="3" class="scatter"/>
+    <circle cx="285" cy="8" r="3" class="scatter"/>
+    <circle cx="315" cy="14" r="3" class="scatter"/>
+    <circle cx="345" cy="6" r="3" class="scatter"/>
+    <text x="0" y="115" font-size="11" class="mono" letter-spacing="1" fill-opacity="0.5">FEATURE IMPORTANCE</text>
+  </g>
+
+  <!-- Background mini cards (faint Pokédex entries) -->
+  <g transform="translate(60, 180)">
+    <rect width="120" height="170" rx="10" class="card"/>
+    <circle cx="60" cy="55" r="22" class="card-dot"/>
+    <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+    <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+    <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#025</text>
+  </g>
+  <g transform="translate(1020, 180)">
+    <rect width="120" height="170" rx="10" class="card"/>
+    <circle cx="60" cy="55" r="22" class="card-dot"/>
+    <rect x="22" y="95" width="76" height="6" rx="3" class="card-dot"/>
+    <rect x="32" y="112" width="56" height="4" rx="2" class="card-dot"/>
+    <text x="60" y="160" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.35">#133</text>
+  </g>
+
+  <!-- Center: VS composition — two Pokéballs facing each other with a probability bar above -->
+
+  <!-- Probability prediction bar above the VS -->
+  <g transform="translate(420, 130)">
+    <text x="180" y="14" font-size="13" text-anchor="middle" class="mono" letter-spacing="2" fill-opacity="0.75">P(WIN) PREDICTION</text>
+    <!-- Bar background -->
+    <rect x="0" y="24" width="360" height="14" rx="7" class="bar"/>
+    <!-- Winner bar (left) -->
+    <rect x="0" y="24" width="260" height="14" rx="7" class="winner-bar"/>
+  </g>
+
+  <!-- Left Pokéball -->
+  <g transform="translate(490, 270)">
+    <circle cx="0" cy="0" r="68" class="ball-outer"/>
+    <line x1="-68" y1="0" x2="-22" y2="0" class="ball-band"/>
+    <line x1="22" y1="0" x2="68" y2="0" class="ball-band"/>
+    <circle cx="0" cy="0" r="22" class="ball-center-outer"/>
+    <text x="0" y="6" font-size="14" text-anchor="middle" class="mono">A</text>
+  </g>
+
+  <!-- VS hexagon -->
+  <g transform="translate(600, 270)">
+    <polygon points="0,-32 27.7,-16 27.7,16 0,32 -27.7,16 -27.7,-16" class="vs-bg"/>
+    <text x="0" y="9" font-size="26" text-anchor="middle" class="vs-txt" letter-spacing="-1">VS</text>
+  </g>
+
+  <!-- Right Pokéball -->
+  <g transform="translate(710, 270)">
+    <circle cx="0" cy="0" r="68" class="ball-outer" fill-opacity="0.18"/>
+    <line x1="-68" y1="0" x2="-22" y2="0" class="ball-band" stroke-opacity="0.7"/>
+    <line x1="22" y1="0" x2="68" y2="0" class="ball-band" stroke-opacity="0.7"/>
+    <circle cx="0" cy="0" r="22" class="ball-center-outer"/>
+    <text x="0" y="6" font-size="14" text-anchor="middle" class="mono" fill-opacity="0.7">B</text>
+  </g>
+
+  <!-- Tag pills -->
+  <g transform="translate(0, 380)">
+    <g transform="translate(440, 0)">
+      <rect width="90" height="32" rx="16" class="pil"/>
+      <text x="45" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">XGBOOST</text>
+    </g>
+    <g transform="translate(545, 0)">
+      <rect width="100" height="32" rx="16" class="pil"/>
+      <text x="50" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">MLFLOW</text>
+    </g>
+    <g transform="translate(660, 0)">
+      <rect width="100" height="32" rx="16" class="pil"/>
+      <text x="50" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">MLOPS</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="475" font-size="92" text-anchor="middle" letter-spacing="-3" class="txt">PredictionDex</text>
+
+  <!-- Subtitle bar -->
+  <g transform="translate(600, 525)" text-anchor="middle">
+    <text x="0" y="0" font-size="18" class="mono" letter-spacing="2" fill-opacity="0.85">
+      <tspan class="sub">PRÉDICTION DE COMBATS POKÉMON</tspan>
+      <tspan class="mono" dx="18" fill-opacity="0.6">·</tspan>
+      <tspan class="sub" dx="18">PIPELINE MLOPS</tspan>
+    </text>
+  </g>
+
+  <!-- Top-left meta tag -->
+  <g transform="translate(80, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <text x="14" y="5" font-size="14" class="mono" letter-spacing="2">PROJECT · MLOPS</text>
+  </g>
+
+  <!-- Top-right status dots -->
+  <g transform="translate(1100, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <circle cx="14" cy="0" r="4" class="dot" fill-opacity="0.6"/>
+    <circle cx="28" cy="0" r="4" class="dot" fill-opacity="0.3"/>
+  </g>
+
+  <!-- Corner brackets -->
+  <path d="M 36 60 L 36 36 L 60 36" class="cor"/>
+  <path d="M 1140 36 L 1164 36 L 1164 60" class="cor"/>
+  <path d="M 36 570 L 36 594 L 60 594" class="cor"/>
+  <path d="M 1140 594 L 1164 594 L 1164 570" class="cor"/>
+</svg>

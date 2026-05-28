@@ -82,7 +82,7 @@ const {
   nav,
   extraNav = [],
   showCta = false,
-  cta = { label: 'Start a project', href: '/contact' },
+  cta = { label: 'Me contacter', href: '/contact' },
   actions = [],
   showThemeToggle = true,
   showThemeSelector = true,
@@ -179,11 +179,11 @@ const buttonId = `${menuId}-button`;
     {
       layout !== 'minimal' &&
         (hasNavSlot ? (
-          <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+          <nav class="hidden items-center gap-1 md:flex" aria-label="Navigation principale">
             <slot name="nav" />
           </nav>
         ) : (
-          <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+          <nav class="hidden items-center gap-1 md:flex" aria-label="Navigation principale">
             {navItems.map(({ label, href }) => (
               <a
                 href={href.startsWith('#') && !isLandingPage ? `/${href}` : href}
@@ -298,7 +298,7 @@ const buttonId = `${menuId}-button`;
             )}
             aria-expanded="false"
             aria-controls={menuId}
-            aria-label="Toggle menu"
+            aria-label="Ouvrir le menu"
           >
             <span class="menu-icon">
               <Icon name="menu" size="md" />
@@ -345,7 +345,7 @@ const buttonId = `${menuId}-button`;
               : 'border-border bg-background border-t'
           )}
           role="navigation"
-          aria-label="Mobile navigation"
+          aria-label="Navigation mobile"
         >
           <slot name="mobile-menu" />
         </div>
@@ -359,7 +359,7 @@ const buttonId = `${menuId}-button`;
               : 'border-border bg-background border-t'
           )}
           role="navigation"
-          aria-label="Mobile navigation"
+          aria-label="Navigation mobile"
         >
           <div class={cn(
             'space-y-1 py-4',
@@ -394,7 +394,7 @@ const buttonId = `${menuId}-button`;
             {showThemeToggle && (
               <div class="border-border mt-3 border-t pt-3">
                 <div class="flex items-center justify-between px-1">
-                  <span class="text-sm text-foreground-muted">Theme mode</span>
+                  <span class="text-sm text-foreground-muted">Mode d'affichage</span>
                   <ThemeModeDropdown />
                 </div>
               </div>
@@ -403,7 +403,7 @@ const buttonId = `${menuId}-button`;
             {showThemeSelector && (
               <div class="border-border mt-3 border-t pt-3">
                 <div class="flex items-center justify-between px-1">
-                  <span class="text-sm text-foreground-muted">Colour theme</span>
+                  <span class="text-sm text-foreground-muted">Couleur</span>
                   <ThemeSelector />
                 </div>
               </div>
