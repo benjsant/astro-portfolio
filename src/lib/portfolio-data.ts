@@ -73,10 +73,10 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     type: 'project',
-    title: "CinnamonForge",
-    description: "Interface web Flask pour post-installation Fedora Cinnamon : profils par catégorie, dry-run, streaming SSE des logs, rollback, gestion thèmes GTK.",
+    title: "MintyForge",
+    description: "Interface web Flask pour post-installation Linux Mint Cinnamon : profils par catégorie, dry-run, streaming SSE des logs, rollback, gestion thèmes GTK.",
     tags: ["Python", "Flask", "Bash", "Pydantic", "Linux", "Automatisation"],
-    url: "/projects/cinnamon-forge",
+    url: "/projects/minty-forge",
   },
   // ── Blog articles ─────────────────────────────────────────────────────────
   {
@@ -144,10 +144,10 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     type: 'article',
-    title: "Logs en temps réel avec SSE dans Flask : CinnamonForge",
+    title: "Logs en temps réel avec SSE dans Flask : MintyForge",
     description: "Streaming de logs d'installation via Server-Sent Events dans Flask : queue thread-safe, blueprints, rollback avec state.json et validation Pydantic v2.",
     tags: ["Flask", "SSE", "Python", "Linux", "Pydantic", "Bash", "Automatisation"],
-    url: "/blog/flask-sse-logs-cinnamonforge",
+    url: "/blog/flask-sse-logs-mintyforge",
   },
 ];
 

@@ -1,16 +1,16 @@
 ---
-title: "Logs en temps réel avec SSE dans Flask : CinnamonForge"
+title: "Logs en temps réel avec SSE dans Flask : MintyForge"
 description: "Streaming de logs d'installation en temps réel via Server-Sent Events dans Flask : architecture blueprints, queue thread-safe, rollback avec state.json et validation Pydantic v2."
 publishedAt: 2026-04-28
 author: "Benjamin Santrisse"
 tags: ["Flask", "SSE", "Python", "Linux", "Pydantic", "Bash", "Automatisation"]
-svgSlug: "cinnamonforge"
+svgSlug: "minty-forge"
 draft: false
 featured: false
 locale: "fr"
 ---
 
-**CinnamonForge** est une interface web pour automatiser la post-installation d'un environnement Fedora Cinnamon — installation de paquets par profil, configuration dconf, gestion de thèmes GTK. Le problème : une installation Flatpak peut prendre 3 minutes. Sans feedback visuel, l'utilisateur ne sait pas si l'application est bloquée ou si `dnf` télécharge 800 Mo de dépendances.
+**MintyForge** est une interface web pour automatiser la post-installation d'un environnement Linux Mint Cinnamon — installation de paquets par profil, configuration dconf, gestion de thèmes GTK. Le problème : une installation Flatpak peut prendre 3 minutes. Sans feedback visuel, l'utilisateur ne sait pas si l'application est bloquée ou si `apt` télécharge 800 Mo de dépendances.
 
 La solution : les **Server-Sent Events** — une connexion HTTP unidirectionnelle qui pousse les lignes de log au navigateur au fur et à mesure que les commandes Bash s'exécutent.
 
@@ -68,7 +68,7 @@ class QueueHandler(logging.Handler):
         except queue.Full:
             pass  # On ne bloque jamais le thread d'installation
 
-logger = logging.getLogger('cinnamonforge')
+logger = logging.getLogger('mintyforge')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(QueueHandler())
 ```
@@ -272,4 +272,4 @@ class StateManager:
 
 **Valider les entrées système à la frontière, pas au fond.** La regex sur les noms de paquets est dans le schéma Pydantic, avant tout code d'installation. Valider au plus tôt réduit la surface d'injection — et Pydantic v2 retourne une erreur structurée que le frontend peut afficher directement.
 
-Le code source est disponible sur [GitHub](https://github.com/benjsant/CinnamonForge).
+Le code source est disponible sur [GitHub](https://github.com/benjsant/minty_forge).
