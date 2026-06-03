@@ -41,3 +41,10 @@ vite.config.ts.timestamp-*
 # Coverage
 coverage/
 *.lcov
+
+# Personal roadmap / notes (ne pas pousser)
+IMPROVEMENTS.md
+
+# CV PDFs de test à la racine (les officiels restent dans public/)
+/CV*.pdf
+/cv*.pdf
