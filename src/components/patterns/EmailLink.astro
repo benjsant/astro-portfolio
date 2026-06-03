@@ -1,0 +1,77 @@
+---
+/**
+ * EmailLink — bouton/lien email obfusqué côté serveur.
+ *
+ * Le HTML rendu côté serveur NE contient JAMAIS la chaîne `user@domain` en clair :
+ * les bots scrapeurs voient juste deux data-attributes séparés et un placeholder
+ * `[email protégé]`. Au load côté client, un petit script assemble l'email,
+ * remplace le placeholder par l'adresse complète, et active le `mailto:`.
+ *
+ * Usage :
+ *   <EmailLink user="santrissebenjamin.portfolio" domain="gmail.com" />
+ *
+ * Note : en PDF (print), le JS ne s'exécute pas → l'email reste obfusqué.
+ * Si tu veux qu'il soit visible en print (ex: page CV), affiche l'email en
+ * texte direct au lieu d'utiliser ce composant.
+ */
+interface Props {
+  /** Partie locale (avant le @) */
+  user: string;
+  /** Partie domaine (après le @) */
+  domain: string;
+  /** Classe CSS additionnelle pour le lien */
+  class?: string;
+  /** Texte du placeholder visible avant hydration (et pour les bots) */
+  placeholder?: string;
+  /**
+   * Si `true` (défaut), le texte du lien est remplacé par l'email assemblé après hydration.
+   * Si `false`, le placeholder reste visible mais le href `mailto:` est quand même actif au clic.
+   * Utile pour un bouton « Cliquer pour m'écrire » qui n'expose pas l'email à l'œil nu.
+   */
+  revealEmail?: boolean;
+  /** Slot par défaut : si fourni, écrase le placeholder texte. */
+}
+
+const {
+  user,
+  domain,
+  class: className,
+  placeholder = '[email protégé]',
+  revealEmail = true,
+} = Astro.props;
+
+const hasSlot = Astro.slots.has('default');
+---
+
+<a
+  href="#"
+  class:list={['email-link', className]}
+  data-email-u={user}
+  data-email-d={domain}
+  data-email-reveal={revealEmail ? 'true' : 'false'}
+  aria-label="Adresse email"
+  rel="nofollow"
+>
+  {hasSlot ? <slot /> : <span class="email-text">{placeholder}</span>}
+</a>
+
+<script>
+  function initEmailLinks() {
+    document.querySelectorAll<HTMLAnchorElement>('a.email-link[data-email-u][data-email-d]').forEach((link) => {
+      if (link.dataset.emailInit === 'true') return;
+      link.dataset.emailInit = 'true';
+      const user = link.dataset.emailU;
+      const domain = link.dataset.emailD;
+      if (!user || !domain) return;
+      const email = `${user}@${domain}`;
+      link.href = `mailto:${email}`;
+      // Si revealEmail est false, on ne touche pas au texte visible
+      if (link.dataset.emailReveal === 'false') return;
+      const text = link.querySelector('.email-text');
+      if (text) text.textContent = email;
+    });
+  }
+  initEmailLinks();
+  document.addEventListener('astro:page-load', initEmailLinks);
+  document.addEventListener('astro:after-swap', initEmailLinks);
+</script>

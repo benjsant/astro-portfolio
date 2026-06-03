@@ -2,41 +2,27 @@
 /**
  * Contact page
  * URL: /contact
+ *
+ * Pas de formulaire ni d'email visible.
+ * Pour contacter Benjamin :
+ *   - Voir le CV (`/cv`) → l'email principal y est, prêt à copier ou cliquer
+ *   - LinkedIn / GitHub : canaux directs visibles ici
+ *   - Chat agent (bulle 💬) : pour les questions rapides
  */
 import PageLayout from '@/layouts/PageLayout.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import { Hero } from '@/components/hero';
-import ContactForm from '@/components/patterns/ContactForm.astro';
 import siteConfig from '@/config/site.config';
 import { resolveSocialLinks } from '@/lib/utils';
 
 const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
-
-const channels = [
-  {
-    icon: 'mail',
-    label: 'Email',
-    value: siteConfig.email,
-    note: 'Écris-moi directement',
-    href: `mailto:${siteConfig.email}`,
-    external: false,
-  },
-  ...socialLinks.map((link) => ({
-    icon: link.icon,
-    label: link.label,
-    value: link.href.replace(/^https?:\/\/(www\.)?/, ''),
-    note: 'Reste en contact',
-    href: link.href,
-    external: true,
-  })),
-];
 ---
 
 <PageLayout
   title="Contact — Benjamin Santrisse"
-  description="Disponible pour de nouvelles opportunités en IA, Data Engineering ou ML Engineering. Écrivez-moi directement ou via le formulaire."
+  description="Disponible pour de nouvelles opportunités en IA, Data Engineering ou ML Engineering. CV, LinkedIn et GitHub — choisissez le canal qui vous convient."
   eagerReveal
 >
   <Hero layout="centered" size="sm">
@@ -50,70 +36,76 @@ const channels = [
     </h1>
 
     <p slot="description">
-      Disponible pour un poste en IA, Data Engineering ou ML Engineering. Utilisez le formulaire ou contactez-moi directement.
+      Disponible pour un poste en IA, Data Engineering ou ML Engineering.
+      Mon email se trouve directement sur mon CV — ou contactez-moi sur LinkedIn / GitHub.
     </p>
   </Hero>
 
-  <!-- Contact Section -->
+  <!-- Contact channels -->
   <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
-    <div class="mx-auto max-w-5xl px-6">
-      <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 items-stretch">
+    <div class="mx-auto max-w-3xl px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" data-reveal>
 
-        <!-- Left column: contact form -->
-        <div class="lg:col-span-3 h-full" data-reveal="right">
-          <Card padding="lg" class="h-full flex flex-col justify-center">
-            <h2 class="font-display text-xl font-bold text-foreground mb-6">Envoyer un message</h2>
-            <ContactForm />
-          </Card>
-        </div>
-
-        <!-- Right column: contact channels -->
-        <div class="lg:col-span-2 space-y-4" data-reveal="left" data-reveal-delay="1">
-          <div>
-            <h2 class="font-display text-lg font-bold text-foreground mb-1">Autres canaux</h2>
-            <p class="text-sm text-foreground-muted">Tu préfères un contact direct ? Choisis ce qui te convient.</p>
-          </div>
-
-          <!-- Channel list -->
-          <div class="space-y-2">
-            {channels.map((ch) => (
-              <a
-                href={ch.href}
-                {...ch.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
-                class="block group"
-              >
-                <Card hover padding="sm" class="h-full">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
-                      <Icon name={ch.icon} size="sm" />
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="font-semibold text-sm text-foreground">{ch.label}</p>
-                      <p class="text-xs text-foreground-muted truncate">{ch.value}</p>
-                    </div>
-                    <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
-                  </div>
-                </Card>
-              </a>
-            ))}
-          </div>
-
-          <!-- Location card -->
-          <Card hover padding="sm" class="bg-brand-500/5 border-brand-500/20">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
-                <Icon name="map-pin" size="sm" />
+        <!-- CV : c'est ici qu'on trouve l'adresse email -->
+        <a href="/cv" class="block group sm:col-span-2">
+          <Card hover padding="md" class="border-brand-500/40 bg-brand-500/5">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/30 to-brand-500/10 flex items-center justify-center text-brand-500">
+                <Icon name="file-text" size="md" />
               </div>
-              <div>
-                <p class="font-semibold text-sm text-foreground">{siteConfig.address?.city ?? 'France'}</p>
-                <p class="text-xs text-foreground-muted mt-0.5">Basé en {siteConfig.address?.country ?? 'France'}</p>
+              <div class="min-w-0 flex-1">
+                <p class="font-semibold text-base text-foreground">Mon CV (avec email)</p>
+                <p class="text-xs text-foreground-muted">Profil complet, projets, contact direct — téléchargeable en PDF</p>
               </div>
+              <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
             </div>
           </Card>
+        </a>
 
-        </div>
+        <!-- Social channels -->
+        {socialLinks.map((link) => (
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block group"
+          >
+            <Card hover padding="md" class="h-full">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
+                  <Icon name={link.icon} size="md" />
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="font-semibold text-base text-foreground">{link.label}</p>
+                  <p class="text-xs text-foreground-muted truncate">{link.href.replace(/^https?:\/\/(www\.)?/, '')}</p>
+                </div>
+                <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
+              </div>
+            </Card>
+          </a>
+        ))}
+
+        <!-- Location card -->
+        <Card hover padding="md" class="sm:col-span-2 bg-brand-500/5 border-brand-500/20">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
+              <Icon name="map-pin" size="md" />
+            </div>
+            <div>
+              <p class="font-semibold text-base text-foreground">{siteConfig.address?.city ?? 'France'}</p>
+              <p class="text-xs text-foreground-muted mt-0.5">
+                Basé en {siteConfig.address?.country ?? 'France'} · Mobile sur la métropole Valenciennoise + Lilloise · Remote OK
+              </p>
+            </div>
+          </div>
+        </Card>
 
       </div>
+
+      <!-- Hint sur l'assistant chat -->
+      <p class="text-center text-sm text-foreground-muted mt-8" data-reveal data-reveal-delay="1">
+        Une question rapide ? Utilise l'<span class="text-brand-500 font-medium">assistant en bas à droite 💬</span> — il connaît mes projets et ma stack.
+      </p>
     </div>
   </section>
 </PageLayout>

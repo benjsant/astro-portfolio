@@ -111,7 +111,7 @@ const siteConfig: SiteConfig = {
   url: SITE_URL || 'https://example.com',
   ogImage: '/og-default.svg',
   author: 'Benjamin Santrisse',
-  email: 'santrissebenjamin@gmail.com',
+  email: 'santrissebenjamin.portfolio@gmail.com',
   address: {
     street: '',
     city: 'Marly', // à mettre à jour avec ta ville

@@ -6,7 +6,6 @@ import SEO from '@/components/seo/SEO.astro';
 import JsonLd from '@/components/seo/JsonLd.astro';
 import Analytics from '@/components/layout/Analytics.astro';
 import ConsentBanner from '@/components/ui/overlay/ConsentBanner';
-import CursorTrail from '@/components/effects/CursorTrail.astro';
 import ChatWidget from '@/components/chat/ChatWidget';
 import { createWebsiteSchema, createOrganizationSchema, createPersonSchema, createProfessionalServiceSchema } from '@/lib/schema';
 import type { Thing, WithContext } from 'schema-dts';
@@ -239,8 +238,6 @@ schemas.push(...extraSchemas);
     <slot name="footer" />
 
     <ConsentBanner />
-
-    <CursorTrail />
 
     <ChatWidget client:load />
 

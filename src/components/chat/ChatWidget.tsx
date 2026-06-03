@@ -135,7 +135,7 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-20 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-6 right-20 z-50 flex flex-col items-end gap-3 print:hidden">
       {open && (
         <div className="flex flex-col w-[340px] max-h-[520px] rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl overflow-hidden">
           {/* Header */}
