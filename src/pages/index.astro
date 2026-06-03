@@ -23,7 +23,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 
 <LandingLayout
   title="Benjamin Santrisse — Développeur IA & Data"
-  description="Développeur spécialisé en Intelligence Artificielle et Data Engineering. Pipelines ML, APIs FastAPI, orchestration Airflow, LLMs. Disponible pour de nouvelles opportunités."
+  description="Développeur spécialisé en Intelligence Artificielle et Data Engineering. Pipelines ML, APIs FastAPI, agents LLM, ETL Prefect. Disponible pour de nouvelles opportunités."
   image="/og-default.svg"
   includePersonSchema={true}
   includeProfessionalServiceSchema={true}
@@ -43,9 +43,9 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     </p>
 
     <Fragment slot="actions">
-      <Button size="lg" href="/cv.pdf" target="_blank" rel="noopener noreferrer">
-        <Icon name="download" size="sm" />
-        Télécharger mon CV
+      <Button size="lg" href="/cv">
+        <Icon name="file-text" size="sm" />
+        Voir mon CV
       </Button>
       <Button size="lg" variant="outline" href="#work">
         Voir mes projets
@@ -94,7 +94,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Data Engineering</h3>
               <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Pipelines ETL robustes, APIs FastAPI, bases PostgreSQL et orchestration Airflow pour des flux de données fiables en production.
+                Pipelines ETL robustes, APIs FastAPI, bases PostgreSQL et orchestration Prefect pour des flux de données fiables en production.
               </p>
             </div>
           </div>
@@ -337,8 +337,8 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
         Disponible pour un poste en IA, ML Engineering ou Data — parlons-en.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" href="/contact" class="cta-btn-brand">
-          Me contacter
+        <Button size="lg" href="/cv" class="cta-btn-brand">
+          Voir mon CV
           <Icon name="arrow-right" size="sm" />
         </Button>
         <Button size="lg" variant="outline" href="/about">
@@ -357,8 +357,8 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
         Disponible pour un poste en IA, ML Engineering ou Data — parlons-en.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" href="/contact" class="hero-btn-brand">
-          Me contacter
+        <Button size="lg" href="/cv" class="hero-btn-brand">
+          Voir mon CV
           <Icon name="arrow-right" size="sm" />
         </Button>
         <Button size="lg" variant="outline" href="/about">
