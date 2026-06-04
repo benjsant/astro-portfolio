@@ -13,7 +13,7 @@ const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
 
 // Get all published posts
 const allPosts = await getCollection('blog', ({ data }) => {
-  return import.meta.env.PROD ? data.draft !== true : true;
+  return data.locale === 'fr' && data.draft !== true;
 });
 
 const posts = allPosts
