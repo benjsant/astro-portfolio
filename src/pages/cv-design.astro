@@ -68,125 +68,116 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
         )}
       </header>
 
-      <!-- ── BODY : 2 colonnes ──────────────────────────────── -->
+      <!-- ── BODY : 1 colonne (ATS-compatible) ────────────── -->
       <div class="cvd-body">
 
-        <!-- Colonne gauche -->
-        <div class="cvd-col-left">
+        <!-- COMPÉTENCES -->
+        <section class="cvd-card" data-reveal>
+          <h2 class="cvd-card-title">
+            <span class="cvd-title-dot" aria-hidden="true"></span>
+            Compétences
+          </h2>
+          <div class="cvd-skills">
+            {cv.skills.map((s) => (
+              <div class="cvd-skill-row">
+                <span class="cvd-badge-cat">{s.category}</span>
+                <span class="cvd-skill-val">{s.value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          <!-- COMPÉTENCES -->
-          <section class="cvd-card" data-reveal>
-            <h2 class="cvd-card-title">
-              <span class="cvd-title-dot" aria-hidden="true"></span>
-              Compétences
-            </h2>
-            <div class="cvd-skills">
-              {cv.skills.map((s) => (
-                <div class="cvd-skill-row">
-                  <span class="cvd-badge-cat">{s.category}</span>
-                  <span class="cvd-skill-val">{s.value}</span>
-                </div>
-              ))}
+        <!-- PROJETS -->
+        <section class="cvd-card" data-reveal>
+          <h2 class="cvd-card-title">
+            <span class="cvd-title-dot" aria-hidden="true"></span>
+            Projets réalisés
+          </h2>
+          {cv.projects.map((p) => (
+            <div class="cvd-project-item">
+              <div class="cvd-proj-top">
+                <p class="cvd-proj-name">
+                  <a href={p.repo} target="_blank" rel="noopener noreferrer">{p.title}</a>
+                </p>
+                {p.period && <span class="cvd-proj-period">{p.period}</span>}
+              </div>
+              <p class="cvd-proj-stack">{p.stack}</p>
+              <p class="cvd-proj-desc">{p.description}</p>
             </div>
-          </section>
+          ))}
+        </section>
 
-          <!-- EXPÉRIENCES -->
-          <section class="cvd-card" data-reveal>
-            <h2 class="cvd-card-title">
-              <span class="cvd-title-dot" aria-hidden="true"></span>
-              Expériences
-            </h2>
-            {cv.experiences.map((e) => (
-              <div class="cvd-exp-item">
-                <div class="cvd-exp-meta">
-                  <div>
-                    <p class="cvd-exp-org">{e.org}</p>
-                    <p class="cvd-exp-role">{e.role}</p>
-                  </div>
-                  <p class="cvd-exp-date">{e.date}</p>
-                </div>
-                <ul class="cvd-tasks">
-                  {e.tasks.map((t) => <li>{t}</li>)}
-                </ul>
-                <div class="cvd-tags">
-                  {e.stack.split(' · ').map((tech) => (
-                    <span class="cvd-tag">{tech}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </section>
-
-        </div>
-
-        <!-- Colonne droite -->
-        <div class="cvd-col-right">
-
-          <!-- PROJETS -->
-          <section class="cvd-card" data-reveal>
-            <h2 class="cvd-card-title">
-              <span class="cvd-title-dot" aria-hidden="true"></span>
-              Projets réalisés
-            </h2>
-            {cv.projects.map((p) => (
-              <div class="cvd-project-item">
-                <div class="cvd-proj-top">
-                  <p class="cvd-proj-name">
-                    <a href={p.repo} target="_blank" rel="noopener noreferrer">{p.title}</a>
-                  </p>
-                  {p.period && <span class="cvd-proj-period">{p.period}</span>}
-                </div>
-                <p class="cvd-proj-stack">{p.stack}</p>
-                <p class="cvd-proj-desc">{p.description}</p>
-              </div>
-            ))}
-          </section>
-
-          <!-- FORMATIONS -->
-          <section class="cvd-card" data-reveal>
-            <h2 class="cvd-card-title">
-              <span class="cvd-title-dot" aria-hidden="true"></span>
-              Formations
-            </h2>
-            {cv.education.map((ed) => (
-              <div class="cvd-entry">
-                <span class="cvd-entry-date">{ed.date}</span>
+        <!-- EXPÉRIENCES -->
+        <section class="cvd-card" data-reveal>
+          <h2 class="cvd-card-title">
+            <span class="cvd-title-dot" aria-hidden="true"></span>
+            Expériences professionnelles
+          </h2>
+          {cv.experiences.map((e) => (
+            <div class="cvd-exp-item">
+              <div class="cvd-exp-meta">
                 <div>
-                  <p class="cvd-entry-title">{ed.title}</p>
-                  <p class="cvd-entry-sub">{ed.school}</p>
+                  <p class="cvd-exp-org">{e.org}</p>
+                  <p class="cvd-exp-role">{e.role}</p>
                 </div>
+                <p class="cvd-exp-date">{e.date}</p>
               </div>
-            ))}
-          </section>
-
-          <!-- CERTIFICATIONS -->
-          <section class="cvd-card" data-reveal>
-            <h2 class="cvd-card-title">
-              <span class="cvd-title-dot" aria-hidden="true"></span>
-              Certifications
-            </h2>
-            {cv.certifications.map((c) => (
-              <div class="cvd-entry">
-                <span class="cvd-entry-date">{c.date}</span>
-                <p class="cvd-entry-title">{c.title}</p>
+              <ul class="cvd-tasks">
+                {e.tasks.map((t) => <li>{t}</li>)}
+              </ul>
+              <div class="cvd-tags">
+                {e.stack.split(' · ').map((tech) => (
+                  <span class="cvd-tag">{tech}</span>
+                ))}
               </div>
-            ))}
-          </section>
+            </div>
+          ))}
+        </section>
 
-          <!-- INTÉRÊTS -->
-          <section class="cvd-card" data-reveal>
-            <h2 class="cvd-card-title">
-              <span class="cvd-title-dot" aria-hidden="true"></span>
-              Centres d'intérêt
-            </h2>
-            {cv.interests.map((i) => (
-              <p class="cvd-interest">
-                <strong>{i.title}</strong> — {i.description}
-              </p>
-            ))}
-          </section>
+        <!-- FORMATIONS -->
+        <section class="cvd-card" data-reveal>
+          <h2 class="cvd-card-title">
+            <span class="cvd-title-dot" aria-hidden="true"></span>
+            Formations
+          </h2>
+          {cv.education.map((ed) => (
+            <div class="cvd-entry">
+              <span class="cvd-entry-date">{ed.date}</span>
+              <div>
+                <p class="cvd-entry-title">{ed.title}</p>
+                <p class="cvd-entry-sub">{ed.school}</p>
+              </div>
+            </div>
+          ))}
+        </section>
 
-        </div>
+        <!-- CERTIFICATIONS -->
+        <section class="cvd-card" data-reveal>
+          <h2 class="cvd-card-title">
+            <span class="cvd-title-dot" aria-hidden="true"></span>
+            Certifications
+          </h2>
+          {cv.certifications.map((c) => (
+            <div class="cvd-entry">
+              <span class="cvd-entry-date">{c.date}</span>
+              <p class="cvd-entry-title">{c.title}</p>
+            </div>
+          ))}
+        </section>
+
+        <!-- INTÉRÊTS -->
+        <section class="cvd-card" data-reveal>
+          <h2 class="cvd-card-title">
+            <span class="cvd-title-dot" aria-hidden="true"></span>
+            Centres d'intérêt
+          </h2>
+          {cv.interests.map((i) => (
+            <p class="cvd-interest">
+              <strong>{i.title}</strong> — {i.description}
+            </p>
+          ))}
+        </section>
+
       </div>
 
     </main>
@@ -400,14 +391,13 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   display: block;
 }
 
-/* ── Layout 2 colonnes pour le corps ── */
+/* ── Layout 1 colonne (ATS-compatible) ── */
 .cvd-body {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.875rem;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
 }
 
 /* ── Cards (même pattern que les Card du site) ── */
@@ -456,15 +446,20 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 }
 
 /* ── Skills ── */
-.cvd-skills { display: flex; flex-direction: column; gap: 2px; }
+.cvd-skills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2rem;
+}
 
 .cvd-skill-row {
   display: grid;
-  grid-template-columns: 98px 1fr;
+  grid-template-columns: 110px 1fr;
   gap: 4px 8px;
   font-size: 10px;
-  padding: 2px 0;
+  padding: 3px 0;
   border-bottom: 1px solid var(--brand-50);
+  align-items: start;
 }
 .cvd-skill-row:last-child { border-bottom: none; }
 
