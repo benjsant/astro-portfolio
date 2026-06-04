@@ -1,0 +1,76 @@
+---
+/**
+ * PhoneLink — numéro de téléphone obfusqué côté serveur.
+ *
+ * Le HTML rendu côté serveur NE contient JAMAIS le numéro complet. Le numéro
+ * est splitté en `prefix` et `suffix` séparés (data-attributes), et un script
+ * client les concatène au load + active le `tel:` au clic.
+ *
+ * Usage (numéro fr `` → split en 4+6) :
+ *   <PhoneLink prefix="0667" suffix="017993" />
+ *
+ * Le rendu visible (après hydration) est formaté en ``.
+ * Le lien `tel:+33667017993` permet l'appel direct depuis mobile.
+ *
+ * Note : en PDF (print), le JS a déjà tourné → le numéro est visible
+ * normalement dans le PDF imprimé.
+ */
+interface Props {
+  /** 4 premiers chiffres (incluant le 0 initial). Ex: "0667" */
+  prefix: string;
+  /** Reste du numéro (6 chiffres). Ex: "017993" */
+  suffix: string;
+  /** Classe CSS additionnelle pour le lien */
+  class?: string;
+  /** Placeholder visible avant hydration (pour les bots et les visiteurs sans JS) */
+  placeholder?: string;
+  /**
+   * Si `true` (défaut), le texte est remplacé par le numéro formaté après
+   * hydration. Si `false`, le placeholder reste mais le lien `tel:` est actif.
+   */
+  revealNumber?: boolean;
+}
+
+const {
+  prefix,
+  suffix,
+  class: className,
+  placeholder = '[numéro protégé]',
+  revealNumber = true,
+} = Astro.props;
+---
+
+<a
+  href="#"
+  class:list={['phone-link', className]}
+  data-phone-p={prefix}
+  data-phone-s={suffix}
+  data-phone-reveal={revealNumber ? 'true' : 'false'}
+  aria-label="Numéro de téléphone"
+  rel="nofollow"
+>
+  <span class="phone-text">{placeholder}</span>
+</a>
+
+<script>
+  function initPhoneLinks() {
+    document.querySelectorAll<HTMLAnchorElement>('a.phone-link[data-phone-p][data-phone-s]').forEach((link) => {
+      if (link.dataset.phoneInit === 'true') return;
+      link.dataset.phoneInit = 'true';
+      const p = link.dataset.phoneP;
+      const s = link.dataset.phoneS;
+      if (!p || !s) return;
+      const num = `${p}${s}`;
+      // Format ""
+      const formatted = num.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+      // Tel international (FR : +33 puis numéro sans le 0 initial)
+      link.href = `tel:+33${num.substring(1)}`;
+      if (link.dataset.phoneReveal === 'false') return;
+      const text = link.querySelector('.phone-text');
+      if (text) text.textContent = formatted;
+    });
+  }
+  initPhoneLinks();
+  document.addEventListener('astro:page-load', initPhoneLinks);
+  document.addEventListener('astro:after-swap', initPhoneLinks);
+</script>
