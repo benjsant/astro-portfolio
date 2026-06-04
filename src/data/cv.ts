@@ -94,6 +94,7 @@ export const cv: CVData = {
     // Email principal — visible dans le CV PDF téléchargé (destiné aux recruteurs).
     // Sur les pages site, c'est l'email portfolio dédié + obfuscation JS.
     { label: 'Mail', value: 'santrissebenjamin@gmail.com', href: 'mailto:santrissebenjamin@gmail.com' },
+    { label: 'Portfolio', value: 'benjamin-santrisse.vercel.app', href: 'https://benjamin-santrisse.vercel.app' },
     { label: 'LinkedIn', value: 'benjamin-santrisse', href: 'https://www.linkedin.com/in/benjamin-santrisse/' },
     { label: 'GitHub', value: 'benjsant', href: 'https://github.com/benjsant' },
   ],
