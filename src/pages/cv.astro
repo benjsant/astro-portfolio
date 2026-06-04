@@ -32,7 +32,7 @@ function asEmailParts(value: string): { user: string; domain: string } | null {
 
 // Détecte un numéro de téléphone français à 10 chiffres et le split en 4+6
 function asPhoneParts(value: string): { prefix: string; suffix: string } | null {
-  const cleaned = value.replace(/[\s.\-]/g, '');
+  const cleaned = value.replace(/[\s.-]/g, '');
   if (!/^0\d{9}$/.test(cleaned)) return null;
   return { prefix: cleaned.substring(0, 4), suffix: cleaned.substring(4) };
 }
