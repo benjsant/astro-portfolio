@@ -30,9 +30,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
     <!-- Wrapper papier -->
     <main class="cvd-paper" role="main">
 
-      <!-- Motif de grille en fond (comme index.astro) -->
-      <div class="cvd-grid-bg" aria-hidden="true"></div>
-      <!-- Radial glow brand (comme les sections hero) -->
+      <!-- Radial glow brand -->
       <div class="cvd-glow" aria-hidden="true"></div>
 
       <!-- ── HERO / HEADER ──────────────────────────────────── -->
@@ -194,8 +192,8 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 .cvd-root {
   /* Forcer light mode : on réinjecte tous les tokens teal light */
   --background:           oklch(100%   0      0);
-  --background-secondary: oklch(97.5%  0.010  190);
-  --background-tertiary:  oklch(95%    0.018  190);
+  --background-secondary: oklch(97%    0.012  274);
+  --background-tertiary:  oklch(93%    0.025  274);
   --foreground:           oklch(19.4%  0      0);
   --foreground-secondary: oklch(32%    0      0);
   --foreground-muted:     oklch(38%    0      0);
@@ -204,19 +202,20 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   --border-strong:        oklch(85.8%  0      0);
   --card:                 oklch(100%   0      0);
   --card-border:          oklch(91.3%  0      0);
-  --brand-50:             oklch(97.5%  0.02   190);
-  --brand-100:            oklch(94.8%  0.04   190);
-  --brand-200:            oklch(87.5%  0.09   190);
-  --brand-300:            oklch(77.8%  0.15   190);
-  --brand-400:            oklch(68.5%  0.20   190);
-  --brand-500:            oklch(62.5%  0.22   190);
-  --brand-600:            oklch(53.2%  0.19   190);
-  --brand-700:            oklch(45.5%  0.16   190);
+  /* Indigo — même palette que /cv ATS */
+  --brand-50:             oklch(97%    0.02   274);
+  --brand-100:            oklch(93%    0.045  274);
+  --brand-200:            oklch(85%    0.09   274);
+  --brand-300:            oklch(75%    0.14   274);
+  --brand-400:            oklch(65%    0.19   274);
+  --brand-500:            oklch(53%    0.22   274);
+  --brand-600:            oklch(46%    0.21   274);
+  --brand-700:            oklch(38%    0.17   274);
 
-  /* Shadow teal-tinted (comme le thème light) */
-  --shadow-sm: 0 1px 2px oklch(20% 0.01 190 / 0.06);
-  --shadow-md: 0 4px 8px oklch(20% 0.01 190 / 0.08), 0 0 1px oklch(20% 0.01 190 / 0.04);
-  --shadow-lg: 0 8px 16px oklch(20% 0.01 190 / 0.10), 0 0 1px oklch(20% 0.01 190 / 0.04);
+  /* Shadow indigo-tinted */
+  --shadow-sm: 0 1px 2px oklch(20% 0.05 274 / 0.06);
+  --shadow-md: 0 4px 8px oklch(20% 0.05 274 / 0.08), 0 0 1px oklch(20% 0.05 274 / 0.04);
+  --shadow-lg: 0 8px 16px oklch(20% 0.05 274 / 0.10), 0 0 1px oklch(20% 0.05 274 / 0.04);
 
   background: var(--background-secondary);
   min-height: 100vh;
@@ -266,20 +265,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   overflow: hidden;
 }
 
-/* Grid pattern (même que index.astro hero) */
-.cvd-grid-bg {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right,  var(--border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-  background-size: 32px 32px;
-  opacity: 0.35;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-/* Radial glow brand (comme les sections hero/CTA du site) */
+/* Radial glow brand */
 .cvd-glow {
   position: absolute;
   top: -60px;
@@ -674,22 +660,23 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   header[data-menu-id],
   footer { display: none !important; }
 
-  /* Hex fallback pour teal en print */
+  /* Hex fallback indigo en print (identiques à /cv ATS) */
   .cvd-root {
-    --background-secondary: #f0fafb !important;
-    --brand-50:  #f0fafb !important;
-    --brand-200: #a8e0e8 !important;
-    --brand-300: #67ccd8 !important;
-    --brand-500: #0891b2 !important;
-    --brand-600: #0e7490 !important;
-    --brand-700: #155e75 !important;
-    --foreground: #111827 !important;
+    --background-secondary: #eef2ff !important;
+    --brand-50:  #eef2ff !important;
+    --brand-100: #e0e7ff !important;
+    --brand-200: #c7d2fe !important;
+    --brand-300: #a5b4fc !important;
+    --brand-500: #4f46e5 !important;
+    --brand-600: #4338ca !important;
+    --brand-700: #3730a3 !important;
+    --foreground: #1a2228 !important;
     --foreground-secondary: #374151 !important;
-    --foreground-muted: #4b5563 !important;
+    --foreground-muted: #5a6670 !important;
     --foreground-subtle: #9ca3af !important;
-    --border: #e5e7eb !important;
+    --border: #e3e8eb !important;
     --card: #fff !important;
-    background: #f0fafb !important;
+    background: #eef2ff !important;
     padding: 0 !important;
   }
 
@@ -702,7 +689,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
     padding: 9mm 10mm 8mm !important;
   }
 
-  .cvd-grid-bg, .cvd-glow { display: none !important; }
+  .cvd-glow { display: none !important; }
 
   .cvd-card {
     box-shadow: none !important;
