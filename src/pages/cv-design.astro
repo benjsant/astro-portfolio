@@ -9,7 +9,14 @@ import { cv } from '@/data/cv';
   title="CV Design — Benjamin Santrisse"
   description="Curriculum vitae visuel — Développeur Backend Python (API, IA appliquée)"
 >
-  <main class="min-h-screen">
+  <main class="cv-design-page min-h-screen">
+    <!-- Toolbar de téléchargement -->
+    <div class="cv-design-toolbar">
+      <button type="button" class="cv-design-print-btn" onclick="window.print()">
+        ↓ Télécharger en PDF
+      </button>
+    </div>
+
     <!-- HERO SECTION — Vercel minimal style -->
     <section class="relative py-32 px-6 border-b border-border">
       <div class="max-w-5xl mx-auto">
@@ -271,6 +278,88 @@ import { cv } from '@/data/cv';
     </section>
   </main>
 </PageLayout>
+
+<style is:global>
+  /* CV Design page — Light mode forcé (clair par défaut) */
+  .cv-design-page {
+    /* Forcer le mode clair */
+    color-scheme: light;
+    background: oklch(100% 0 0);
+    color: oklch(20% 0.01 250);
+
+    /* Variables light mode */
+    --background: oklch(100% 0 0);
+    --background-secondary: oklch(97.5% 0.010 190);
+    --background-tertiary: oklch(95% 0.018 190);
+    --background-elevated: oklch(100% 0 0);
+    --foreground: oklch(20% 0.01 250);
+    --foreground-secondary: oklch(45% 0.01 250);
+    --foreground-muted: oklch(55% 0.008 250);
+    --foreground-subtle: oklch(65% 0.005 250);
+    --border: oklch(92% 0.006 220);
+    --border-strong: oklch(85% 0.006 220);
+
+    /* Brand colors (teal pour le design) */
+    --brand-50: oklch(97.5% 0.02 190);
+    --brand-100: oklch(94.8% 0.04 190);
+    --brand-200: oklch(87.5% 0.09 190);
+    --brand-300: oklch(77.8% 0.15 190);
+    --brand-400: oklch(68.5% 0.20 190);
+    --brand-500: oklch(62.5% 0.22 190);
+    --brand-600: oklch(53.2% 0.19 190);
+
+    /* Map to Tailwind classes */
+    --color-background: var(--background);
+    --color-background-secondary: var(--background-secondary);
+    --color-foreground: var(--foreground);
+    --color-foreground-secondary: var(--foreground-secondary);
+    --color-foreground-muted: var(--foreground-muted);
+    --color-border: var(--border);
+    --color-brand-600: var(--brand-600);
+
+    min-height: 100vh;
+  }
+
+  /* Toolbar */
+  .cv-design-toolbar {
+    max-width: 5rem /* max-w-5xl */;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .cv-design-print-btn {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: oklch(100% 0 0);
+    background: var(--brand-600);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 1px 2px oklch(62.5% 0.22 190 / 0.12);
+  }
+
+  .cv-design-print-btn:hover {
+    background: oklch(48% 0.17 190);
+  }
+
+  .cv-design-print-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Hide print button in print mode */
+  @media print {
+    .cv-design-toolbar {
+      display: none;
+    }
+  }
+</style>
 
 <style>
   [data-reveal] {
