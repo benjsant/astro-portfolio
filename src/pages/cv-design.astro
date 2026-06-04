@@ -20,38 +20,39 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 >
   <Header slot="header" position="fixed" shape="bar" variant="solid" size="lg" showCta={false} />
 
-  <div class="cvd-root">
-
-    <!-- Toolbar -->
-    <div class="cvd-toolbar no-print">
+  <main class="cvd-page pt-20 pb-12">
+    <div class="cvd-toolbar">
       <button class="cvd-btn" onclick="window.print()">↓ Télécharger en PDF</button>
     </div>
 
-    <!-- Wrapper papier -->
-    <main class="cvd-paper" role="main">
+    <article class="cvd-sheet">
 
-      <!-- Radial glow brand -->
+      <!-- Accent bar dégradée indigo (du CV Design) -->
+      <div class="cvd-accent-bar"></div>
+
+      <!-- Glow subtil (du CV Design) -->
       <div class="cvd-glow" aria-hidden="true"></div>
 
-      <!-- ── HERO / HEADER ──────────────────────────────────── -->
-      <header class="cvd-hero" data-reveal>
-        <div class="cvd-hero-text">
+      <!-- ── HEADER ── -->
+      <header class="cvd-header">
+        <div class="cvd-identity">
+          <!-- Nom en Outfit bold (du CV Design) -->
           <h1 class="cvd-name">{cv.header.name}</h1>
           <p class="cvd-role">{cv.header.role}</p>
           <p class="cvd-summary">{cv.header.summary}</p>
 
-          <!-- Contact pills -->
-          <div class="cvd-pills">
+          <!-- Contact en pills (du CV Design) -->
+          <div class="cvd-contact">
             {cv.contact.map((item) => {
               const ep = asEmailParts(item.value);
               return (
                 <span class="cvd-pill">
-                  <span class="cvd-pill-label">{item.label}</span>
+                  <span class="cvd-pill-label">{item.label} :</span>{' '}
                   {ep
-                    ? <EmailLink user={ep.user} domain={ep.domain} class="cvd-pill-link" />
+                    ? <EmailLink user={ep.user} domain={ep.domain} />
                     : item.href
-                      ? <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" class="cvd-pill-link">{item.value}</a>
-                      : <span class="cvd-pill-val">{item.value}</span>}
+                      ? <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{item.value}</a>
+                      : item.value}
                 </span>
               );
             })}
@@ -59,177 +60,146 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
           <p class="cvd-meta" set:html={cv.meta} />
         </div>
 
+        <!-- Photo avec ring gradient (du CV Design) -->
         {photoExists && (
-          <div class="cvd-photo-wrap">
-            <img class="cvd-photo" src="/photo.jpg" alt={cv.header.name} width="88" height="107" />
+          <div class="cvd-photo-ring">
+            <img class="cvd-photo" src="/photo.jpg" alt={cv.header.name} width="92" height="112" />
           </div>
         )}
       </header>
 
-      <!-- ── BODY : 1 colonne (ATS-compatible) ────────────── -->
-      <div class="cvd-body">
+      <!-- ── COMPÉTENCES ── -->
+      <section class="cvd-section">
+        <h2>Compétences</h2>
+        <div class="cvd-skills">
+          {cv.skills.map((s) => (
+            <div class="cvd-skill-row">
+              <span class="cvd-badge-cat">{s.category}</span>
+              <span class="cvd-skill-val">{s.value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        <!-- COMPÉTENCES -->
-        <section class="cvd-card" data-reveal>
-          <h2 class="cvd-card-title">
-            <span class="cvd-title-dot" aria-hidden="true"></span>
-            Compétences
-          </h2>
-          <div class="cvd-skills">
-            {cv.skills.map((s) => (
-              <div class="cvd-skill-row">
-                <span class="cvd-badge-cat">{s.category}</span>
-                <span class="cvd-skill-val">{s.value}</span>
-              </div>
-            ))}
+      <!-- ── PROJETS ── -->
+      <section class="cvd-section">
+        <h2>Projets réalisés</h2>
+        {cv.projects.map((p) => (
+          <div class="cvd-project">
+            <div class="cvd-project-head">
+              <span class="cvd-project-title">
+                <a href={p.repo} target="_blank" rel="noopener noreferrer">{p.title}</a>
+              </span>
+              <span class="cvd-stack">{p.stack}</span>
+            </div>
+            {p.period && <div class="cvd-period">{p.period}</div>}
+            <p class="cvd-project-desc">{p.description}</p>
           </div>
-        </section>
+        ))}
+      </section>
 
-        <!-- PROJETS -->
-        <section class="cvd-card" data-reveal>
-          <h2 class="cvd-card-title">
-            <span class="cvd-title-dot" aria-hidden="true"></span>
-            Projets réalisés
-          </h2>
-          {cv.projects.map((p) => (
-            <div class="cvd-project-item">
-              <div class="cvd-proj-top">
-                <p class="cvd-proj-name">
-                  <a href={p.repo} target="_blank" rel="noopener noreferrer">{p.title}</a>
-                </p>
-                {p.period && <span class="cvd-proj-period">{p.period}</span>}
-              </div>
-              <p class="cvd-proj-stack">{p.stack}</p>
-              <p class="cvd-proj-desc">{p.description}</p>
-            </div>
-          ))}
-        </section>
-
-        <!-- EXPÉRIENCES -->
-        <section class="cvd-card" data-reveal>
-          <h2 class="cvd-card-title">
-            <span class="cvd-title-dot" aria-hidden="true"></span>
-            Expériences professionnelles
-          </h2>
-          {cv.experiences.map((e) => (
-            <div class="cvd-exp-item">
-              <div class="cvd-exp-meta">
-                <div>
-                  <p class="cvd-exp-org">{e.org}</p>
-                  <p class="cvd-exp-role">{e.role}</p>
-                </div>
-                <p class="cvd-exp-date">{e.date}</p>
-              </div>
-              <ul class="cvd-tasks">
-                {e.tasks.map((t) => <li>{t}</li>)}
-              </ul>
-              <div class="cvd-tags">
-                {e.stack.split(' · ').map((tech) => (
-                  <span class="cvd-tag">{tech}</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        <!-- FORMATIONS -->
-        <section class="cvd-card" data-reveal>
-          <h2 class="cvd-card-title">
-            <span class="cvd-title-dot" aria-hidden="true"></span>
-            Formations
-          </h2>
-          {cv.education.map((ed) => (
-            <div class="cvd-entry">
-              <span class="cvd-entry-date">{ed.date}</span>
+      <!-- ── EXPÉRIENCES ── -->
+      <section class="cvd-section">
+        <h2>Expériences professionnelles</h2>
+        {cv.experiences.map((e) => (
+          <div class="cvd-exp">
+            <div class="cvd-exp-head">
               <div>
-                <p class="cvd-entry-title">{ed.title}</p>
-                <p class="cvd-entry-sub">{ed.school}</p>
+                <div class="cvd-exp-org">{e.org}</div>
+                <div class="cvd-exp-role">{e.role}</div>
               </div>
+              <div class="cvd-exp-date">{e.date}</div>
             </div>
-          ))}
-        </section>
-
-        <!-- CERTIFICATIONS -->
-        <section class="cvd-card" data-reveal>
-          <h2 class="cvd-card-title">
-            <span class="cvd-title-dot" aria-hidden="true"></span>
-            Certifications
-          </h2>
-          {cv.certifications.map((c) => (
-            <div class="cvd-entry">
-              <span class="cvd-entry-date">{c.date}</span>
-              <p class="cvd-entry-title">{c.title}</p>
+            <ul class="cvd-tasks">
+              {e.tasks.map((t) => <li>{t}</li>)}
+            </ul>
+            <!-- Tags technos (du CV Design) -->
+            <div class="cvd-tags">
+              {e.stack.split(' · ').map((tech) => (
+                <span class="cvd-tag">{tech}</span>
+              ))}
             </div>
-          ))}
-        </section>
+          </div>
+        ))}
+      </section>
 
-        <!-- INTÉRÊTS -->
-        <section class="cvd-card" data-reveal>
-          <h2 class="cvd-card-title">
-            <span class="cvd-title-dot" aria-hidden="true"></span>
-            Centres d'intérêt
-          </h2>
+      <!-- ── FORMATIONS ── -->
+      <section class="cvd-section">
+        <h2>Formations</h2>
+        {cv.education.map((ed) => (
+          <div class="cvd-entry">
+            <div class="cvd-entry-date">{ed.date}</div>
+            <div class="cvd-entry-body">
+              <strong>{ed.title}</strong>
+              <span>{ed.school}</span>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <!-- ── CERTIFICATIONS ── -->
+      <section class="cvd-section">
+        <h2>Certifications</h2>
+        {cv.certifications.map((c) => (
+          <div class="cvd-entry">
+            <div class="cvd-entry-date">{c.date}</div>
+            <div class="cvd-entry-body"><strong>{c.title}</strong></div>
+          </div>
+        ))}
+      </section>
+
+      <!-- ── INTÉRÊTS ── -->
+      <section class="cvd-section">
+        <h2>Centres d'intérêt</h2>
+        <div class="cvd-interests">
           {cv.interests.map((i) => (
-            <p class="cvd-interest">
-              <strong>{i.title}</strong> — {i.description}
-            </p>
+            <p><strong>{i.title}</strong> &nbsp;—&nbsp; {i.description}</p>
           ))}
-        </section>
+        </div>
+      </section>
 
-      </div>
-
-    </main>
-  </div>
+    </article>
+  </main>
 </BaseLayout>
 
 <style is:global>
 
 /* ══════════════════════════════════════════════════════════════
-   CV DESIGN — Thème Astro teal, light mode fixé, 1 page A4
-   Utilise les tokens exacts du design system du portfolio.
+   CV DESIGN — Meilleur des 2 mondes
+   Structure compacte du CV ATS + visuels du CV Design
+   Palette indigo identique au /cv ATS — light mode fixé
 ══════════════════════════════════════════════════════════════ */
 
-.cvd-root {
-  /* Forcer light mode : on réinjecte tous les tokens teal light */
-  --background:           oklch(100%   0      0);
-  --background-secondary: oklch(97%    0.012  274);
-  --background-tertiary:  oklch(93%    0.025  274);
-  --foreground:           oklch(19.4%  0      0);
-  --foreground-secondary: oklch(32%    0      0);
-  --foreground-muted:     oklch(38%    0      0);
-  --foreground-subtle:    oklch(52%    0      0);
-  --border:               oklch(91.3%  0      0);
-  --border-strong:        oklch(85.8%  0      0);
-  --card:                 oklch(100%   0      0);
-  --card-border:          oklch(91.3%  0      0);
-  /* Indigo — même palette que /cv ATS */
-  --brand-50:             oklch(97%    0.02   274);
-  --brand-100:            oklch(93%    0.045  274);
-  --brand-200:            oklch(85%    0.09   274);
-  --brand-300:            oklch(75%    0.14   274);
-  --brand-400:            oklch(65%    0.19   274);
-  --brand-500:            oklch(53%    0.22   274);
-  --brand-600:            oklch(46%    0.21   274);
-  --brand-700:            oklch(38%    0.17   274);
+.cvd-page {
+  /* Tokens indigo light (identiques à /cv ATS) */
+  --bg:       oklch(100% 0 0);
+  --bg-sec:   oklch(97.5% 0.010 190);
+  --fg:       oklch(20% 0.01 250);
+  --fg-muted: oklch(45% 0.01 250);
+  --fg-sub:   oklch(60% 0.005 250);
+  --border:   oklch(92% 0.006 220);
 
-  /* Shadow indigo-tinted */
-  --shadow-sm: 0 1px 2px oklch(20% 0.05 274 / 0.06);
-  --shadow-md: 0 4px 8px oklch(20% 0.05 274 / 0.08), 0 0 1px oklch(20% 0.05 274 / 0.04);
-  --shadow-lg: 0 8px 16px oklch(20% 0.05 274 / 0.10), 0 0 1px oklch(20% 0.05 274 / 0.04);
+  --b50:  oklch(97%  0.02  274);
+  --b100: oklch(93%  0.045 274);
+  --b200: oklch(85%  0.09  274);
+  --b500: oklch(53%  0.22  274);
+  --b600: oklch(46%  0.21  274);
+  --b700: oklch(38%  0.17  274);
 
-  background: var(--background-secondary);
+  background: oklch(97% 0.012 274);
   min-height: 100vh;
-  padding: 5rem 1rem 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: var(--fg);
   font-family: 'Manrope Variable', Manrope, system-ui, sans-serif;
-  color: var(--foreground);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  color-scheme: light;
 }
 
 /* ── Toolbar ── */
 .cvd-toolbar {
-  max-width: 860px;
-  margin: 0 auto 1rem;
+  max-width: 820px;
+  margin: 0 auto 14px;
   display: flex;
   justify-content: flex-end;
 }
@@ -238,330 +208,307 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: white;
-  background: var(--brand-600);
+  color: #fff;
+  background: var(--b600);
   border: none;
   padding: 9px 18px;
-  border-radius: 8px;           /* --theme-radius-lg */
+  border-radius: 7px;
   cursor: pointer;
-  transition: background 200ms, transform 150ms;
-  box-shadow: var(--shadow-sm);
+  transition: background .2s, transform .1s;
+  box-shadow: 0 1px 3px oklch(46% 0.21 274 / .20);
 }
-.cvd-btn:hover  { background: var(--brand-700); }
-.cvd-btn:active { transform: translateY(1px) scale(0.98); }
+.cvd-btn:hover  { background: var(--b700); }
+.cvd-btn:active { transform: translateY(1px); }
 
-/* ── Papier (feuille blanche avec background grid) ── */
-.cvd-paper {
+/* ── Feuille (compacité ATS + esthétique Design) ── */
+.cvd-sheet {
   position: relative;
-  max-width: 860px;
+  max-width: 820px;
   margin: 0 auto;
-  background: var(--card);
-  border-radius: 12px;           /* --theme-radius-xl */
-  border: 1px solid var(--card-border);
-  box-shadow: var(--shadow-lg);
-  padding: 2rem 2.5rem 1.75rem;
+  background: var(--bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow:
+    0 1px 3px oklch(46% 0.21 274 / .08),
+    0 8px 32px oklch(20% 0.05 274 / .08);
+  padding: 30px 42px 24px;   /* Exactement comme le CV ATS */
+  font-size: 11.5px;          /* Exactement comme le CV ATS */
+  line-height: 1.4;
   overflow: hidden;
 }
 
-/* Radial glow brand */
+/* Barre dégradée indigo en haut (du CV Design) */
+.cvd-accent-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--b500), var(--b200));
+  border-radius: 10px 10px 0 0;
+}
+
+/* Glow discret coin supérieur droit (du CV Design) */
 .cvd-glow {
   position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 420px;
-  height: 420px;
+  top: -80px; right: -80px;
+  width: 300px; height: 300px;
   background: radial-gradient(
     ellipse 80% 80% at 70% 20%,
-    color-mix(in oklch, var(--brand-500) 8%, transparent) 0%,
+    oklch(53% 0.22 274 / .06) 0%,
     transparent 70%
   );
   pointer-events: none;
   z-index: 0;
 }
 
-/* ── Hero header ── */
-.cvd-hero {
+/* ── Header ── */
+.cvd-header {
   position: relative;
   z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1.25rem;
-  padding-bottom: 1.25rem;
+  gap: 20px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
-.cvd-hero-text { flex: 1; }
+.cvd-identity { flex: 1; }
 
+/* Outfit 800 comme le CV Design, taille proche ATS */
 .cvd-name {
   font-family: 'Outfit Variable', Outfit, system-ui, sans-serif;
-  font-size: 2rem;
+  font-size: 26px;
   font-weight: 800;
-  letter-spacing: -0.03em;          /* --tracking-tighter */
-  line-height: 1.1;
-  color: var(--foreground);
-  margin: 0 0 3px;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--fg);
+  margin: 0 0 4px;
 }
 
 .cvd-role {
   font-size: 13px;
   font-weight: 700;
-  color: var(--brand-600);
-  letter-spacing: 0.01em;
+  color: var(--b600);
   margin: 0 0 5px;
 }
 
 .cvd-summary {
-  font-size: 11px;
-  color: var(--foreground-muted);
-  max-width: 54ch;
-  line-height: 1.55;
-  margin: 0 0 10px;
+  font-size: 11.5px;
+  color: var(--fg-muted);
+  max-width: 58ch;
+  line-height: 1.45;
+  margin: 0 0 7px;
 }
 
-/* Contact : badges pills (comme le composant Badge pill=true du site) */
-.cvd-pills {
+/* Contact pills (du CV Design) */
+.cvd-contact {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 8px;
-  margin-bottom: 5px;
+  gap: 3px 10px;
+  margin-bottom: 4px;
 }
 
 .cvd-pill {
   display: inline-flex;
   align-items: baseline;
   gap: 3px;
-  background: var(--background-secondary);
-  border: 1px solid var(--border);
-  border-radius: 9999px;            /* rounded-full — pill */
-  padding: 2px 8px;
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9.5px;
-  transition: border-color 150ms;
+  font-size: 10px;
+  background: var(--b50);
+  border: 1px solid var(--b100);
+  border-radius: 9999px;
+  padding: 1px 7px;
+  color: var(--fg-muted);
 }
-.cvd-pill:hover { border-color: var(--brand-300); }
 
-.cvd-pill-label { color: var(--foreground-subtle); }
-.cvd-pill-val   { color: var(--foreground); }
-.cvd-pill-link  { color: var(--foreground); text-decoration: none; border-bottom: 1px solid var(--brand-200); transition: color 150ms, border-color 150ms; }
-.cvd-pill-link:hover { color: var(--brand-600); border-color: var(--brand-500); }
+.cvd-pill-label { color: var(--fg-sub); }
 
-.cvd-meta { font-size: 9.5px; color: var(--foreground-muted); margin: 0; }
-.cvd-meta strong { color: var(--foreground); font-weight: 600; }
+.cvd-pill a {
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--b200);
+  transition: color .15s, border-color .15s;
+}
+.cvd-pill a:hover { color: var(--b600); border-color: var(--b500); }
 
-/* Photo — cadre avec ring brand (comme Avatar du site) */
-.cvd-photo-wrap {
+.cvd-meta { font-size: 10.5px; color: var(--fg-muted); margin: 0; }
+.cvd-meta strong { color: var(--fg); font-weight: 600; }
+
+/* Photo avec ring gradient (du CV Design) */
+.cvd-photo-ring {
   position: relative;
   flex-shrink: 0;
 }
-
-.cvd-photo-wrap::before {
+.cvd-photo-ring::before {
   content: '';
   position: absolute;
   inset: -2px;
   border-radius: 9px;
-  background: linear-gradient(135deg, var(--brand-300), var(--brand-500));
+  background: linear-gradient(135deg, var(--b200), var(--b500));
   z-index: 0;
 }
-
 .cvd-photo {
   position: relative;
   z-index: 1;
-  width: 88px;
-  height: 107px;
+  width: 92px;
+  height: 112px;
   object-fit: cover;
   border-radius: 7px;
   display: block;
 }
 
-/* ── Layout 1 colonne (ATS-compatible) ── */
-.cvd-body {
+/* ── Sections — titre avec dot + ligne (du CV Design) ── */
+.cvd-section {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
+  margin-top: 11px;    /* Exactement comme le CV ATS */
 }
 
-/* ── Cards (même pattern que les Card du site) ── */
-/* border: 1px solid brand-500/30  hover:border-brand-500/70  rounded-xl */
-.cvd-card {
-  background: var(--background-secondary);
-  border: 1px solid oklch(62.5% 0.22 190 / 0.20);
-  border-radius: 10px;            /* --theme-radius-xl */
-  padding: 10px 12px;
-  transition: border-color 200ms ease-out;
-  box-shadow: var(--shadow-sm);
-}
-.cvd-card:hover {
-  border-color: oklch(62.5% 0.22 190 / 0.55);
-}
-
-/* Card titles — même pattern que les h2 de section du site */
-.cvd-card-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.cvd-section h2 {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.13em;
-  color: var(--foreground);
-  margin: 0 0 8px;
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 5px;
 }
 
-/* Point décoratif teal devant chaque titre (comme le ■ du CV ATS mais rond) */
-.cvd-title-dot {
-  width: 6px;
-  height: 6px;
+/* Dot teal remplace le ■ du CV ATS */
+.cvd-section h2::before {
+  content: '';
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--brand-500);
+  background: var(--b500);
   flex-shrink: 0;
 }
 
-/* Ligne séparatrice après chaque titre */
-.cvd-card-title::after {
+/* Ligne dégradée indigo→gris (du CV Design) */
+.cvd-section h2::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, var(--brand-200), var(--border));
+  background: linear-gradient(90deg, var(--b200), var(--border));
 }
 
-/* ── Skills ── */
+/* ── Compétences ── */
 .cvd-skills {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 2rem;
+  gap: 0 28px;
 }
 
 .cvd-skill-row {
   display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 4px 8px;
-  font-size: 10px;
-  padding: 3px 0;
-  border-bottom: 1px solid var(--brand-50);
+  grid-template-columns: 148px 1fr;
+  gap: 4px 10px;
+  font-size: 11.5px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--b50);
   align-items: start;
 }
 .cvd-skill-row:last-child { border-bottom: none; }
 
-/* Badge category — comme Badge variant="brand" du site */
+/* Badge catégorie (du CV Design) */
 .cvd-badge-cat {
-  display: inline-flex;
-  align-items: center;
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 8.5px;
+  font-size: 9.5px;
   font-weight: 700;
-  color: var(--brand-600);
-  background: oklch(62.5% 0.22 190 / 0.08);
-  border: 1px solid oklch(62.5% 0.22 190 / 0.18);
+  color: var(--b600);
+  background: oklch(53% 0.22 274 / .07);
+  border: 1px solid oklch(53% 0.22 274 / .18);
   border-radius: 4px;
   padding: 1px 5px;
   white-space: nowrap;
   align-self: start;
+  margin-top: 1px;
 }
 
-.cvd-skill-val {
-  font-size: 10px;
-  color: var(--foreground-secondary);
-  line-height: 1.4;
-}
+.cvd-skill-val { color: var(--fg); font-size: 11px; }
 
 /* ── Projets ── */
-.cvd-project-item {
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-}
-.cvd-project-item:last-child { border-bottom: none; padding-bottom: 0; }
+.cvd-project { margin-bottom: 7px; }
+.cvd-project:last-child { margin-bottom: 0; }
 
-.cvd-proj-top {
+.cvd-project-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 6px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
-.cvd-proj-name {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--foreground);
-  margin: 0;
+.cvd-project-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fg);
 }
-.cvd-proj-name a {
-  color: var(--brand-600);
+.cvd-project-title a {
+  color: inherit;
   text-decoration: none;
-  border-bottom: 1.5px solid var(--brand-300);
-  transition: color 150ms, border-color 150ms;
+  border-bottom: 1.5px solid var(--b500);
+  transition: color .15s;
 }
-.cvd-proj-name a:hover { color: var(--brand-700); border-color: var(--brand-500); }
+.cvd-project-title a:hover { color: var(--b600); }
 
-.cvd-proj-period {
+.cvd-stack {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 8.5px;
-  font-weight: 700;
-  color: var(--brand-600);
-  background: oklch(62.5% 0.22 190 / 0.08);
-  border: 1px solid oklch(62.5% 0.22 190 / 0.18);
-  border-radius: 4px;
-  padding: 1px 5px;
-  white-space: nowrap;
-}
-
-.cvd-proj-stack {
-  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 8.5px;
-  color: var(--foreground-subtle);
-  margin: 1px 0 2px;
-}
-
-.cvd-proj-desc {
   font-size: 9.5px;
-  color: var(--foreground-muted);
-  line-height: 1.4;
-  margin: 0;
+  color: var(--fg-muted);
+}
+
+.cvd-period {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--b600);
+  margin: 1px 0;
+}
+
+.cvd-project-desc {
+  font-size: 11px;
+  color: var(--fg-muted);
+  line-height: 1.45;
+  margin: 2px 0 0;
 }
 
 /* ── Expériences ── */
-.cvd-exp-item {
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-}
-.cvd-exp-item:last-child { border-bottom: none; padding-bottom: 0; }
+.cvd-exp { margin-bottom: 4px; }
 
-.cvd-exp-meta {
+.cvd-exp-head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 4px;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.cvd-exp-org  { font-size: 11px; font-weight: 700; color: var(--foreground); margin: 0; }
-.cvd-exp-role { font-size: 10px; font-weight: 600; color: var(--brand-600); margin: 0; }
+.cvd-exp-org  { font-size: 12.5px; font-weight: 600; color: var(--fg); }
+.cvd-exp-role { font-size: 11.5px; color: var(--b600); font-weight: 500; }
 .cvd-exp-date {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 8.5px;
-  color: var(--foreground-subtle);
-  white-space: nowrap;
-  padding-top: 2px;
+  font-size: 9.5px;
+  color: var(--fg-muted);
+  text-align: right;
 }
 
 .cvd-tasks {
   list-style: none;
   padding: 0;
-  margin: 0 0 4px;
+  margin: 4px 0;
 }
-
 .cvd-tasks li {
   position: relative;
-  padding-left: 11px;
-  font-size: 9.5px;
-  color: var(--foreground-muted);
+  padding-left: 14px;
+  font-size: 11px;
+  color: var(--fg-muted);
   line-height: 1.35;
   margin-bottom: 1px;
 }
@@ -569,78 +516,54 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   content: "▸";
   position: absolute;
   left: 0;
-  color: var(--brand-500);
-  font-size: 8px;
-  top: 0.15em;
+  color: var(--b500);
+  font-size: 10px;
 }
 
-/* Tags technos — comme Badge variant="default" du site */
+/* Tags technos (du CV Design) */
 .cvd-tags { display: flex; flex-wrap: wrap; gap: 3px; }
 
 .cvd-tag {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
-  color: var(--brand-700);
-  background: oklch(62.5% 0.22 190 / 0.07);
-  border: 1px solid oklch(62.5% 0.22 190 / 0.20);
-  padding: 1px 5px;
+  color: var(--b700);
+  background: var(--b50);
+  border: 1px solid var(--b100);
+  padding: 1px 6px;
   border-radius: 4px;
-  transition: background 150ms, border-color 150ms;
-}
-.cvd-tag:hover {
-  background: oklch(62.5% 0.22 190 / 0.14);
-  border-color: oklch(62.5% 0.22 190 / 0.40);
 }
 
-/* ── Entrées formations / certifications ── */
+/* ── Formations / Certifications ── */
 .cvd-entry {
   display: grid;
-  grid-template-columns: 52px 1fr;
-  gap: 6px;
-  padding: 3px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 10.5px;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
+  font-size: 11.5px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--b100);
 }
-.cvd-entry:last-child { border-bottom: none; padding-bottom: 0; }
+.cvd-entry:last-child { border-bottom: none; }
 
 .cvd-entry-date {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 8.5px;
+  font-size: 10px;
+  color: var(--b600);
   font-weight: 700;
-  color: var(--brand-600);
   padding-top: 1px;
 }
 
-.cvd-entry-title { font-weight: 600; color: var(--foreground); font-size: 10px; margin: 0; }
-.cvd-entry-sub   { font-size: 9.5px; color: var(--foreground-muted); margin: 0; }
+.cvd-entry-body strong { color: var(--fg); font-weight: 600; display: block; }
+.cvd-entry-body span { color: var(--fg-muted); font-size: 10.5px; }
 
 /* ── Intérêts ── */
-.cvd-interest {
-  font-size: 10px;
-  color: var(--foreground-muted);
-  margin: 0 0 2px;
-  line-height: 1.4;
-}
-.cvd-interest:last-child { margin-bottom: 0; }
-.cvd-interest strong {
+.cvd-interests { font-size: 11px; color: var(--fg-muted); }
+.cvd-interests p { margin: 1px 0; }
+.cvd-interests strong {
+  color: var(--fg);
   font-weight: 600;
-  color: var(--foreground);
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9px;
-}
-
-/* ── Animations écran (scroll reveal du site) ── */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(24px) scale(0.97);
-  transition:
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.22, 1.6, 0.36, 1);
-}
-[data-reveal].is-visible {
-  opacity: 1;
-  transform: none;
+  font-size: 10px;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -654,77 +577,43 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
     print-color-adjust: exact !important;
   }
 
-  html, body { background: white !important; }
+  html, body { background: #fff !important; }
 
-  .no-print,
-  header[data-menu-id],
-  footer { display: none !important; }
-
-  /* Hex fallback indigo en print (identiques à /cv ATS) */
-  .cvd-root {
-    --background-secondary: #eef2ff !important;
-    --brand-50:  #eef2ff !important;
-    --brand-100: #e0e7ff !important;
-    --brand-200: #c7d2fe !important;
-    --brand-300: #a5b4fc !important;
-    --brand-500: #4f46e5 !important;
-    --brand-600: #4338ca !important;
-    --brand-700: #3730a3 !important;
-    --foreground: #1a2228 !important;
-    --foreground-secondary: #374151 !important;
-    --foreground-muted: #5a6670 !important;
-    --foreground-subtle: #9ca3af !important;
-    --border: #e3e8eb !important;
-    --card: #fff !important;
-    background: #eef2ff !important;
-    padding: 0 !important;
+  .cvd-page {
+    --b50:  #eef2ff !important;
+    --b100: #e0e7ff !important;
+    --b200: #c7d2fe !important;
+    --b500: #4f46e5 !important;
+    --b600: #4338ca !important;
+    --b700: #3730a3 !important;
+    --fg:       #1a2228 !important;
+    --fg-muted: #5a6670 !important;
+    --fg-sub:   #8a949c !important;
+    --border:   #e3e8eb !important;
   }
 
-  .cvd-paper {
-    max-width: 100%;
+  header[data-menu-id], footer, .cvd-toolbar { display: none !important; }
+
+  .cvd-page { background: #fff !important; padding: 0; min-height: 0; }
+
+  .cvd-sheet {
+    max-width: none;
+    width: 100%;
     margin: 0;
+    padding: 9mm 12mm 8mm !important;
+    box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
-    box-shadow: none !important;
-    padding: 9mm 10mm 8mm !important;
   }
 
-  .cvd-glow { display: none !important; }
+  .cvd-accent-bar { display: none; }
+  .cvd-glow       { display: none; }
 
-  .cvd-card {
-    box-shadow: none !important;
-    border-color: #e5e7eb !important;
-    background: #f8fcfd !important;
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
+  .cvd-section h2::before { background: #4f46e5 !important; }
+  .cvd-section h2::after  { background: linear-gradient(90deg, #c7d2fe, #e3e8eb) !important; }
+  .cvd-tasks li::before   { color: #4f46e5 !important; }
 
-  .cvd-project-item,
-  .cvd-exp-item,
-  .cvd-entry,
-  .cvd-tasks li { page-break-inside: avoid; }
-
-  /* Désactiver animations en print */
-  [data-reveal] {
-    opacity: 1 !important;
-    transform: none !important;
-  }
+  .cvd-section, .cvd-project, .cvd-exp-head,
+  .cvd-entry, .cvd-tasks li { page-break-inside: avoid; }
 }
 </style>
-
-<script>
-/* Scroll reveal — même IntersectionObserver que le site */
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) {
-        e.target.classList.add('is-visible');
-        observer.unobserve(e.target);
-      }
-    });
-  },
-  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-);
-
-document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
-</script>
