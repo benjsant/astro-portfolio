@@ -91,7 +91,6 @@ import { cv } from '@/data/cv';
         <div class="grid md:grid-cols-2 gap-6">
           {cv.skills.map((skill, idx) => (
             <div
-              key={idx}
               class="group p-6 rounded-lg border border-border bg-background-secondary hover:border-brand-400 hover:bg-card transition-all duration-200 data-reveal"
               style={{ transitionDelay: `${idx * 30}ms` }}
             >
@@ -121,7 +120,6 @@ import { cv } from '@/data/cv';
         <div class="grid md:grid-cols-2 gap-6">
           {cv.projects.map((project, idx) => (
             <div
-              key={idx}
               class="group flex flex-col p-6 rounded-lg border border-border bg-background-secondary hover:border-brand-400 hover:shadow-sm transition-all duration-200 data-reveal"
               style={{ transitionDelay: `${idx * 30}ms` }}
             >
@@ -146,9 +144,8 @@ import { cv } from '@/data/cv';
 
               <!-- Tech stack -->
               <div class="flex flex-wrap gap-2 mb-4 pt-4 border-t border-border">
-                {project.stack.split(' · ').map((tech, i) => (
+                {project.stack.split(' · ').map((tech) => (
                   <span
-                    key={i}
                     class="px-2 py-1 rounded text-xs font-medium bg-card text-foreground-secondary border border-border/50"
                   >
                     {tech}
@@ -185,7 +182,6 @@ import { cv } from '@/data/cv';
         <div class="space-y-8">
           {cv.experiences.map((exp, idx) => (
             <div
-              key={idx}
               class="group data-reveal"
               style={{ transitionDelay: `${idx * 30}ms` }}
             >
@@ -201,8 +197,8 @@ import { cv } from '@/data/cv';
 
               {exp.tasks && (
                 <ul class="space-y-2 mb-4 ml-0">
-                  {exp.tasks.map((task, i) => (
-                    <li key={i} class="text-foreground-secondary text-sm flex gap-3">
+                  {exp.tasks.map((task) => (
+                    <li class="text-foreground-secondary text-sm flex gap-3">
                       <span class="text-brand-600 flex-shrink-0 mt-1">▸</span>
                       <span>{task}</span>
                     </li>
@@ -212,8 +208,8 @@ import { cv } from '@/data/cv';
 
               {exp.stack && (
                 <div class="flex flex-wrap gap-2 pt-3 border-t border-border">
-                  {exp.stack.split(' · ').map((tech, i) => (
-                    <span key={i} class="text-xs px-2 py-1 rounded bg-card text-foreground-secondary border border-border/50">
+                  {exp.stack.split(' · ').map((tech) => (
+                    <span class="text-xs px-2 py-1 rounded bg-card text-foreground-secondary border border-border/50">
                       {tech}
                     </span>
                   ))}
@@ -236,7 +232,6 @@ import { cv } from '@/data/cv';
         <div class="grid md:grid-cols-3 gap-6">
           {cv.education.map((edu, idx) => (
             <div
-              key={idx}
               class="p-6 rounded-lg border border-border bg-background-secondary hover:border-brand-400 transition-colors data-reveal"
               style={{ transitionDelay: `${idx * 30}ms` }}
             >
@@ -261,7 +256,6 @@ import { cv } from '@/data/cv';
           {cv.contact.map((item) => (
             item.href && (
               <a
-                key={item.label}
                 href={item.href}
                 target={item.href.startsWith('http') ? '_blank' : undefined}
                 rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
