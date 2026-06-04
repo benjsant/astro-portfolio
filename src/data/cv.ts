@@ -91,9 +91,8 @@ export const cv: CVData = {
   },
 
   contact: [
-    { label: 'Tél', value: '' },
     // Email principal — visible dans le CV PDF téléchargé (destiné aux recruteurs).
-    // Sur les pages site (/contact), c'est l'email portfolio dédié + obfuscation JS.
+    // Sur les pages site, c'est l'email portfolio dédié + obfuscation JS.
     { label: 'Mail', value: 'santrissebenjamin@gmail.com', href: 'mailto:santrissebenjamin@gmail.com' },
     { label: 'LinkedIn', value: 'benjamin-santrisse', href: 'https://www.linkedin.com/in/benjamin-santrisse/' },
     { label: 'GitHub', value: 'benjsant', href: 'https://github.com/benjsant' },
