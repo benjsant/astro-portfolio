@@ -1,380 +1,568 @@
 ---
-import PageLayout from '@/layouts/PageLayout.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
-import CTA from '@/components/ui/marketing/CTA/CTA.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import EmailLink from '@/components/patterns/EmailLink.astro';
 import { cv } from '@/data/cv';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+function asEmailParts(value: string): { user: string; domain: string } | null {
+  const m = value.match(/^([^@\s]+)@([^@\s]+)$/);
+  return m ? { user: m[1], domain: m[2] } : null;
+}
+
+const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 ---
 
-<PageLayout
-  title="CV Design — Benjamin Santrisse"
-  description="Curriculum vitae visuel — Développeur Backend Python (API, IA appliquée)"
+<BaseLayout
+  title="CV Design"
+  description={`Curriculum vitae de ${cv.header.name} — ${cv.header.role}. Téléchargeable en PDF.`}
 >
-  <main class="cv-design-page min-h-screen">
-    <!-- Toolbar de téléchargement -->
-    <div class="cv-design-toolbar">
-      <button type="button" class="cv-design-print-btn" onclick="window.print()">
+  <Header
+    slot="header"
+    position="fixed"
+    shape="bar"
+    variant="solid"
+    size="lg"
+    showCta={false}
+  />
+
+  <main class="cv-design-page pt-20 pb-12">
+    <div class="cv-toolbar">
+      <button type="button" class="cv-print-btn" onclick="window.print()">
         ↓ Télécharger en PDF
       </button>
     </div>
 
-    <!-- HERO SECTION — Vercel minimal style -->
-    <section class="relative py-32 px-6 border-b border-border">
-      <div class="max-w-5xl mx-auto">
-        <div class="grid md:grid-cols-3 gap-12 items-start" data-reveal>
-          <!-- Left: Text content -->
-          <div class="md:col-span-2 space-y-8">
-            <div>
-              <h1 class="font-display text-6xl md:text-7xl font-bold text-foreground leading-tight mb-4">
-                Benjamin
-                <br />
-                <span class="text-brand-600">Santrisse</span>
-              </h1>
-            </div>
-
-            <div class="space-y-4">
-              <h2 class="text-2xl font-semibold text-brand-600">
-                Développeur Backend Python
-              </h2>
-              <p class="text-lg text-foreground-secondary max-w-xl leading-relaxed">
-                Spécialisé en IA appliquée, pipelines ML et APIs haute performance. Passionné par la création de solutions techniques sophistiquées et scalables.
-              </p>
-            </div>
-
-            <!-- Stats grid -->
-            <div class="grid grid-cols-3 gap-8 pt-8 border-t border-border">
-              <div class="space-y-2">
-                <div class="text-4xl font-bold text-brand-600">10+</div>
-                <div class="text-sm text-foreground-muted">Projets</div>
-              </div>
-              <div class="space-y-2">
-                <div class="text-4xl font-bold text-brand-600">7y</div>
-                <div class="text-sm text-foreground-muted">Expérience</div>
-              </div>
-              <div class="space-y-2">
-                <div class="text-4xl font-bold text-brand-600">3y</div>
-                <div class="text-sm text-foreground-muted">IA Focus</div>
-              </div>
-            </div>
-
-            <!-- CTA Buttons -->
-            <div class="flex gap-3 pt-4">
-              <a
-                href="#contact"
-                class="px-6 py-2 rounded-lg bg-brand-600 text-white font-semibold hover:bg-brand-700 transition-colors"
-              >
-                Me contacter
-              </a>
-              <a
-                href="/cv"
-                class="px-6 py-2 rounded-lg border border-border bg-background-secondary text-foreground font-semibold hover:border-brand-400 transition-colors"
-              >
-                CV classique
-              </a>
-            </div>
+    <article class="cv-sheet">
+      <!-- HEADER -->
+      <header class="cv-header">
+        <div class="cv-identity">
+          <h1 class="cv-name">{cv.header.name}</h1>
+          <p class="cv-role">{cv.header.role}</p>
+          <p class="cv-summary">{cv.header.summary}</p>
+        </div>
+        {photoExists ? (
+          <img class="cv-photo" src="/photo.jpg" alt={cv.header.name} width="108" height="132" />
+        ) : (
+          <div class="cv-photo cv-photo-placeholder">
+            <span>Photo</span>
+            <span>108 × 132</span>
+            <span class="cv-photo-hint">public/photo.jpg</span>
           </div>
+        )}
+      </header>
 
-          <!-- Right: Photo -->
-          <div class="hidden md:block" data-reveal>
-            <div class="relative aspect-square rounded-xl overflow-hidden border border-border bg-background-secondary shadow-sm hover:shadow-md transition-shadow">
-              <img
-                src="/photo.jpg"
-                alt="Benjamin Santrisse"
-                class="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- COMPÉTENCES SECTION -->
-    <section class="py-20 px-6 border-b border-border">
-      <div class="max-w-5xl mx-auto">
-        <div class="mb-12" data-reveal>
-          <h2 class="font-display text-4xl font-bold text-foreground mb-2">Compétences</h2>
-          <p class="text-foreground-secondary">Expertises techniques et domaines de spécialisation</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6">
-          {cv.skills.map((skill, idx) => (
-            <div
-              class="group p-6 rounded-lg border border-border bg-background-secondary hover:border-brand-400 hover:bg-card transition-all duration-200 data-reveal"
-              style={{ transitionDelay: `${idx * 30}ms` }}
-            >
-              <div class="flex items-start gap-3 mb-3">
-                <div class="w-1 h-6 bg-brand-600 rounded-full mt-1 group-hover:h-8 transition-all" />
-                <h3 class="text-lg font-semibold text-foreground group-hover:text-brand-600 transition-colors">
-                  {skill.category}
-                </h3>
-              </div>
-              <p class="text-foreground-secondary text-sm leading-relaxed ml-4">
-                {skill.value}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- PROJETS SECTION -->
-    <section class="py-20 px-6 border-b border-border">
-      <div class="max-w-5xl mx-auto">
-        <div class="mb-12" data-reveal>
-          <h2 class="font-display text-4xl font-bold text-foreground mb-2">Projets</h2>
-          <p class="text-foreground-secondary">Réalisations techniques et collaborations</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6">
-          {cv.projects.map((project, idx) => (
-            <div
-              class="group flex flex-col p-6 rounded-lg border border-border bg-background-secondary hover:border-brand-400 hover:shadow-sm transition-all duration-200 data-reveal"
-              style={{ transitionDelay: `${idx * 30}ms` }}
-            >
-              <div class="flex items-start justify-between mb-3">
-                <h3 class="text-xl font-semibold text-foreground group-hover:text-brand-600 transition-colors flex-1">
-                  {project.title}
-                </h3>
-                <Icon
-                  name="external-link"
-                  size="sm"
-                  class="text-foreground-muted group-hover:text-brand-600 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
-                />
-              </div>
-
-              {project.period && (
-                <p class="text-xs text-foreground-muted mb-3">{project.period}</p>
-              )}
-
-              <p class="text-foreground-secondary text-sm mb-4 flex-grow leading-relaxed">
-                {project.description}
-              </p>
-
-              <!-- Tech stack -->
-              <div class="flex flex-wrap gap-2 mb-4 pt-4 border-t border-border">
-                {project.stack.split(' · ').map((tech) => (
-                  <span
-                    class="px-2 py-1 rounded text-xs font-medium bg-card text-foreground-secondary border border-border/50"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
-              <!-- Link -->
-              {project.repo && (
-                <a
-                  href={project.repo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700 text-sm font-semibold transition-colors"
-                >
-                  Voir sur GitHub
-                  <Icon name="arrow-right" size="sm" />
+      <!-- CONTACT -->
+      <div class="cv-contact">
+        {cv.contact.map((item) => {
+          const emailParts = asEmailParts(item.value);
+          return (
+            <span>
+              <span class="cv-label">{item.label} :</span>{' '}
+              {emailParts ? (
+                <EmailLink user={emailParts.user} domain={emailParts.domain} class="cv-email" />
+              ) : item.href ? (
+                <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
+                  {item.value}
                 </a>
+              ) : (
+                item.value
               )}
-            </div>
-          ))}
-        </div>
+            </span>
+          );
+        })}
       </div>
-    </section>
+      <p class="cv-meta" set:html={cv.meta} />
 
-    <!-- EXPÉRIENCE SECTION -->
-    <section class="py-20 px-6 border-b border-border">
-      <div class="max-w-4xl mx-auto">
-        <div class="mb-12" data-reveal>
-          <h2 class="font-display text-4xl font-bold text-foreground mb-2">Expérience</h2>
-          <p class="text-foreground-secondary">Parcours professionnel</p>
-        </div>
+      <!-- COMPÉTENCES -->
+      <section class="cv-section">
+        <h2>Compétences</h2>
+        {cv.skills.map((row) => (
+          <div class="cv-skill-row">
+            <div class="cv-skill-cat">{row.category}</div>
+            <div class="cv-skill-val">{row.value}</div>
+          </div>
+        ))}
+      </section>
 
-        <div class="space-y-8">
-          {cv.experiences.map((exp, idx) => (
-            <div
-              class="group data-reveal"
-              style={{ transitionDelay: `${idx * 30}ms` }}
-            >
-              <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-2 mb-3">
-                <div>
-                  <h3 class="text-xl font-semibold text-foreground group-hover:text-brand-600 transition-colors">
-                    {exp.role}
-                  </h3>
-                  <p class="text-brand-600 font-medium">{exp.org}</p>
-                </div>
-                <p class="text-sm text-foreground-muted whitespace-nowrap">{exp.date}</p>
+      <!-- PROJETS -->
+      <section class="cv-section">
+        <h2>Projets réalisés</h2>
+        {cv.projects.map((project) => (
+          <div class="cv-project">
+            <div class="cv-project-head">
+              <div class="cv-project-title">
+                <a href={project.repo} target="_blank" rel="noopener noreferrer">{project.title}</a>
               </div>
-
-              {exp.tasks && (
-                <ul class="space-y-2 mb-4 ml-0">
-                  {exp.tasks.map((task) => (
-                    <li class="text-foreground-secondary text-sm flex gap-3">
-                      <span class="text-brand-600 flex-shrink-0 mt-1">▸</span>
-                      <span>{task}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {exp.stack && (
-                <div class="flex flex-wrap gap-2 pt-3 border-t border-border">
-                  {exp.stack.split(' · ').map((tech) => (
-                    <span class="text-xs px-2 py-1 rounded bg-card text-foreground-secondary border border-border/50">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <div class="cv-stack">{project.stack}</div>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
+            {project.period && <div class="cv-project-period">{project.period}</div>}
+            <p class="cv-project-desc">{project.description}</p>
+          </div>
+        ))}
+      </section>
 
-    <!-- FORMATIONS SECTION -->
-    <section class="py-20 px-6 border-b border-border">
-      <div class="max-w-4xl mx-auto">
-        <div class="mb-12" data-reveal>
-          <h2 class="font-display text-4xl font-bold text-foreground mb-2">Formations</h2>
-          <p class="text-foreground-secondary">Parcours académique et certifications</p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6">
-          {cv.education.map((edu, idx) => (
-            <div
-              class="p-6 rounded-lg border border-border bg-background-secondary hover:border-brand-400 transition-colors data-reveal"
-              style={{ transitionDelay: `${idx * 30}ms` }}
-            >
-              <div class="text-3xl font-bold text-brand-600 mb-3">{edu.date}</div>
-              <h3 class="text-lg font-semibold text-foreground mb-1">{edu.title}</h3>
-              <p class="text-sm text-foreground-secondary">{edu.school}</p>
+      <!-- EXPÉRIENCES -->
+      <section class="cv-section">
+        <h2>Expériences professionnelles</h2>
+        {cv.experiences.map((exp) => (
+          <div class="cv-experience">
+            <div class="cv-job-head">
+              <div>
+                <div class="cv-job-org">{exp.org}</div>
+                <div class="cv-job-role">{exp.role}</div>
+              </div>
+              <div class="cv-job-date">{exp.date}</div>
             </div>
+            <ul class="cv-tasks">
+              {exp.tasks.map((t) => <li>{t}</li>)}
+            </ul>
+            <span class="cv-env">{exp.stack}</span>
+          </div>
+        ))}
+      </section>
+
+      <!-- FORMATIONS -->
+      <section class="cv-section">
+        <h2>Formations</h2>
+        {cv.education.map((entry) => (
+          <div class="cv-entry">
+            <div class="cv-entry-date">{entry.date}</div>
+            <div class="cv-entry-body">
+              <strong>{entry.title}</strong>
+              <span>{entry.school}</span>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <!-- CERTIFICATIONS -->
+      <section class="cv-section">
+        <h2>Certifications</h2>
+        {cv.certifications.map((c) => (
+          <div class="cv-entry">
+            <div class="cv-entry-date">{c.date}</div>
+            <div class="cv-entry-body"><strong>{c.title}</strong></div>
+          </div>
+        ))}
+      </section>
+
+      <!-- INTÉRÊTS -->
+      <section class="cv-section">
+        <h2>Centres d'intérêt</h2>
+        <div class="cv-interests">
+          {cv.interests.map((i) => (
+            <p><strong>{i.title}</strong> &nbsp;—&nbsp; {i.description}</p>
           ))}
         </div>
-      </div>
-    </section>
-
-    <!-- CONTACT SECTION -->
-    <section id="contact" class="py-20 px-6">
-      <CTA variant="default" size="md" maxWidth="lg" glow={false} data-reveal>
-        <h2 slot="heading" class="!text-4xl">Discutons ensemble</h2>
-        <p slot="description" class="!text-base">
-          Intéressé par une collaboration ou une opportunité ? Contactez-moi pour en discuter.
-        </p>
-
-        <div class="flex flex-wrap gap-3 justify-center">
-          {cv.contact.map((item) => (
-            item.href && (
-              <a
-                href={item.href}
-                target={item.href.startsWith('http') ? '_blank' : undefined}
-                rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-background-secondary text-foreground font-medium hover:border-brand-400 hover:text-brand-600 transition-colors text-sm"
-              >
-                <Icon name="mail" size="sm" />
-                {item.label}
-              </a>
-            )
-          ))}
-        </div>
-      </CTA>
-    </section>
+      </section>
+    </article>
   </main>
-</PageLayout>
+</BaseLayout>
 
 <style is:global>
-  /* CV Design page — Light mode forcé (clair par défaut) */
+  /* CV Design — Même structure que CV ATS, light mode par défaut */
   .cv-design-page {
-    /* Forcer le mode clair */
-    color-scheme: light;
-    background: oklch(100% 0 0);
-    color: oklch(20% 0.01 250);
-
-    /* Variables light mode */
+    /* Vars portfolio en mode clair fixé */
     --background: oklch(100% 0 0);
     --background-secondary: oklch(97.5% 0.010 190);
-    --background-tertiary: oklch(95% 0.018 190);
-    --background-elevated: oklch(100% 0 0);
     --foreground: oklch(20% 0.01 250);
-    --foreground-secondary: oklch(45% 0.01 250);
-    --foreground-muted: oklch(55% 0.008 250);
-    --foreground-subtle: oklch(65% 0.005 250);
+    --foreground-muted: oklch(45% 0.01 250);
+    --foreground-subtle: oklch(60% 0.005 250);
     --border: oklch(92% 0.006 220);
     --border-strong: oklch(85% 0.006 220);
 
-    /* Brand colors (teal pour le design) */
-    --brand-50: oklch(97.5% 0.02 190);
-    --brand-100: oklch(94.8% 0.04 190);
-    --brand-200: oklch(87.5% 0.09 190);
-    --brand-300: oklch(77.8% 0.15 190);
-    --brand-400: oklch(68.5% 0.20 190);
-    --brand-500: oklch(62.5% 0.22 190);
-    --brand-600: oklch(53.2% 0.19 190);
+    /* Indigo (même que CV ATS) */
+    --brand-50:  oklch(97% 0.02 274);
+    --brand-100: oklch(93% 0.045 274);
+    --brand-500: oklch(53% 0.22 274);
+    --brand-600: oklch(46% 0.21 274);
+    --brand-700: oklch(38% 0.17 274);
 
-    /* Map to Tailwind classes */
     --color-background: var(--background);
-    --color-background-secondary: var(--background-secondary);
     --color-foreground: var(--foreground);
-    --color-foreground-secondary: var(--foreground-secondary);
     --color-foreground-muted: var(--foreground-muted);
     --color-border: var(--border);
-    --color-brand-600: var(--brand-600);
+    --color-brand-500: var(--brand-500);
 
+    background: var(--background-secondary);
     min-height: 100vh;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    color: var(--foreground);
+    font-family: 'Manrope Variable', Manrope, system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* Toolbar */
-  .cv-design-toolbar {
-    max-width: 5rem /* max-w-5xl */;
-    margin: 0 auto;
-    padding: 1.5rem 1.5rem 0;
+  .cv-toolbar {
+    max-width: 820px;
+    margin: 0 auto 16px;
     display: flex;
     justify-content: flex-end;
   }
-
-  .cv-design-print-btn {
+  .cv-print-btn {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: oklch(100% 0 0);
-    background: var(--brand-600);
+    background: var(--brand-500);
     border: none;
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
-    box-shadow: 0 1px 2px oklch(62.5% 0.22 190 / 0.12);
+    box-shadow: 0 1px 2px oklch(20% 0.05 274 / 0.08);
+  }
+  .cv-print-btn:hover { background: var(--brand-600); }
+  .cv-print-btn:active { transform: translateY(1px); }
+
+  /* La feuille — proportions A4 fidèles (1 page) */
+  .cv-sheet {
+    max-width: 820px;
+    margin: 0 auto;
+    background: var(--background);
+    padding: 30px 42px 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 18px 50px oklch(20% 0.05 274 / 0.08), 0 4px 12px oklch(20% 0.05 274 / 0.04);
+    position: relative;
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+  .cv-sheet::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--brand-500);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
   }
 
-  .cv-design-print-btn:hover {
-    background: oklch(48% 0.17 190);
+  /* Header */
+  .cv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cv-identity { flex: 1; }
+  .cv-name {
+    font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--foreground);
+    margin: 0;
+  }
+  .cv-role {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-600);
+    margin: 5px 0 0;
+  }
+  .cv-summary {
+    font-size: 11.5px;
+    color: var(--foreground-muted);
+    margin: 7px 0 0;
+    max-width: 58ch;
+    line-height: 1.45;
   }
 
-  .cv-design-print-btn:active {
-    transform: translateY(1px);
+  /* Photo */
+  .cv-photo {
+    width: 92px;
+    height: 112px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--border);
+  }
+  .cv-photo-placeholder {
+    border: 1.5px dashed var(--border-strong);
+    background: var(--background-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px;
+    line-height: 1.4;
+    color: var(--foreground-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    gap: 2px;
+  }
+  .cv-photo-hint {
+    font-size: 7.5px;
+    margin-top: 3px;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    opacity: 0.7;
   }
 
-  /* Hide print button in print mode */
+  /* Contact strip */
+  .cv-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 18px;
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    padding: 10px 0 3px;
+    color: var(--foreground-muted);
+  }
+  .cv-contact a {
+    color: var(--foreground);
+    text-decoration: none;
+    border-bottom: 1px solid var(--brand-100);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .cv-contact a:hover {
+    border-color: var(--brand-500);
+    color: var(--brand-600);
+  }
+  .cv-label { color: var(--foreground-subtle); }
+  .cv-meta {
+    font-size: 10.5px;
+    color: var(--foreground-muted);
+    padding-top: 5px;
+    margin: 0;
+  }
+  .cv-meta strong { color: var(--foreground); font-weight: 600; }
+
+  /* Sections */
+  .cv-section { margin-top: 11px; }
+  .cv-section h2 {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 5px;
+  }
+  .cv-section h2::before {
+    content: "■";
+    color: var(--brand-500);
+    font-size: 11px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .cv-section h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Skills */
+  .cv-skill-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 4px 16px;
+    font-size: 11.5px;
+    padding: 2px 0;
+  }
+  .cv-skill-row + .cv-skill-row { border-top: 1px solid var(--brand-100); }
+  .cv-skill-cat {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--brand-600);
+    padding-top: 1px;
+  }
+  .cv-skill-val { color: var(--foreground); }
+
+  /* Projects */
+  .cv-project { margin-bottom: 7px; }
+  .cv-project:last-child { margin-bottom: 0; }
+  .cv-project-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cv-project-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  .cv-project-title a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--brand-500);
+    transition: color 0.2s;
+  }
+  .cv-project-title a:hover { color: var(--brand-600); }
+  .cv-stack {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9.5px;
+    color: var(--foreground-muted);
+  }
+  .cv-project-period {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--brand-600);
+    font-weight: 600;
+    margin-top: 2px;
+    letter-spacing: 0.02em;
+  }
+  .cv-project-desc {
+    font-size: 11px;
+    color: var(--foreground-muted);
+    margin: 2px 0 0;
+    line-height: 1.45;
+  }
+
+  /* Experience */
+  .cv-experience { margin-bottom: 4px; }
+  .cv-job-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cv-job-org { font-size: 12.5px; font-weight: 600; color: var(--foreground); }
+  .cv-job-role { font-size: 11.5px; color: var(--brand-600); font-weight: 500; }
+  .cv-job-date {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9.5px;
+    color: var(--foreground-muted);
+    text-align: right;
+    max-width: 60%;
+    line-height: 1.4;
+  }
+  ul.cv-tasks {
+    list-style: none;
+    margin: 4px 0 4px;
+    padding: 0;
+  }
+  ul.cv-tasks li {
+    position: relative;
+    padding-left: 14px;
+    font-size: 11px;
+    color: var(--foreground-muted);
+    margin-bottom: 0;
+    line-height: 1.35;
+  }
+  ul.cv-tasks li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--brand-500);
+    font-size: 10px;
+  }
+  .cv-env {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9.5px;
+    color: var(--brand-700);
+    background: var(--brand-50);
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--brand-100);
+  }
+
+  /* Education / certs */
+  .cv-entry {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 10px;
+    font-size: 11.5px;
+    padding: 2px 0;
+  }
+  .cv-entry + .cv-entry { border-top: 1px solid var(--brand-100); }
+  .cv-entry-date {
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--brand-600);
+    font-weight: 600;
+  }
+  .cv-entry-body strong { color: var(--foreground); font-weight: 600; }
+  .cv-entry-body span { color: var(--foreground-muted); display: block; font-size: 10.5px; }
+
+  /* Interests */
+  .cv-interests { font-size: 11px; color: var(--foreground-muted); }
+  .cv-interests p { padding: 1px 0; margin: 0; }
+  .cv-interests strong {
+    color: var(--foreground);
+    font-weight: 600;
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+  }
+
+  /* PRINT / PDF */
+  @page { size: A4; margin: 0; }
+
   @media print {
-    .cv-design-toolbar {
-      display: none;
+    *,
+    *::before,
+    *::after {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
     }
-  }
-</style>
 
-<style>
-  [data-reveal] {
-    animation: revealUp 0.6s ease-out forwards;
-    opacity: 0;
-  }
+    html, body { background: #fff !important; }
 
-  @keyframes revealUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
+    .cv-design-page {
+      --brand-50: #eef2ff !important;
+      --brand-100: #e0e7ff !important;
+      --brand-500: #4f46e5 !important;
+      --brand-600: #4338ca !important;
+      --brand-700: #3730a3 !important;
+      --foreground: #1a2228 !important;
+      --foreground-muted: #5a6670 !important;
+      --foreground-subtle: #8a949c !important;
+      --border: #e3e8eb !important;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+
+    header[data-menu-id],
+    footer,
+    .cv-toolbar { display: none !important; }
+
+    [class*="z-50"]:not(.cv-sheet):not(.cv-sheet *) { display: none !important; }
+
+    .cv-design-page {
+      background: #fff !important;
+      padding: 0;
+      min-height: 0;
     }
+    .cv-sheet {
+      max-width: none;
+      width: 100%;
+      padding: 9mm 12mm 8mm;
+      margin: 0;
+      box-shadow: none !important;
+      border: none !important;
+      border-radius: 0 !important;
+    }
+    .cv-sheet::before { display: none; }
+    .cv-photo-placeholder { border-color: #bbb; }
+    .cv-design-page a { color: var(--foreground) !important; }
+
+    .cv-section h2::before,
+    ul.cv-tasks li::before { color: #4f46e5 !important; }
+
+    .cv-section,
+    .cv-project,
+    .cv-job-head,
+    .cv-entry,
+    ul.cv-tasks li { page-break-inside: avoid; }
   }
 </style>
