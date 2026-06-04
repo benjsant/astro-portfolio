@@ -44,6 +44,7 @@ coverage/
 
 # Personal roadmap / notes (ne pas pousser)
 IMPROVEMENTS.md
+SPOOFING_GUIDE.md
 
 # CV PDFs de test à la racine (les officiels restent dans public/)
 /CV*.pdf
