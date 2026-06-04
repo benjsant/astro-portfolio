@@ -1,6 +1,5 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import EmailLink from '@/components/patterns/EmailLink.astro';
 import { cv } from '@/data/cv';
 import { existsSync } from 'node:fs';
@@ -18,16 +17,16 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   title="CV Design"
   description={`Curriculum vitae de ${cv.header.name} — ${cv.header.role}. Téléchargeable en PDF.`}
 >
-  <main class="cv-design-page">
+  <main class="!bg-white !text-black min-h-screen">
     <!-- PDF Button -->
-    <div class="max-w-5xl mx-auto px-6 pt-20 pb-6 flex justify-end">
-      <button type="button" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm transition-colors" onclick="window.print()">
-        ↓ Télécharger en PDF
+    <div class="max-w-4xl mx-auto px-4 pt-16 pb-4 flex justify-end no-print">
+      <button type="button" class="px-3 py-1 text-xs rounded bg-blue-600 text-white font-semibold transition-colors" onclick="window.print()">
+        ↓ PDF
       </button>
     </div>
 
     <!-- CV Container -->
-    <div class="max-w-5xl mx-auto px-6 pb-12">
+    <div class="max-w-4xl mx-auto px-4 pb-8">
       <article class="bg-background rounded-lg border border-border p-8 md:p-12 shadow-sm">
         <!-- HEADER -->
         <header class="flex flex-col md:flex-row gap-8 md:gap-12 pb-8 border-b border-border mb-8">
@@ -212,188 +211,128 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 </PageLayout>
 
 <style is:global>
-  .cv-design-page {
-    color-scheme: light;
-    background: var(--color-background);
-    color: var(--color-foreground);
+  /* Force light mode on page */
+  main {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  /* Hide dark mode stuff */
+  .dark, [data-theme] {
+    color-scheme: light !important;
+  }
+
+  .no-print {
+    print-color-adjust: exact !important;
   }
 
   @page {
     size: A4;
-    margin: 0;
+    margin: 10mm;
   }
 
   @media print {
     * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
-      margin: 0 !important;
-      padding: 0 !important;
     }
 
-    html, body {
+    html, body, main {
       background: white !important;
+      color: black !important;
+      margin: 0 !important;
+      padding: 0 !important;
       width: 100%;
-      height: 100%;
     }
 
-    .cv-design-page {
-      background: white !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-
-    main {
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-
-    /* Hide print button */
-    div:has(> button) {
+    .no-print {
       display: none !important;
     }
 
-    button {
+    header[data-menu-id], footer {
       display: none !important;
     }
 
-    /* Compact layout */
+    /* Super compact */
     article {
+      padding: 0 !important;
       border: none !important;
       box-shadow: none !important;
-      padding: 12mm 14mm !important;
-      margin: 0 !important;
-      background: white !important;
-      max-width: 100% !important;
-      border-radius: 0 !important;
     }
 
-    /* Header compact */
     header {
-      padding-bottom: 6mm !important;
-      margin-bottom: 4mm !important;
-      gap: 6mm !important;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #ddd;
     }
 
     h1 {
-      font-size: 24px !important;
-      margin: 0 0 2mm 0 !important;
-      line-height: 1.2 !important;
+      font-size: 18px;
+      margin: 0 0 2px 0;
+      line-height: 1.1;
     }
 
     h2 {
-      font-size: 13px !important;
-      margin: 0 0 3mm 0 !important;
+      font-size: 11px;
+      margin: 4px 0 2px 0;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    h3 {
-      font-size: 11px !important;
-      margin: 0 0 1mm 0 !important;
+    h3, p, li {
+      margin: 0;
+      font-size: 9px;
+      line-height: 1.2;
     }
 
-    p {
-      margin: 0 0 2mm 0 !important;
-      font-size: 10px !important;
-      line-height: 1.3 !important;
-    }
+    p { margin-bottom: 1px; }
+    li { margin-bottom: 1px; margin-left: 12px; }
 
-    .text-xl {
-      font-size: 12px !important;
-    }
-
-    .text-lg {
-      font-size: 11px !important;
-    }
-
-    .text-sm {
-      font-size: 9px !important;
-    }
-
-    .text-xs {
-      font-size: 8px !important;
-    }
-
-    /* Reduce spacing */
     section {
-      margin-bottom: 4mm !important;
-      padding-bottom: 4mm !important;
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+      page-break-inside: avoid;
     }
 
-    .mb-8 {
-      margin-bottom: 3mm !important;
-    }
-
-    .pb-8 {
-      padding-bottom: 3mm !important;
-    }
-
-    .gap-8 {
-      gap: 4mm !important;
-    }
-
-    .gap-6 {
-      gap: 3mm !important;
-    }
-
-    .gap-4 {
-      gap: 2mm !important;
-    }
-
-    .space-y-6 > * {
-      margin-bottom: 3mm !important;
-    }
-
-    .space-y-3 > * {
-      margin-bottom: 2mm !important;
-    }
-
-    /* Cards compact */
-    .p-4 {
-      padding: 2mm !important;
-    }
-
-    .p-8 {
-      padding: 3mm !important;
-    }
-
-    .md\:p-12 {
-      padding: 3mm !important;
-    }
-
-    /* Photo smaller */
     img {
-      width: 28mm !important;
-      height: 34mm !important;
+      width: 24mm;
+      height: 30mm;
+      object-fit: cover;
     }
 
-    /* Grid adjust */
-    .md\:grid-cols-2 {
-      grid-template-columns: 1fr 1fr !important;
-      gap: 2mm !important;
+    div, span {
+      margin: 0;
+      padding: 0;
     }
 
-    .md\:flex-row {
-      flex-direction: column !important;
+    .space-y-3 > *, .space-y-6 > * {
+      margin-bottom: 1px !important;
     }
 
-    /* Border thinning */
+    .gap-4, .gap-6, .gap-8 {
+      gap: 2px !important;
+    }
+
+    .mb-8, .pb-8 {
+      margin-bottom: 2px !important;
+      padding-bottom: 2px !important;
+    }
+
+    .p-4, .p-8, .md\:p-12 {
+      padding: 2px !important;
+    }
+
     .border {
-      border-width: 0.5px !important;
+      border-width: 0.5px;
+      border-color: #ddd;
     }
 
-    /* Prevent page breaks mid-content */
-    section {
-      page-break-inside: avoid !important;
-    }
-
-    div[class*="space-y"] > div {
-      page-break-inside: avoid !important;
-    }
-
-    /* Footer & header removal */
-    header[data-menu-id],
-    footer {
-      display: none !important;
+    /* Remove all background colors except white */
+    .bg-background-secondary, .bg-brand-100\\/50 {
+      background: white !important;
     }
   }
 </style>
