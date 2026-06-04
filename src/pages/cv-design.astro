@@ -1,5 +1,6 @@
 ---
-import PageLayout from '@/layouts/PageLayout.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
 import EmailLink from '@/components/patterns/EmailLink.astro';
 import { cv } from '@/data/cv';
 import { existsSync } from 'node:fs';
@@ -13,569 +14,551 @@ function asEmailParts(value: string): { user: string; domain: string } | null {
 const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 ---
 
-<PageLayout
-  title="CV Design — Benjamin Santrisse"
+<BaseLayout
+  title="CV — Benjamin Santrisse"
   description={`Curriculum vitae de ${cv.header.name} — ${cv.header.role}. Téléchargeable en PDF.`}
 >
-  <div class="cv-light-wrapper">
+  <Header slot="header" position="fixed" shape="bar" variant="solid" size="lg" showCta={false} />
+
+  <main class="cvd-page pt-20 pb-12">
+
     <!-- Toolbar -->
-    <div class="cv-toolbar no-print">
-      <button type="button" class="cv-btn" onclick="window.print()">
+    <div class="cvd-toolbar">
+      <button type="button" class="cvd-print-btn" onclick="window.print()">
         ↓ Télécharger en PDF
       </button>
     </div>
 
-    <!-- PAGE 1 -->
-    <div class="cv-page">
-      <article class="cv-sheet">
+    <!-- Feuille -->
+    <article class="cvd-sheet">
 
-        <!-- HEADER -->
-        <header class="cv-header">
-          <div class="cv-identity">
-            <h1 class="cv-name">{cv.header.name}</h1>
-            <p class="cv-role">{cv.header.role}</p>
-            <p class="cv-summary">{cv.header.summary}</p>
+      <!-- ── HEADER ─────────────────────────────────────────── -->
+      <header class="cvd-header">
+        <div class="cvd-identity">
+          <h1 class="cvd-name">{cv.header.name}</h1>
+          <p class="cvd-role">{cv.header.role}</p>
+          <p class="cvd-summary">{cv.header.summary}</p>
 
-            <!-- CONTACT inline -->
-            <div class="cv-contact">
-              {cv.contact.map((item) => {
-                const emailParts = asEmailParts(item.value);
-                return (
-                  <span class="cv-contact-item">
-                    <span class="cv-label">{item.label} :</span>{' '}
-                    {emailParts ? (
-                      <EmailLink user={emailParts.user} domain={emailParts.domain} />
-                    ) : item.href ? (
-                      <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
-                        {item.value}
-                      </a>
-                    ) : (
-                      item.value
-                    )}
-                  </span>
-                );
-              })}
-            </div>
-            <p class="cv-meta" set:html={cv.meta} />
+          <div class="cvd-contact">
+            {cv.contact.map((item) => {
+              const ep = asEmailParts(item.value);
+              return (
+                <span class="cvd-contact-item">
+                  <span class="cvd-clabel">{item.label}&nbsp;:</span>{' '}
+                  {ep
+                    ? <EmailLink user={ep.user} domain={ep.domain} />
+                    : item.href
+                      ? <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{item.value}</a>
+                      : item.value}
+                </span>
+              );
+            })}
           </div>
-          {photoExists && (
-            <img class="cv-photo" src="/photo.jpg" alt={cv.header.name} />
-          )}
-        </header>
+          <p class="cvd-meta" set:html={cv.meta} />
+        </div>
 
-        <!-- COMPÉTENCES — grille 2 colonnes -->
-        <section class="cv-section">
-          <h2 class="cv-section-title">Compétences</h2>
-          <div class="cv-skills-grid">
-            {cv.skills.map((skill) => (
-              <div class="cv-skill-card">
-                <div class="cv-skill-cat">{skill.category}</div>
-                <div class="cv-skill-val">{skill.value}</div>
-              </div>
-            ))}
-          </div>
-        </section>
+        {photoExists && (
+          <img class="cvd-photo" src="/photo.jpg" alt={cv.header.name} width="86" height="105" />
+        )}
+      </header>
 
-        <!-- PROJETS -->
-        <section class="cv-section">
-          <h2 class="cv-section-title">Projets réalisés</h2>
-          <div class="cv-projects">
-            {cv.projects.map((project) => (
-              <div class="cv-project-card">
-                <div class="cv-project-top">
-                  <div class="cv-project-title">
-                    <a href={project.repo} target="_blank" rel="noopener noreferrer">
-                      {project.title}
-                    </a>
-                  </div>
-                  <div class="cv-stack">{project.stack}</div>
-                </div>
-                {project.period && <div class="cv-period">{project.period}</div>}
-                <p class="cv-project-desc">{project.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-      </article>
-    </div>
-
-    <!-- PAGE 2 -->
-    <div class="cv-page">
-      <article class="cv-sheet">
-
-        <!-- EXPÉRIENCES -->
-        <section class="cv-section">
-          <h2 class="cv-section-title">Expériences professionnelles</h2>
-          {cv.experiences.map((exp) => (
-            <div class="cv-exp-card">
-              <div class="cv-exp-head">
-                <div>
-                  <div class="cv-exp-org">{exp.org}</div>
-                  <div class="cv-exp-role">{exp.role}</div>
-                </div>
-                <div class="cv-exp-date">{exp.date}</div>
-              </div>
-              <ul class="cv-tasks">
-                {exp.tasks.map((t) => <li>{t}</li>)}
-              </ul>
-              <div class="cv-tags">
-                {exp.stack.split(' · ').map((tech) => (
-                  <span class="cv-tag">{tech}</span>
-                ))}
-              </div>
+      <!-- ── COMPÉTENCES ───────────────────────────────────── -->
+      <section class="cvd-section">
+        <h2>Compétences</h2>
+        <div class="cvd-skills">
+          {cv.skills.map((s) => (
+            <div class="cvd-skill">
+              <span class="cvd-scat">{s.category}</span>
+              <span class="cvd-sval">{s.value}</span>
             </div>
           ))}
-        </section>
+        </div>
+      </section>
 
-        <!-- FORMATIONS -->
-        <section class="cv-section">
-          <h2 class="cv-section-title">Formations</h2>
-          <div class="cv-entries">
-            {cv.education.map((entry) => (
-              <div class="cv-entry">
-                <div class="cv-entry-date">{entry.date}</div>
-                <div class="cv-entry-body">
-                  <strong>{entry.title}</strong>
-                  <span>{entry.school}</span>
-                </div>
+      <!-- ── PROJETS ───────────────────────────────────────── -->
+      <section class="cvd-section">
+        <h2>Projets réalisés</h2>
+        {cv.projects.map((p) => (
+          <div class="cvd-project">
+            <div class="cvd-prow">
+              <span class="cvd-ptitle">
+                <a href={p.repo} target="_blank" rel="noopener noreferrer">{p.title}</a>
+              </span>
+              <span class="cvd-pstack">{p.stack}</span>
+            </div>
+            {p.period && <div class="cvd-pperiod">{p.period}</div>}
+            <p class="cvd-pdesc">{p.description}</p>
+          </div>
+        ))}
+      </section>
+
+      <!-- ── EXPÉRIENCES ───────────────────────────────────── -->
+      <section class="cvd-section">
+        <h2>Expériences professionnelles</h2>
+        {cv.experiences.map((e) => (
+          <div class="cvd-exp">
+            <div class="cvd-erow">
+              <div>
+                <div class="cvd-eorg">{e.org}</div>
+                <div class="cvd-erole">{e.role}</div>
               </div>
-            ))}
+              <div class="cvd-edate">{e.date}</div>
+            </div>
+            <ul class="cvd-tasks">
+              {e.tasks.map((t) => <li>{t}</li>)}
+            </ul>
+            <div class="cvd-tags">
+              {e.stack.split(' · ').map((tech) => <span class="cvd-tag">{tech}</span>)}
+            </div>
           </div>
-        </section>
+        ))}
+      </section>
 
-        <!-- CERTIFICATIONS -->
-        <section class="cv-section">
-          <h2 class="cv-section-title">Certifications</h2>
-          <div class="cv-entries">
-            {cv.certifications.map((c) => (
-              <div class="cv-entry">
-                <div class="cv-entry-date">{c.date}</div>
-                <div class="cv-entry-body">
-                  <strong>{c.title}</strong>
-                </div>
-              </div>
-            ))}
+      <!-- ── FORMATIONS ────────────────────────────────────── -->
+      <section class="cvd-section">
+        <h2>Formations</h2>
+        {cv.education.map((ed) => (
+          <div class="cvd-entry">
+            <span class="cvd-edate2">{ed.date}</span>
+            <div class="cvd-ebody">
+              <strong>{ed.title}</strong>
+              <span>{ed.school}</span>
+            </div>
           </div>
-        </section>
+        ))}
+      </section>
 
-        <!-- INTÉRÊTS -->
-        <section class="cv-section">
-          <h2 class="cv-section-title">Centres d'intérêt</h2>
-          <div class="cv-interests">
-            {cv.interests.map((i) => (
-              <p><strong>{i.title}</strong> &nbsp;—&nbsp; {i.description}</p>
-            ))}
+      <!-- ── CERTIFICATIONS ────────────────────────────────── -->
+      <section class="cvd-section">
+        <h2>Certifications</h2>
+        {cv.certifications.map((c) => (
+          <div class="cvd-entry">
+            <span class="cvd-edate2">{c.date}</span>
+            <div class="cvd-ebody"><strong>{c.title}</strong></div>
           </div>
-        </section>
+        ))}
+      </section>
 
-      </article>
-    </div>
+      <!-- ── INTÉRÊTS ──────────────────────────────────────── -->
+      <section class="cvd-section">
+        <h2>Centres d'intérêt</h2>
+        <div class="cvd-interests">
+          {cv.interests.map((i) => (
+            <p><strong>{i.title}</strong>&nbsp;—&nbsp;{i.description}</p>
+          ))}
+        </div>
+      </section>
 
-  </div>
-</PageLayout>
+    </article>
+  </main>
+</BaseLayout>
 
 <style is:global>
-  /* ─── Force light mode sur toute la page ─── */
-  .cv-light-wrapper {
-    background: oklch(97.5% 0.010 190);
-    min-height: 100vh;
-    padding-top: 5rem;
-    padding-bottom: 3rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    color-scheme: light;
+
+/* ══════════════════════════════════════════════════════════════
+   CV DESIGN — thème Astro teal, mode clair fixé
+   Même philosophie que /cv (1 feuille, proportions A4)
+   mais avec les couleurs et typographie du site.
+══════════════════════════════════════════════════════════════ */
+
+/* Tokens teal light-mode injectés sur .cvd-page
+   (isolés de l'éventuel dark-mode du site)           */
+.cvd-page {
+  --bg:          oklch(100% 0 0);
+  --bg-sec:      oklch(97.5% 0.010 190);
+  --fg:          oklch(19.4% 0 0);
+  --fg-sec:      oklch(32%   0 0);
+  --fg-muted:    oklch(38%   0 0);
+  --fg-subtle:   oklch(55%   0 0);
+  --border:      oklch(91.3% 0 0);
+  --border-soft: oklch(96.5% 0 0);
+
+  /* Teal du site */
+  --t50:  oklch(97.5% 0.02  190);
+  --t100: oklch(94.8% 0.04  190);
+  --t200: oklch(87.5% 0.09  190);
+  --t500: oklch(62.5% 0.22  190);
+  --t600: oklch(53.2% 0.19  190);
+  --t700: oklch(45.5% 0.16  190);
+
+  background: var(--bg-sec);
+  min-height: 100vh;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: var(--fg);
+  font-family: 'Manrope Variable', Manrope, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Toolbar ── */
+.cvd-toolbar {
+  max-width: 820px;
+  margin: 0 auto 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cvd-print-btn {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--t600);
+  border: none;
+  padding: 9px 18px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+  box-shadow: 0 1px 3px oklch(62.5% 0.22 190 / .18);
+}
+.cvd-print-btn:hover  { background: var(--t700); }
+.cvd-print-btn:active { transform: translateY(1px); }
+
+/* ── Feuille ── */
+.cvd-sheet {
+  max-width: 820px;
+  margin: 0 auto;
+  background: var(--bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow:
+    0 1px 2px oklch(62.5% 0.22 190 / .05),
+    0 8px 32px oklch(19.4% 0 0 / .06);
+  padding: 28px 40px 22px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent bar teal en haut */
+.cvd-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--t500), var(--t200));
+  border-radius: 10px 10px 0 0;
+}
+
+/* ── Header ── */
+.cvd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid var(--t100);
+  margin-bottom: 12px;
+}
+
+.cvd-identity { flex: 1; }
+
+.cvd-name {
+  font-family: 'Outfit Variable', Outfit, system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--fg);
+  margin: 0 0 4px;
+}
+
+.cvd-role {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--t600);
+  margin: 0 0 5px;
+  letter-spacing: 0.01em;
+}
+
+.cvd-summary {
+  font-size: 11px;
+  color: var(--fg-muted);
+  max-width: 56ch;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+/* Contact en ligne */
+.cvd-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--fg-muted);
+  margin-bottom: 4px;
+}
+.cvd-contact-item { display: flex; align-items: baseline; gap: 3px; }
+.cvd-clabel { color: var(--fg-subtle); }
+.cvd-contact a {
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--t200);
+  transition: color .15s, border-color .15s;
+}
+.cvd-contact a:hover { color: var(--t600); border-color: var(--t500); }
+
+.cvd-meta {
+  font-size: 10px;
+  color: var(--fg-muted);
+  margin: 0;
+}
+.cvd-meta strong { color: var(--fg); font-weight: 600; }
+
+/* Photo */
+.cvd-photo {
+  width: 86px;
+  height: 105px;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1.5px solid var(--t100);
+  flex-shrink: 0;
+}
+
+/* ── Section titles ── */
+.cvd-section { margin-top: 11px; }
+
+.cvd-section h2 {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+}
+
+.cvd-section h2::before {
+  content: "■";
+  color: var(--t500);
+  font-size: 10px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.cvd-section h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--t200), var(--border));
+}
+
+/* ── Compétences — 2 colonnes ── */
+.cvd-skills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 28px;
+}
+
+.cvd-skill {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 6px;
+  font-size: 11px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--t50);
+}
+
+.cvd-scat {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--t600);
+  padding-top: 1px;
+}
+
+.cvd-sval { color: var(--fg-sec); }
+
+/* ── Projets ── */
+.cvd-project { margin-bottom: 6px; }
+.cvd-project:last-child { margin-bottom: 0; }
+
+.cvd-prow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cvd-ptitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fg);
+}
+.cvd-ptitle a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1.5px solid var(--t500);
+  transition: color .15s;
+}
+.cvd-ptitle a:hover { color: var(--t600); }
+
+.cvd-pstack {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.cvd-pperiod {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--t600);
+  margin: 1px 0;
+}
+
+.cvd-pdesc {
+  font-size: 10.5px;
+  color: var(--fg-muted);
+  line-height: 1.4;
+  margin: 2px 0 0;
+}
+
+/* ── Expériences ── */
+.cvd-exp { margin-bottom: 5px; }
+
+.cvd-erow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cvd-eorg  { font-size: 12px; font-weight: 700; color: var(--fg); }
+.cvd-erole { font-size: 11px; font-weight: 600; color: var(--t600); }
+.cvd-edate {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  color: var(--fg-muted);
+  text-align: right;
+}
+
+.cvd-tasks {
+  list-style: none;
+  padding: 0;
+  margin: 3px 0;
+}
+.cvd-tasks li {
+  position: relative;
+  padding-left: 13px;
+  font-size: 10.5px;
+  color: var(--fg-muted);
+  line-height: 1.35;
+  margin-bottom: 1px;
+}
+.cvd-tasks li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: var(--t500);
+  font-size: 9px;
+  top: 0.15em;
+}
+
+.cvd-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+.cvd-tag {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--t700);
+  background: var(--t50);
+  border: 1px solid var(--t100);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ── Formations / Certifications ── */
+.cvd-entry {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 11px;
+  border-bottom: 1px solid var(--t50);
+}
+.cvd-entry:last-child { border-bottom: none; }
+
+.cvd-edate2 {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--t600);
+  padding-top: 1px;
+}
+
+.cvd-ebody strong { display: block; color: var(--fg); font-weight: 600; }
+.cvd-ebody span   { color: var(--fg-muted); font-size: 10.5px; }
+
+/* ── Intérêts ── */
+.cvd-interests { font-size: 10.5px; color: var(--fg-muted); }
+.cvd-interests p { margin: 1px 0; }
+.cvd-interests strong {
+  color: var(--fg);
+  font-weight: 600;
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+}
+
+/* ════════════════════════════════════════════════════════
+   PRINT — 1 page A4
+════════════════════════════════════════════════════════ */
+@page { size: A4; margin: 0; }
+
+@media print {
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  /* ─── Toolbar ─── */
-  .cv-toolbar {
-    max-width: 820px;
-    margin: 0 auto 1rem;
-    display: flex;
-    justify-content: flex-end;
+  html, body { background: #fff !important; }
+
+  /* Hex fallbacks pour teal en print */
+  .cvd-page {
+    --t50:  #f0fafb !important;
+    --t100: #d6f1f4 !important;
+    --t200: #a8e0e8 !important;
+    --t500: #0891b2 !important;
+    --t600: #0e7490 !important;
+    --t700: #155e75 !important;
+    --fg:   #111827 !important;
+    --fg-sec:   #374151 !important;
+    --fg-muted: #4b5563 !important;
+    --fg-subtle:#9ca3af !important;
+    --border:   #e5e7eb !important;
+    --border-soft: #f3f4f6 !important;
+    --bg-sec:   #f8fafc !important;
   }
 
-  .cv-btn {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: white;
-    background: oklch(53% 0.22 274);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  .cv-btn:hover { background: oklch(46% 0.21 274); }
-  .cv-btn:active { transform: translateY(1px); }
+  header[data-menu-id], footer, .cvd-toolbar { display: none !important; }
 
-  /* ─── Page (feuille blanche sur fond gris) ─── */
-  .cv-page {
-    max-width: 820px;
-    margin: 0 auto 2.5rem;
-  }
-
-  .cv-sheet {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid oklch(92% 0.006 220);
-    box-shadow:
-      0 1px 3px oklch(20% 0.01 250 / 0.06),
-      0 8px 32px oklch(20% 0.01 250 / 0.08),
-      0 0 0 1px oklch(92% 0.006 220 / 0.5);
-    padding: 2.5rem 3rem;
-    color: oklch(20% 0.01 250);
-    font-family: 'Manrope Variable', Manrope, system-ui, sans-serif;
-    font-size: 13px;
-    line-height: 1.55;
-  }
-
-  /* ─── Header ─── */
-  .cv-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid oklch(92% 0.006 220);
-    margin-bottom: 1.5rem;
-  }
-
-  .cv-identity { flex: 1; }
-
-  .cv-name {
-    font-family: 'Outfit Variable', Outfit, system-ui, sans-serif;
-    font-size: 2.25rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: oklch(20% 0.01 250);
-    margin: 0 0 0.25rem;
-    line-height: 1.1;
-  }
-
-  .cv-role {
-    font-size: 1rem;
-    font-weight: 600;
-    color: oklch(46% 0.21 274);
-    margin: 0 0 0.5rem;
-  }
-
-  .cv-summary {
-    font-size: 0.8125rem;
-    color: oklch(45% 0.01 250);
-    max-width: 55ch;
-    line-height: 1.5;
-    margin: 0 0 0.75rem;
-  }
-
-  .cv-photo {
-    width: 90px;
-    height: 110px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid oklch(92% 0.006 220);
-    flex-shrink: 0;
-  }
-
-  /* ─── Contact ─── */
-  .cv-contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px 1rem;
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.7rem;
-    color: oklch(45% 0.01 250);
-    margin-bottom: 0.3rem;
-  }
-
-  .cv-contact-item { display: flex; gap: 0.25rem; align-items: baseline; }
-  .cv-label { color: oklch(60% 0.005 250); }
-
-  .cv-contact a {
-    color: oklch(46% 0.21 274);
-    text-decoration: none;
-    border-bottom: 1px solid oklch(93% 0.045 274);
-  }
-  .cv-contact a:hover { border-color: oklch(46% 0.21 274); }
-
-  .cv-meta {
-    font-size: 0.7rem;
-    color: oklch(45% 0.01 250);
-    margin: 0;
-  }
-  .cv-meta strong { color: oklch(20% 0.01 250); font-weight: 600; }
-
-  /* ─── Sections ─── */
-  .cv-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .cv-section-title {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: oklch(20% 0.01 250);
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    margin: 0 0 0.875rem;
-  }
-
-  .cv-section-title::before {
-    content: "■";
-    color: oklch(53% 0.22 274);
-    font-size: 0.625rem;
-  }
-
-  .cv-section-title::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: oklch(92% 0.006 220);
-  }
-
-  /* ─── Skills — 2 colonnes ─── */
-  .cv-skills-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 2rem;
-  }
-
-  .cv-skill-card {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid oklch(97% 0.02 274);
-  }
-
-  .cv-skill-cat {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: oklch(46% 0.21 274);
-    margin-bottom: 0.125rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .cv-skill-val {
-    font-size: 0.75rem;
-    color: oklch(30% 0.01 250);
-    line-height: 1.4;
-  }
-
-  /* ─── Projets ─── */
-  .cv-projects { display: flex; flex-direction: column; gap: 0.875rem; }
-
-  .cv-project-card {
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    border: 1px solid oklch(92% 0.006 220);
-    background: oklch(99% 0.005 220);
-  }
-
-  .cv-project-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.2rem;
-  }
-
-  .cv-project-title {
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: oklch(20% 0.01 250);
-  }
-
-  .cv-project-title a {
-    color: oklch(46% 0.21 274);
-    text-decoration: none;
-    border-bottom: 1.5px solid oklch(53% 0.22 274);
-  }
-  .cv-project-title a:hover { color: oklch(38% 0.17 274); }
-
-  .cv-stack {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.6rem;
-    color: oklch(55% 0.008 250);
-  }
-
-  .cv-period {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: oklch(46% 0.21 274);
-    margin-bottom: 0.2rem;
-  }
-
-  .cv-project-desc {
-    font-size: 0.75rem;
-    color: oklch(40% 0.01 250);
-    line-height: 1.45;
-    margin: 0;
-  }
-
-  /* ─── Expériences ─── */
-  .cv-exp-card {
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid oklch(94% 0.006 220);
-  }
-  .cv-exp-card:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-  .cv-exp-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .cv-exp-org {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: oklch(20% 0.01 250);
-  }
-
-  .cv-exp-role {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: oklch(46% 0.21 274);
-  }
-
-  .cv-exp-date {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.65rem;
-    color: oklch(55% 0.008 250);
-    white-space: nowrap;
-    padding-top: 0.15rem;
-  }
-
-  .cv-tasks {
-    list-style: none;
+  .cvd-page {
+    background: #f8fafc !important;
     padding: 0;
-    margin: 0.375rem 0 0.5rem;
+    min-height: 0;
   }
 
-  .cv-tasks li {
-    position: relative;
-    padding-left: 1rem;
-    font-size: 0.8rem;
-    color: oklch(40% 0.01 250);
-    line-height: 1.45;
-    margin-bottom: 0.1rem;
-  }
-
-  .cv-tasks li::before {
-    content: "▸";
-    position: absolute;
-    left: 0;
-    color: oklch(53% 0.22 274);
-    font-size: 0.65rem;
-    top: 0.15rem;
-  }
-
-  .cv-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-
-  .cv-tag {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.6rem;
-    font-weight: 600;
-    color: oklch(38% 0.17 274);
-    background: oklch(97% 0.02 274);
-    border: 1px solid oklch(93% 0.045 274);
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-  }
-
-  /* ─── Formations / Certifications ─── */
-  .cv-entries { display: flex; flex-direction: column; gap: 0.375rem; }
-
-  .cv-entry {
-    display: grid;
-    grid-template-columns: 5.5rem 1fr;
-    gap: 1rem;
-    font-size: 0.8125rem;
-    padding-bottom: 0.375rem;
-    border-bottom: 1px solid oklch(97% 0.02 274);
-  }
-  .cv-entry:last-child { border-bottom: none; padding-bottom: 0; }
-
-  .cv-entry-date {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: oklch(46% 0.21 274);
-    padding-top: 0.1rem;
-  }
-
-  .cv-entry-body strong { display: block; color: oklch(20% 0.01 250); font-weight: 600; }
-  .cv-entry-body span { color: oklch(45% 0.01 250); font-size: 0.75rem; }
-
-  /* ─── Intérêts ─── */
-  .cv-interests { display: flex; flex-direction: column; gap: 0.2rem; }
-
-  .cv-interests p {
-    font-size: 0.8125rem;
-    color: oklch(40% 0.01 250);
+  .cvd-sheet {
+    max-width: none;
+    width: 100%;
     margin: 0;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 8mm 11mm 7mm !important;
   }
 
-  .cv-interests strong {
-    font-weight: 600;
-    color: oklch(20% 0.01 250);
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.7rem;
-  }
+  .cvd-sheet::before { display: none; }
 
-  /* ─── Print ─── */
-  @page { size: A4; margin: 0; }
-
-  @media print {
-    *, *::before, *::after {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-
-    html, body { background: white !important; }
-
-    .no-print { display: none !important; }
-
-    header[data-menu-id], footer { display: none !important; }
-
-    .cv-light-wrapper {
-      background: oklch(97.5% 0.010 190) !important;
-      padding: 0 !important;
-    }
-
-    .cv-page {
-      max-width: 100%;
-      margin: 0;
-    }
-
-    .cv-sheet {
-      border-radius: 0 !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 12mm 14mm !important;
-      page-break-after: always;
-    }
-
-    .cv-sheet:last-child { page-break-after: auto; }
-
-    /* Hex fallback pour indigo en print */
-    .cv-light-wrapper {
-      --cv-brand: #4338ca;
-      --cv-brand-light: #4f46e5;
-    }
-  }
+  .cvd-section, .cvd-project, .cvd-exp,
+  .cvd-entry, .cvd-tasks li { page-break-inside: avoid; }
+}
 </style>
