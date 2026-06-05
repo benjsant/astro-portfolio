@@ -162,7 +162,7 @@ export const cv: CVData = {
     {
       date: '2018–19',
       title: 'Licence Pro SIO, option Développement',
-      school: 'IUT de Valenciennes (UVHC)',
+      school: 'ISTV de Valenciennes (UVHC)',
     },
     {
       date: '2015–17',
