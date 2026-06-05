@@ -70,7 +70,8 @@ export interface CVData {
     summary: string;
   };
   contact: ContactItem[];
-  meta: string;
+  /** Infos complémentaires (permis, mobilité…) — affichées comme les contacts. */
+  details: { label: string; value: string }[];
   skills: SkillRow[];
   projects: Project[];
   experiences: Experience[];
@@ -99,7 +100,10 @@ export const cv: CVData = {
     { label: 'GitHub', value: 'benjsant', href: 'https://github.com/benjsant' },
   ],
 
-  meta: '<strong>Permis B + véhicule</strong> (mobilité départementale) &nbsp;·&nbsp; <strong>Mobilité :</strong> Métropole Valenciennoise + Lilloise',
+  details: [
+    { label: 'Permis', value: 'B + véhicule (mobilité départementale)' },
+    { label: 'Mobilité', value: 'Métropole Valenciennoise + Lilloise' },
+  ],
 
   skills: [
     { category: 'IA & Données', value: 'Machine Learning, MLOps, Pandas, NumPy, Scikit-learn, MLflow, XGBoost' },

@@ -102,7 +102,14 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
           );
         })}
       </div>
-      <p class="cv-meta" set:html={cv.meta} />
+      <p class="cv-meta">
+        {cv.details.map((d, i) => (
+          <Fragment>
+            {i > 0 ? <span>&nbsp;·&nbsp;</span> : null}
+            <strong>{d.label} :</strong> {d.value}
+          </Fragment>
+        ))}
+      </p>
 
       <!-- COMPÉTENCES -->
       <section class="cv-section">
