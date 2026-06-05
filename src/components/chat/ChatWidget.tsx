@@ -5,11 +5,25 @@ interface Message {
   content: string;
 }
 
-const SUGGESTIONS = [
-  'Quels sont ses projets en IA ?',
-  'Quelle est sa stack technique ?',
-  'Quel est son parcours ?',
-  'Est-il disponible ?',
+// Raccourcis thématiques permanents (les "volets") — toujours visibles au-dessus
+// de l'input. Chaque clic envoie la question préparée associée.
+const TOPICS: { label: string; q: string }[] = [
+  { label: 'Projets', q: 'Quels sont ses projets en IA ?' },
+  { label: 'Stack', q: 'Quelle est sa stack technique ?' },
+  { label: 'Parcours', q: 'Quel est son parcours ?' },
+  { label: 'Dispo', q: 'Est-il disponible ?' },
+  { label: 'Contact', q: 'Comment le contacter ?' },
+];
+
+// Pool de relances — questions de suivi plus précises, proposées après chaque
+// réponse de l'assistant (on retire celles déjà posées).
+const FOLLOWUPS: string[] = [
+  "Parle-moi d'InfiniDex",
+  'Le projet Audiomancy en détail ?',
+  'Quels articles a-t-il écrits ?',
+  'Son expérience en MLOps ?',
+  'Comment il utilise le RAG ?',
+  'Quelles bases de données maîtrise-t-il ?',
 ];
 
 // ── Minimal safe markdown renderer ────────────────────────────────────────────
@@ -107,6 +121,12 @@ export default function ChatWidget() {
 
     setError(null);
     setInput('');
+
+    // Historique = échanges précédents (on retire le message d'accueil [0]).
+    const history = messages
+      .slice(1)
+      .map((m) => ({ role: m.role, content: m.content }));
+
     setMessages((prev) => [...prev, { role: 'user', content: trimmed }]);
     setLoading(true);
 
@@ -114,7 +134,7 @@ export default function ChatWidget() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed }),
+        body: JSON.stringify({ message: trimmed, history }),
       });
 
       const data = await res.json();
@@ -134,6 +154,15 @@ export default function ChatWidget() {
       setLoading(false);
     }
   }
+
+  // Relances : questions de suivi proposées après chaque réponse de l'assistant,
+  // en retirant celles déjà posées.
+  const askedSet = new Set(
+    messages.filter((m) => m.role === 'user').map((m) => m.content.trim())
+  );
+  const lastMsg = messages[messages.length - 1];
+  const showFollowups = !loading && messages.length > 1 && lastMsg?.role === 'assistant';
+  const followupChips = FOLLOWUPS.filter((q) => !askedSet.has(q)).slice(0, 3);
 
   return (
     <div className="fixed bottom-6 right-20 z-50 flex flex-col items-end gap-3 print:hidden">
@@ -189,23 +218,42 @@ export default function ChatWidget() {
               <p className="text-xs text-red-400 text-center">{error}</p>
             )}
 
+            {/* Relances après chaque réponse de l'assistant */}
+            {showFollowups && followupChips.length > 0 && (
+              <div className="flex flex-col gap-1.5 pt-1">
+                <span className="text-[10px] uppercase tracking-wider text-white/30">
+                  Pour aller plus loin
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {followupChips.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => sendMessage(s)}
+                      className="text-xs px-2.5 py-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/40 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Suggestions (only on first message) */}
-          {messages.length === 1 && (
-            <div className="px-4 pb-2 flex flex-wrap gap-2">
-              {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => sendMessage(s)}
-                  className="text-xs px-2.5 py-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/40 transition-colors"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Volets : raccourcis thématiques permanents */}
+          <div className="px-4 pt-2 pb-1 flex flex-wrap gap-1.5 border-t border-white/5">
+            {TOPICS.map((t) => (
+              <button
+                key={t.label}
+                onClick={() => sendMessage(t.q)}
+                disabled={loading}
+                className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
 
           {/* Rate limit indicator */}
           {remaining !== null && remaining <= 3 && (

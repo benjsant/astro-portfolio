@@ -98,10 +98,37 @@ const TOOLS = [
   },
 ];
 
+// ── Historique ────────────────────────────────────────────────────────────────
+type ChatTurn = { role: 'user' | 'assistant'; content: string };
+
+// Nettoie l'historique reçu du client : ne garde que des tours user/assistant
+// valides, borne le nombre de tours et la longueur de chaque message pour
+// éviter l'abus de tokens / injections de rôles arbitraires.
+function sanitizeHistory(raw: unknown): ChatTurn[] {
+  if (!Array.isArray(raw)) return [];
+  const turns: ChatTurn[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const role = (item as { role?: unknown }).role;
+    const content = (item as { content?: unknown }).content;
+    if ((role !== 'user' && role !== 'assistant') || typeof content !== 'string') continue;
+    const trimmed = content.trim();
+    if (!trimmed) continue;
+    turns.push({ role, content: trimmed.slice(0, 1000) });
+  }
+  // On garde au plus les 8 derniers tours (≈ 4 allers-retours).
+  return turns.slice(-8);
+}
+
 // ── Agent loop ────────────────────────────────────────────────────────────────
-async function runAgent(userMessage: string, apiKey: string): Promise<string> {
+async function runAgent(
+  userMessage: string,
+  history: ChatTurn[],
+  apiKey: string
+): Promise<string> {
   const messages: object[] = [
     { role: 'system', content: SYSTEM_PROMPT },
+    ...history,
     { role: 'user', content: userMessage },
   ];
 
@@ -233,7 +260,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  let body: { message?: string };
+  let body: { message?: string; history?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -251,8 +278,10 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  const history = sanitizeHistory(body.history);
+
   try {
-    const reply = await runAgent(userMessage, apiKey);
+    const reply = await runAgent(userMessage, history, apiKey);
     return new Response(JSON.stringify({ reply, remaining }), {
       status: 200,
       headers: {
