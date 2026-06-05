@@ -6,9 +6,10 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-  'Quels sont tes projets IA ?',
-  'Quelle est ta stack technique ?',
-  'Tu es disponible quand ?',
+  'Quels sont ses projets en IA ?',
+  'Quelle est sa stack technique ?',
+  'Quel est son parcours ?',
+  'Est-il disponible ?',
 ];
 
 // ── Minimal safe markdown renderer ────────────────────────────────────────────
