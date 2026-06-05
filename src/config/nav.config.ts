@@ -29,16 +29,18 @@ export const navItems: NavItem[] = [
   { label: 'Blog', href: '/blog', order: 1 },
   { label: 'Projets', href: '/projects', order: 2 },
   { label: 'CV', href: '/cv', order: 3 },
-  { label: 'À propos', href: '/about', order: 4 },
-  { label: 'Contact', href: '/contact', order: 5 },
+  { label: 'CV Design', href: '/cv-design', order: 4 },
+  { label: 'À propos', href: '/about', order: 5 },
+  { label: 'Contact', href: '/contact', order: 6 },
 ];
 
 export const footerNavItems: NavItem[] = [
   { label: 'Blog', href: '/blog', order: 1 },
   { label: 'Projets', href: '/projects', order: 2 },
   { label: 'CV', href: '/cv', order: 3 },
-  { label: 'À propos', href: '/about', order: 4 },
-  { label: 'Contact', href: '/contact', order: 5 },
+  { label: 'CV Design', href: '/cv-design', order: 4 },
+  { label: 'À propos', href: '/about', order: 5 },
+  { label: 'Contact', href: '/contact', order: 6 },
 ];
 
 export const legalLinks: LegalLink[] = [];
