@@ -132,7 +132,12 @@ async function runAgent(
     { role: 'user', content: userMessage },
   ];
 
-  for (let i = 0; i < 3; i++) {
+  const MAX_STEPS = 4;
+  for (let i = 0; i < MAX_STEPS; i++) {
+    // À la dernière passe, on interdit les appels d'outils (tool_choice: 'none')
+    // pour forcer le modèle à rédiger une réponse texte avec ce qu'il a déjà,
+    // au lieu de boucler sur l'outil et de tomber sur le fallback générique.
+    const isLastStep = i === MAX_STEPS - 1;
     const res = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
@@ -143,7 +148,7 @@ async function runAgent(
         model: 'deepseek-chat',
         messages,
         tools: TOOLS,
-        tool_choice: 'auto',
+        tool_choice: isLastStep ? 'none' : 'auto',
         max_tokens: 900,
         temperature: 0.7,
       }),
