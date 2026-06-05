@@ -50,7 +50,14 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
               );
             })}
           </div>
-          <p class="cvd-meta" set:html={cv.meta} />
+          <div class="cvd-pills cvd-pills-info">
+            {cv.details.map((d) => (
+              <span class="cvd-pill">
+                <span class="cvd-pill-label">{d.label}</span>
+                <span class="cvd-pill-link">{d.value}</span>
+              </span>
+            ))}
+          </div>
         </div>
 
         {photoExists && (
@@ -286,8 +293,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 }
 .cvd-pill-link:hover { color: var(--b100) !important; }
 
-.cvd-meta { font-size: 9.5px; color: rgb(255 255 255 / .7); margin: 0; }
-.cvd-meta strong { color: #fff; font-weight: 600; }
+.cvd-pills-info { margin-top: 2px; }
 
 /* Photo avec ring blanc */
 .cvd-photo-wrap { position: relative; z-index: 1; flex-shrink: 0; }
@@ -473,7 +479,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
     background: linear-gradient(135deg, #3730a3 0%, #4338ca 45%, #4f46e5 100%) !important;
     padding: 8mm 11mm !important;
   }
-  .cvd-name, .cvd-pill-link, .cvd-meta strong { color: #fff !important; }
+  .cvd-name, .cvd-pill-link { color: #fff !important; }
   .cvd-role { color: #e0e7ff !important; }
 
   .cvd-body { padding: 6mm 11mm 7mm !important; }
