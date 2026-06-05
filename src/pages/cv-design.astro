@@ -394,7 +394,11 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 .cvd-tl-role { display: block; font-size: 11px; font-weight: 500; color: var(--b600); }
 .cvd-tl-date {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9px; color: var(--fg-muted); white-space: nowrap;
+  font-size: 8.5px; font-weight: 700; color: var(--b600); white-space: nowrap;
+  background: oklch(53% 0.22 274 / .08);
+  border: 1px solid oklch(53% 0.22 274 / .18);
+  border-radius: 4px; padding: 1px 6px;
+  align-self: flex-start;
 }
 
 .cvd-tasks { list-style: none; padding: 0; margin: 3px 0; }
@@ -418,8 +422,12 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 .cvd-mini:last-child { margin-bottom: 0; }
 .cvd-mini strong { color: var(--fg); font-weight: 600; }
 .cvd-mini-date {
+  display: inline-block;
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9px; font-weight: 700; color: var(--b600); margin-right: 6px;
+  font-size: 8.5px; font-weight: 700; color: var(--b600); margin-right: 6px;
+  background: oklch(53% 0.22 274 / .08);
+  border: 1px solid oklch(53% 0.22 274 / .18);
+  border-radius: 4px; padding: 1px 6px;
 }
 
 /* ════════════════════════════════════════════════════════════
