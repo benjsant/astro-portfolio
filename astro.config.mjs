@@ -23,7 +23,7 @@ export default defineConfig({
     port: 4321,
   },
 
-  site: process.env.SITE_URL || 'https://example.com',
+  site: process.env.SITE_URL || 'https://benjamin-santrisse.vercel.app',
 
   build: {
     inlineStylesheets: 'always',

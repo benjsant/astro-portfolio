@@ -108,7 +108,7 @@ const siteConfig: SiteConfig = {
   name: 'Benjamin Santrisse',
   description:
     'Développeur spécialisé en Intelligence Artificielle et Data Engineering — pipelines ML, APIs FastAPI, agents LLM, ETL Prefect. Disponible pour de nouvelles opportunités.',
-  url: SITE_URL || 'https://example.com',
+  url: SITE_URL || 'https://benjamin-santrisse.vercel.app',
   ogImage: '/og-default.svg',
   author: 'Benjamin Santrisse',
   email: 'santrissebenjamin.portfolio@gmail.com',
