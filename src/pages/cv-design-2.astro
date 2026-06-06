@@ -21,10 +21,6 @@ const contactIcons: Record<string, string> = {
   LinkedIn: 'brand-linkedin',
   GitHub: 'brand-github',
 };
-const detailIcons: Record<string, string> = {
-  Permis: 'badge',
-  Mobilité: 'map-pin',
-};
 ---
 
 <BaseLayout
@@ -71,7 +67,7 @@ const detailIcons: Record<string, string> = {
           <div class="cvd-pills cvd-pills-info">
             {cv.details.map((d) => (
               <span class="cvd-pill">
-                <Icon name={detailIcons[d.label] ?? 'badge'} size="xs" class="cvd-pill-icon" />
+                <span class="cvd-pill-label">{d.label} :</span>
                 <span class="cvd-pill-link">{d.value}</span>
               </span>
             ))}
@@ -160,27 +156,26 @@ const detailIcons: Record<string, string> = {
           </div>
         </section>
 
-        <!-- CERTIF + INTÉRÊTS sur 2 colonnes (gain de place) -->
-        <div class="cvd-duo">
-          <section class="cvd-section">
-            <h2 class="cvd-h2"><span class="cvd-dot"></span>Certifications</h2>
-            {cv.certifications.map((c) => (
-              <p class="cvd-mini">
-                <span class="cvd-mini-date">{c.date}</span>
-                <strong>{c.title}</strong>
-              </p>
-            ))}
-          </section>
+        <!-- CERTIFICATIONS -->
+        <section class="cvd-section">
+          <h2 class="cvd-h2"><span class="cvd-dot"></span>Certifications</h2>
+          {cv.certifications.map((c) => (
+            <p class="cvd-mini">
+              <span class="cvd-mini-date">{c.date}</span>
+              <strong>{c.title}</strong>
+            </p>
+          ))}
+        </section>
 
-          <section class="cvd-section">
-            <h2 class="cvd-h2"><span class="cvd-dot"></span>Centres d'intérêt</h2>
-            {cv.interests.map((i) => (
-              <p class="cvd-mini">
-                <strong>{i.title}</strong> — {i.description}
-              </p>
-            ))}
-          </section>
-        </div>
+        <!-- CENTRES D'INTÉRÊT -->
+        <section class="cvd-section">
+          <h2 class="cvd-h2"><span class="cvd-dot"></span>Centres d'intérêt</h2>
+          {cv.interests.map((i) => (
+            <p class="cvd-mini">
+              <strong>{i.title}</strong> — {i.description}
+            </p>
+          ))}
+        </section>
 
       </div>
     </main>
@@ -292,15 +287,15 @@ const detailIcons: Record<string, string> = {
 }
 
 /* Pills contact translucides sur l'indigo */
-.cvd-pills { display: flex; flex-wrap: wrap; gap: 4px 7px; margin-bottom: 6px; }
+.cvd-pills { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-bottom: 6px; }
 .cvd-pill {
   display: inline-flex; align-items: baseline; gap: 4px;
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9.5px;
+  font-size: 9px;
   background: rgb(255 255 255 / .12);
   border: 1px solid rgb(255 255 255 / .22);
   border-radius: 9999px;
-  padding: 2px 9px;
+  padding: 2px 8px;
 }
 .cvd-pill-label { color: rgb(255 255 255 / .6); }
 .cvd-pill-link {
@@ -379,14 +374,15 @@ const detailIcons: Record<string, string> = {
   background: linear-gradient(90deg, var(--b200), transparent);
 }
 
-/* ── Compétences ── */
-.cvd-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 26px; }
+/* ── Compétences — 1 colonne (comme le CV ATS) ── */
+.cvd-skills { display: flex; flex-direction: column; }
 .cvd-skill-row {
-  display: grid; grid-template-columns: 132px 1fr; gap: 4px 10px;
+  display: grid; grid-template-columns: 150px 1fr; gap: 4px 14px;
   font-size: 11px; padding: 2.5px 0;
   border-bottom: 1px solid var(--b50);
   align-items: start;
 }
+.cvd-skill-row:last-child { border-bottom: none; }
 .cvd-badge-cat {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
   font-size: 9px; font-weight: 700; color: var(--b600);
@@ -468,7 +464,6 @@ const detailIcons: Record<string, string> = {
 }
 
 /* ── Certif + intérêts (2 colonnes) ── */
-.cvd-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .cvd-mini { font-size: 10.5px; color: var(--fg-muted); margin: 0 0 3px; line-height: 1.4; }
 .cvd-mini:last-child { margin-bottom: 0; }
 .cvd-mini strong { color: var(--fg); font-weight: 600; }
