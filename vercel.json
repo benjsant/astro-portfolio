@@ -1,5 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/blog/prefect-etl-fusiondex",
+      "destination": "/blog/prefect-etl-infinidex",
+      "permanent": true
+    },
+    {
+      "source": "/blog/agent-9-outils-streaming-fusiondex",
+      "destination": "/blog/agent-9-outils-streaming-infinidex",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

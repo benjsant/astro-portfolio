@@ -140,7 +140,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: "Orchestration ETL avec Prefect : détection de changements par SHA",
     description: "Deux flows Prefect pour surveiller un Pokédex de 168 000+ fusions : détection par SHA GitHub, retries automatiques, alertes Discord et déploiements cron via prefect.yaml.",
     tags: ["Prefect", "ETL", "Python", "Data Engineering", "Docker", "Automatisation"],
-    url: "/blog/prefect-etl-fusiondex",
+    url: "/blog/prefect-etl-infinidex",
   },
   {
     type: 'article',
