@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import EmailLink from '@/components/patterns/EmailLink.astro';
 import { cv } from '@/data/cv';
 import { existsSync } from 'node:fs';
@@ -12,6 +13,14 @@ function asEmailParts(v: string) {
 }
 
 const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
+
+// Icônes par canal (remplacent les labels texte dans les pills)
+const contactIcons: Record<string, string> = {
+  Mail: 'mail',
+  Portfolio: 'external-link',
+  LinkedIn: 'brand-linkedin',
+  GitHub: 'brand-github',
+};
 ---
 
 <BaseLayout
@@ -31,6 +40,10 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
       <!-- ════ HERO BAND (indigo plein) ════ -->
       <header class="cvd-hero">
         <div class="cvd-hero-text">
+          <div class="cvd-status">
+            <span class="cvd-status-dot"></span>
+            Disponible · démarrage immédiat
+          </div>
           <h1 class="cvd-name">{cv.header.name}</h1>
           <p class="cvd-role">{cv.header.role}</p>
           <p class="cvd-summary">{cv.header.summary}</p>
@@ -40,7 +53,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
               const ep = asEmailParts(item.value);
               return (
                 <span class="cvd-pill">
-                  <span class="cvd-pill-label">{item.label}</span>
+                  <Icon name={contactIcons[item.label] ?? 'link'} size="xs" class="cvd-pill-icon" />
                   {ep
                     ? <EmailLink user={ep.user} domain={ep.domain} class="cvd-pill-link" />
                     : item.href
@@ -53,7 +66,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
           <div class="cvd-pills cvd-pills-info">
             {cv.details.map((d) => (
               <span class="cvd-pill">
-                <span class="cvd-pill-label">{d.label}</span>
+                <span class="cvd-pill-label">{d.label} :</span>
                 <span class="cvd-pill-link">{d.value}</span>
               </span>
             ))}
@@ -142,27 +155,26 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
           </div>
         </section>
 
-        <!-- CERTIF + INTÉRÊTS sur 2 colonnes (gain de place) -->
-        <div class="cvd-duo">
-          <section class="cvd-section">
-            <h2 class="cvd-h2"><span class="cvd-dot"></span>Certifications</h2>
-            {cv.certifications.map((c) => (
-              <p class="cvd-mini">
-                <span class="cvd-mini-date">{c.date}</span>
-                <strong>{c.title}</strong>
-              </p>
-            ))}
-          </section>
+        <!-- CERTIFICATIONS -->
+        <section class="cvd-section">
+          <h2 class="cvd-h2"><span class="cvd-dot"></span>Certifications</h2>
+          {cv.certifications.map((c) => (
+            <p class="cvd-mini">
+              <span class="cvd-mini-date">{c.date}</span>
+              <strong>{c.title}</strong>
+            </p>
+          ))}
+        </section>
 
-          <section class="cvd-section">
-            <h2 class="cvd-h2"><span class="cvd-dot"></span>Centres d'intérêt</h2>
-            {cv.interests.map((i) => (
-              <p class="cvd-mini">
-                <strong>{i.title}</strong> — {i.description}
-              </p>
-            ))}
-          </section>
-        </div>
+        <!-- CENTRES D'INTÉRÊT -->
+        <section class="cvd-section">
+          <h2 class="cvd-h2"><span class="cvd-dot"></span>Centres d'intérêt</h2>
+          {cv.interests.map((i) => (
+            <p class="cvd-mini">
+              <strong>{i.title}</strong> — {i.description}
+            </p>
+          ))}
+        </section>
 
       </div>
     </main>
@@ -230,7 +242,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  padding: 26px 38px;
+  padding: 20px 38px;
   background: linear-gradient(135deg, var(--b700) 0%, var(--b600) 45%, var(--b500) 100%);
   color: #fff;
   overflow: hidden;
@@ -274,15 +286,15 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 }
 
 /* Pills contact translucides sur l'indigo */
-.cvd-pills { display: flex; flex-wrap: wrap; gap: 4px 7px; margin-bottom: 6px; }
+.cvd-pills { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-bottom: 6px; }
 .cvd-pill {
   display: inline-flex; align-items: baseline; gap: 4px;
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 9.5px;
+  font-size: 9px;
   background: rgb(255 255 255 / .12);
   border: 1px solid rgb(255 255 255 / .22);
   border-radius: 9999px;
-  padding: 2px 9px;
+  padding: 2px 8px;
 }
 .cvd-pill-label { color: rgb(255 255 255 / .6); }
 .cvd-pill-link {
@@ -293,7 +305,34 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 }
 .cvd-pill-link:hover { color: var(--b100) !important; }
 
+/* Icône dans les pills (remplace le label texte) */
+.cvd-pill { align-items: center; }
+.cvd-pill-icon { width: 11px; height: 11px; color: rgb(255 255 255 / .75); flex-shrink: 0; }
+
 .cvd-pills-info { margin-top: 2px; }
+
+/* Badge "Disponible" */
+.cvd-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgb(255 255 255 / .14);
+  border: 1px solid rgb(255 255 255 / .25);
+  border-radius: 9999px;
+  padding: 2px 10px;
+  margin-bottom: 8px;
+}
+.cvd-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 0 3px rgb(52 211 153 / .25);
+}
 
 /* Photo avec ring blanc */
 .cvd-photo-wrap { position: relative; z-index: 1; flex-shrink: 0; }
@@ -334,14 +373,15 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   background: linear-gradient(90deg, var(--b200), transparent);
 }
 
-/* ── Compétences ── */
-.cvd-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 26px; }
+/* ── Compétences — 1 colonne (comme le CV ATS) ── */
+.cvd-skills { display: flex; flex-direction: column; }
 .cvd-skill-row {
-  display: grid; grid-template-columns: 132px 1fr; gap: 4px 10px;
+  display: grid; grid-template-columns: 150px 1fr; gap: 4px 14px;
   font-size: 11px; padding: 2.5px 0;
   border-bottom: 1px solid var(--b50);
   align-items: start;
 }
+.cvd-skill-row:last-child { border-bottom: none; }
 .cvd-badge-cat {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
   font-size: 9px; font-weight: 700; color: var(--b600);
@@ -423,7 +463,6 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 }
 
 /* ── Certif + intérêts (2 colonnes) ── */
-.cvd-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .cvd-mini { font-size: 10.5px; color: var(--fg-muted); margin: 0 0 3px; line-height: 1.4; }
 .cvd-mini:last-child { margin-bottom: 0; }
 .cvd-mini strong { color: var(--fg); font-weight: 600; }
@@ -472,18 +511,30 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   .cvd-paper {
     max-width: none; width: 100%; margin: 0;
     border: none !important; border-radius: 0 !important; box-shadow: none !important;
+    /* overflow:hidden empêchait la coupure et isolait le hero en page 1 */
+    overflow: visible !important;
   }
 
   /* Hero indigo doit s'imprimer */
   .cvd-hero {
     background: linear-gradient(135deg, #3730a3 0%, #4338ca 45%, #4f46e5 100%) !important;
-    padding: 8mm 11mm !important;
+    padding: 4mm 11mm !important;
   }
   .cvd-name, .cvd-pill-link { color: #fff !important; }
   .cvd-role { color: #e0e7ff !important; }
 
-  .cvd-body { padding: 6mm 11mm 7mm !important; }
+  .cvd-body { padding: 4mm 11mm 5mm !important; }
 
-  .cvd-section, .cvd-project, .cvd-tl-item, .cvd-mini { page-break-inside: avoid; }
+  /* Compression print pour tenir sur 1 page */
+  .cvd-section { margin-bottom: 6px !important; }
+  .cvd-h2 { margin-bottom: 4px !important; }
+  .cvd-project { margin-bottom: 5px !important; }
+  .cvd-tl-item { margin-bottom: 6px !important; }
+  .cvd-skill-row { padding: 1.5px 0 !important; }
+
+  /* On évite seulement les coupures DANS les petits blocs, jamais sur une
+     section entière (sinon une section trop grande saute en bloc en page 2
+     et laisse le hero seul). */
+  .cvd-project, .cvd-tl-item, .cvd-entry, .cvd-mini { page-break-inside: avoid; }
 }
 </style>
