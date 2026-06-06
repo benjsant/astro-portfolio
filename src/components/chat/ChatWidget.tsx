@@ -296,10 +296,17 @@ export default function ChatWidget() {
       {/* Toggle button */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-14 h-14 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform flex items-center justify-center text-2xl"
+        className="w-14 h-14 rounded-full bg-brand-500 text-white shadow-lg shadow-brand-500/30 ring-1 ring-white/20 hover:bg-brand-600 hover:scale-105 transition-all flex items-center justify-center"
         aria-label={open ? 'Fermer le chat' : 'Ouvrir le chat'}
       >
-        {open ? '×' : '💬'}
+        {open ? (
+          <span className="text-2xl leading-none">×</span>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+            <path d="M8 12h.01M12 12h.01M16 12h.01" />
+          </svg>
+        )}
       </button>
     </div>
   );
