@@ -146,7 +146,7 @@ export const cv: CVData = {
     {
       org: 'CAF du Nord — Agence de Valenciennes',
       role: 'Développeur Web Symfony — Stages successifs',
-      date: 'Mai 2016 → Mai 2019 · 6 mois cumulés (24 sem.)',
+      date: 'Mai 2016 – Mai 2019 · 6 mois cumulés (24 sem.)',
       tasks: [
         "Développement et intégration d'interfaces web avec Symfony et Bootstrap dans des applications internes",
         "Participation au développement d'une plateforme de gestion des espaces de travail",
