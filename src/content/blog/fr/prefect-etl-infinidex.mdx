@@ -212,7 +212,7 @@ deployments:
   - name: pokedex-watcher-daily
     flow: etl/flows/pokedex_watcher.py:pokedex_watcher_flow
     work_pool:
-      name: fusiondex-pool
+      name: infinidex-pool
     schedules:
       - cron: "0 6 * * *"
         timezone: "UTC"
@@ -226,13 +226,13 @@ deployments:
   - name: sprite-watcher-daily
     flow: etl/flows/sprite_watcher.py:sprite_watcher_flow
     work_pool:
-      name: fusiondex-pool
+      name: infinidex-pool
     schedules:
       - cron: "30 6 * * *"
         timezone: "UTC"
 ```
 
-`prefect deploy --all` enregistre les deux déploiements dans Prefect Cloud. Le work pool `fusiondex-pool` est un pool de type `process` — un worker Prefect tourne sur le serveur Docker et poll le serveur pour les runs à exécuter.
+`prefect deploy --all` enregistre les deux déploiements dans Prefect Cloud. Le work pool `infinidex-pool` est un pool de type `process` — un worker Prefect tourne sur le serveur Docker et poll le serveur pour les runs à exécuter.
 
 Le paramètre `force_run: false` peut être surchargé manuellement depuis l'UI Prefect ou via `prefect deployment run pokedex-watcher-daily --params '{"force_run": true}'` — pratique pour forcer un re-traitement sans modifier le code.
 
