@@ -179,7 +179,7 @@ async function runAgent(
             args = { query: userMessage };
           }
 
-          const results = searchPortfolio(args.query ?? userMessage);
+          const results = await searchPortfolio(args.query ?? userMessage);
           const content =
             results.length > 0
               ? JSON.stringify(
