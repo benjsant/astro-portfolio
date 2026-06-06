@@ -21,21 +21,9 @@ import Header from '@/components/layout/Header.astro';
 import EmailLink from '@/components/patterns/EmailLink.astro';
 import PhoneLink from '@/components/patterns/PhoneLink.astro';
 import { cv } from '@/data/cv';
+import { asEmailParts, asPhoneParts } from '@/lib/cv-utils';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-
-// Détecte si une valeur est un email (pour utiliser le composant obfusqué)
-function asEmailParts(value: string): { user: string; domain: string } | null {
-  const m = value.match(/^([^@\s]+)@([^@\s]+)$/);
-  return m ? { user: m[1], domain: m[2] } : null;
-}
-
-// Détecte un numéro de téléphone français à 10 chiffres et le split en 4+6
-function asPhoneParts(value: string): { prefix: string; suffix: string } | null {
-  const cleaned = value.replace(/[\s.-]/g, '');
-  if (!/^0\d{9}$/.test(cleaned)) return null;
-  return { prefix: cleaned.substring(0, 4), suffix: cleaned.substring(4) };
-}
 
 const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 ---

@@ -4,13 +4,9 @@ import Header from '@/components/layout/Header.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import EmailLink from '@/components/patterns/EmailLink.astro';
 import { cv } from '@/data/cv';
+import { asEmailParts } from '@/lib/cv-utils';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-
-function asEmailParts(v: string) {
-  const m = v.match(/^([^@\s]+)@([^@\s]+)$/);
-  return m ? { user: m[1], domain: m[2] } : null;
-}
 
 const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 
