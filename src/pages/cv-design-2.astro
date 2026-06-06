@@ -95,9 +95,7 @@ const detailIcons: Record<string, string> = {
             {cv.skills.map((s) => (
               <div class="cvd-skill-row">
                 <span class="cvd-badge-cat">{s.category}</span>
-                <div class="cvd-skill-tags">
-                  {s.value.split(/,\s*/).map((t) => <span class="cvd-skill-tag">{t}</span>)}
-                </div>
+                <span class="cvd-skill-val">{s.value}</span>
               </div>
             ))}
           </div>
@@ -250,7 +248,7 @@ const detailIcons: Record<string, string> = {
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  padding: 26px 38px;
+  padding: 20px 38px;
   background: linear-gradient(135deg, var(--b700) 0%, var(--b600) 45%, var(--b500) 100%);
   color: #fff;
   overflow: hidden;
@@ -399,18 +397,6 @@ const detailIcons: Record<string, string> = {
 }
 .cvd-skill-val { color: var(--fg); }
 
-/* Compétences en tags (plus visuel) */
-.cvd-skill-tags { display: flex; flex-wrap: wrap; gap: 3px; }
-.cvd-skill-tag {
-  font-size: 9px;
-  color: var(--fg);
-  background: var(--b50);
-  border: 1px solid var(--b100);
-  border-radius: 4px;
-  padding: 1px 6px;
-  line-height: 1.5;
-}
-
 /* ── Projets ── */
 .cvd-project { margin-bottom: 7px; }
 .cvd-project:last-child { margin-bottom: 0; }
@@ -536,13 +522,16 @@ const detailIcons: Record<string, string> = {
   /* Hero indigo doit s'imprimer */
   .cvd-hero {
     background: linear-gradient(135deg, #3730a3 0%, #4338ca 45%, #4f46e5 100%) !important;
-    padding: 8mm 11mm !important;
+    padding: 5mm 11mm !important;
   }
   .cvd-name, .cvd-pill-link { color: #fff !important; }
   .cvd-role { color: #e0e7ff !important; }
 
-  .cvd-body { padding: 6mm 11mm 7mm !important; }
+  .cvd-body { padding: 5mm 11mm 6mm !important; }
 
-  .cvd-section, .cvd-project, .cvd-tl-item, .cvd-mini { page-break-inside: avoid; }
+  /* On évite seulement les coupures DANS les petits blocs, jamais sur une
+     section entière (sinon une section trop grande saute en bloc en page 2
+     et laisse le hero seul). */
+  .cvd-project, .cvd-tl-item, .cvd-entry, .cvd-mini { page-break-inside: avoid; }
 }
 </style>
