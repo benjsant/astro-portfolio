@@ -49,13 +49,13 @@ function renderInline(text: string): ReactNode[] {
           href={href}
           target={isExternal ? '_blank' : undefined}
           rel={isExternal ? 'noopener noreferrer' : undefined}
-          className="underline underline-offset-2 text-white hover:text-white/80"
+          className="underline underline-offset-2 text-brand-600 hover:text-brand-700"
         >
           {match[1]}
         </a>,
       );
     } else if (match[3]) {
-      nodes.push(<strong key={key++} className="font-semibold text-white">{match[3]}</strong>);
+      nodes.push(<strong key={key++} className="font-semibold text-foreground">{match[3]}</strong>);
     }
     lastIndex = match.index + match[0].length;
   }
@@ -167,16 +167,16 @@ export default function ChatWidget() {
   return (
     <div className="fixed bottom-6 right-20 z-50 flex flex-col items-end gap-3 print:hidden">
       {open && (
-        <div className="flex flex-col w-[340px] max-h-[520px] rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl overflow-hidden">
+        <div className="flex flex-col w-[340px] max-h-[520px] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-background-secondary">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-sm font-medium text-white">Assistant de Benjamin</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-sm font-medium text-foreground">Assistant de Benjamin</span>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="text-white/40 hover:text-white/80 transition-colors text-lg leading-none"
+              className="text-foreground-muted hover:text-foreground transition-colors text-lg leading-none"
               aria-label="Fermer"
             >
               ×
@@ -184,7 +184,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0 bg-background">
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -193,8 +193,8 @@ export default function ChatWidget() {
                 <div
                   className={`max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-white text-black'
-                      : 'bg-white/10 text-white/90'
+                      ? 'bg-brand-500 text-white'
+                      : 'bg-secondary text-foreground'
                   }`}
                 >
                   {msg.role === 'assistant' ? renderMarkdown(msg.content) : msg.content}
@@ -204,24 +204,24 @@ export default function ChatWidget() {
 
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-white/10 rounded-xl px-4 py-3">
+                <div className="bg-secondary rounded-xl px-4 py-3">
                   <span className="flex gap-1">
-                    <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce [animation-delay:0ms]" />
-                    <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce [animation-delay:150ms]" />
-                    <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce [animation-delay:300ms]" />
+                    <span className="w-1.5 h-1.5 bg-foreground-muted rounded-full animate-bounce [animation-delay:0ms]" />
+                    <span className="w-1.5 h-1.5 bg-foreground-muted rounded-full animate-bounce [animation-delay:150ms]" />
+                    <span className="w-1.5 h-1.5 bg-foreground-muted rounded-full animate-bounce [animation-delay:300ms]" />
                   </span>
                 </div>
               </div>
             )}
 
             {error && (
-              <p className="text-xs text-red-400 text-center">{error}</p>
+              <p className="text-xs text-red-500 text-center">{error}</p>
             )}
 
             {/* Relances après chaque réponse de l'assistant */}
             {showFollowups && followupChips.length > 0 && (
               <div className="flex flex-col gap-1.5 pt-1">
-                <span className="text-[10px] uppercase tracking-wider text-white/30">
+                <span className="text-[10px] uppercase tracking-wider text-foreground-subtle">
                   Pour aller plus loin
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -229,7 +229,7 @@ export default function ChatWidget() {
                     <button
                       key={s}
                       onClick={() => sendMessage(s)}
-                      className="text-xs px-2.5 py-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/40 transition-colors"
+                      className="text-xs px-2.5 py-1 rounded-full border border-border text-foreground-muted hover:text-brand-600 hover:border-brand-400 transition-colors"
                     >
                       {s}
                     </button>
@@ -242,13 +242,13 @@ export default function ChatWidget() {
           </div>
 
           {/* Volets : raccourcis thématiques permanents */}
-          <div className="px-4 pt-2 pb-1 flex flex-wrap gap-1.5 border-t border-white/5">
+          <div className="px-4 pt-2 pb-1 flex flex-wrap gap-1.5 border-t border-border bg-background">
             {TOPICS.map((t) => (
               <button
                 key={t.label}
                 onClick={() => sendMessage(t.q)}
                 disabled={loading}
-                className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="text-xs px-2.5 py-1 rounded-full bg-secondary border border-border text-foreground-secondary hover:text-brand-600 hover:border-brand-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {t.label}
               </button>
@@ -257,13 +257,13 @@ export default function ChatWidget() {
 
           {/* Rate limit indicator */}
           {remaining !== null && remaining <= 3 && (
-            <p className="text-xs text-white/30 text-center px-4">
+            <p className="text-xs text-foreground-subtle text-center px-4 bg-background">
               {remaining} message{remaining > 1 ? 's' : ''} restant{remaining > 1 ? 's' : ''}
             </p>
           )}
 
           {/* Input */}
-          <div className="px-4 py-3 border-t border-white/10">
+          <div className="px-4 py-3 border-t border-border bg-background">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -279,12 +279,12 @@ export default function ChatWidget() {
                 placeholder="Pose ta question…"
                 maxLength={500}
                 disabled={loading}
-                className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:ring-1 focus:ring-white/20 disabled:opacity-50"
+                className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm text-foreground placeholder-foreground-subtle outline-none focus:ring-1 focus:ring-brand-400 disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="px-3 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="px-3 py-2 rounded-lg bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 →
               </button>
