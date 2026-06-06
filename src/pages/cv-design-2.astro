@@ -512,17 +512,26 @@ const contactIcons: Record<string, string> = {
   .cvd-paper {
     max-width: none; width: 100%; margin: 0;
     border: none !important; border-radius: 0 !important; box-shadow: none !important;
+    /* overflow:hidden empêchait la coupure et isolait le hero en page 1 */
+    overflow: visible !important;
   }
 
   /* Hero indigo doit s'imprimer */
   .cvd-hero {
     background: linear-gradient(135deg, #3730a3 0%, #4338ca 45%, #4f46e5 100%) !important;
-    padding: 5mm 11mm !important;
+    padding: 4mm 11mm !important;
   }
   .cvd-name, .cvd-pill-link { color: #fff !important; }
   .cvd-role { color: #e0e7ff !important; }
 
-  .cvd-body { padding: 5mm 11mm 6mm !important; }
+  .cvd-body { padding: 4mm 11mm 5mm !important; }
+
+  /* Compression print pour tenir sur 1 page */
+  .cvd-section { margin-bottom: 6px !important; }
+  .cvd-h2 { margin-bottom: 4px !important; }
+  .cvd-project { margin-bottom: 5px !important; }
+  .cvd-tl-item { margin-bottom: 6px !important; }
+  .cvd-skill-row { padding: 1.5px 0 !important; }
 
   /* On évite seulement les coupures DANS les petits blocs, jamais sur une
      section entière (sinon une section trop grande saute en bloc en page 2
