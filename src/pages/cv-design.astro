@@ -2,9 +2,8 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
-import EmailLink from '@/components/patterns/EmailLink.astro';
+import CvContactValue from '@/components/patterns/CvContactValue.astro';
 import { cv } from '@/data/cv';
-import { asEmailParts } from '@/lib/cv-utils';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -45,19 +44,12 @@ const contactIcons: Record<string, string> = {
           <p class="cvd-summary">{cv.header.summary}</p>
 
           <div class="cvd-pills">
-            {cv.contact.map((item) => {
-              const ep = asEmailParts(item.value);
-              return (
-                <span class="cvd-pill">
-                  <Icon name={contactIcons[item.label] ?? 'link'} size="xs" class="cvd-pill-icon" />
-                  {ep
-                    ? <EmailLink user={ep.user} domain={ep.domain} class="cvd-pill-link" />
-                    : item.href
-                      ? <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" class="cvd-pill-link">{item.value}</a>
-                      : <span class="cvd-pill-link">{item.value}</span>}
-                </span>
-              );
-            })}
+            {cv.contact.map((item) => (
+              <span class="cvd-pill">
+                <Icon name={contactIcons[item.label] ?? 'link'} size="xs" class="cvd-pill-icon" />
+                <CvContactValue item={item} linkClass="cvd-pill-link" />
+              </span>
+            ))}
           </div>
           <div class="cvd-pills cvd-pills-info">
             {cv.details.map((d) => (

@@ -1,0 +1,46 @@
+---
+/**
+ * Rend la VALEUR d'un contact CV avec le bon composant d'obfuscation :
+ *   - email  → <EmailLink>
+ *   - tél FR → <PhoneLink>
+ *   - lien   → <a> (target _blank si http)
+ *   - sinon  → texte brut
+ *
+ * Logique partagée par `/cv` et `/cv-design` (chacun fournit son propre
+ * wrapper/style autour, ici on ne gère que la valeur).
+ */
+import EmailLink from './EmailLink.astro';
+import PhoneLink from './PhoneLink.astro';
+import { asEmailParts, asPhoneParts } from '@/lib/cv-utils';
+import type { ContactItem } from '@/data/cv';
+
+interface Props {
+  item: ContactItem;
+  /** Classe appliquée au lien/élément rendu. */
+  linkClass?: string;
+}
+
+const { item, linkClass } = Astro.props;
+const email = asEmailParts(item.value);
+const phone = asPhoneParts(item.value);
+const isHttp = item.href?.startsWith('http');
+---
+
+{
+  email ? (
+    <EmailLink user={email.user} domain={email.domain} class={linkClass} />
+  ) : phone ? (
+    <PhoneLink prefix={phone.prefix} suffix={phone.suffix} class={linkClass} />
+  ) : item.href ? (
+    <a
+      href={item.href}
+      target={isHttp ? '_blank' : undefined}
+      rel={isHttp ? 'noopener noreferrer' : undefined}
+      class={linkClass}
+    >
+      {item.value}
+    </a>
+  ) : (
+    <span class={linkClass}>{item.value}</span>
+  )
+}

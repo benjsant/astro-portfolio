@@ -18,10 +18,8 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
-import EmailLink from '@/components/patterns/EmailLink.astro';
-import PhoneLink from '@/components/patterns/PhoneLink.astro';
+import CvContactValue from '@/components/patterns/CvContactValue.astro';
 import { cv } from '@/data/cv';
-import { asEmailParts, asPhoneParts } from '@/lib/cv-utils';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -69,26 +67,12 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 
       <!-- CONTACT -->
       <div class="cv-contact">
-        {cv.contact.map((item) => {
-          const emailParts = asEmailParts(item.value);
-          const phoneParts = asPhoneParts(item.value);
-          return (
-            <span>
-              <span class="cv-label">{item.label} :</span>{' '}
-              {emailParts ? (
-                <EmailLink user={emailParts.user} domain={emailParts.domain} class="cv-email" />
-              ) : phoneParts ? (
-                <PhoneLink prefix={phoneParts.prefix} suffix={phoneParts.suffix} class="cv-phone" />
-              ) : item.href ? (
-                <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
-                  {item.value}
-                </a>
-              ) : (
-                item.value
-              )}
-            </span>
-          );
-        })}
+        {cv.contact.map((item) => (
+          <span>
+            <span class="cv-label">{item.label} :</span>{' '}
+            <CvContactValue item={item} />
+          </span>
+        ))}
       </div>
       <p class="cv-meta">
         {cv.details.map((d, i) => (
