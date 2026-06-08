@@ -117,6 +117,14 @@ export const cv: CVData = {
 
   projects: [
     {
+      title: 'InfiniDex — Pokédex augmenté par IA',
+      repo: 'https://github.com/benjsant/InfiniDex',
+      period: 'Avril 2026 – en cours',
+      stack: 'Python · FastAPI · Next.js · PostgreSQL · Prefect · Docker',
+      description:
+        "Agent LLM multi-provider à 9 outils (DeepSeek/OpenRouter/Ollama, sans LangChain) avec streaming SSE temps réel. Pipeline ETL Prefect automatisé (orchestration, détection de changements par SHA, alertes Discord) sur 572 Pokémon et 168 000+ fusions.",
+    },
+    {
       title: 'PredictionDex — prédiction de combats Pokémon',
       repo: 'https://github.com/benjsant/lets-go-predictiondex',
       period: 'Janvier – Mars 2026',
@@ -131,14 +139,6 @@ export const cv: CVData = {
       stack: 'Python · FastAPI · Next.js · MongoDB · Docker',
       description:
         "Projet en équipe. Agent ReAct DeepSeek (boucle Thought/Action/Observation) + API Jamendo pour générer des playlists musicales. Stack monitoring Prometheus/Grafana, déploiement Azure (anciennement).",
-    },
-    {
-      title: 'MintyForge — utilitaire de configuration Linux Mint',
-      repo: 'https://github.com/benjsant/minty_forge',
-      period: 'Mars 2026',
-      stack: 'Python · Flask · Pydantic · Linux',
-      description:
-        "Web app Flask locale avec streaming SSE des logs et rollback via state.json. Profils par catégorie (Base, Dev, Gaming, Docker, GPU), validation Pydantic v2, gestion thèmes GTK.",
     },
   ],
 
