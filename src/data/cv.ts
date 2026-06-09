@@ -88,7 +88,7 @@ export const cv: CVData = {
     name: 'Benjamin Santrisse',
     role: 'Développeur Backend Python (API, IA appliquée)',
     summary:
-      "Développeur Python en IA et backend, avec expérience en développement web et API. Réalise des projets en machine learning, LLM et automatisation.",
+      "Développeur Python spécialisé en IA et backend, reconverti vers l'IA via une formation certifiante (RNCP 6). Conçoit des projets concrets et déployés : agents LLM, pipelines MLOps, ETL et APIs FastAPI.",
   },
 
   contact: [
@@ -97,10 +97,11 @@ export const cv: CVData = {
     { label: 'Mail', value: 'santrissebenjamin@gmail.com', href: 'mailto:santrissebenjamin@gmail.com' },
     { label: 'Portfolio', value: 'benjamin-santrisse.vercel.app', href: 'https://benjamin-santrisse.vercel.app' },
     { label: 'LinkedIn', value: 'benjamin-santrisse', href: 'https://www.linkedin.com/in/benjamin-santrisse/' },
-    { label: 'GitHub', value: 'benjsant', href: 'https://github.com/benjsant' },
+    { label: 'GitHub', value: 'github.com/benjsant', href: 'https://github.com/benjsant' },
   ],
 
   details: [
+    { label: 'Recherche', value: 'CDI ou alternance · disponible immédiatement' },
     { label: 'Permis', value: 'B + véhicule (mobilité départementale)' },
     { label: 'Mobilité', value: 'Métropole Valenciennoise + Lilloise' },
   ],
