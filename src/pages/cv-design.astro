@@ -53,12 +53,14 @@ const contactIcons: Record<string, string> = {
             ))}
           </div>
           <div class="cvd-pills cvd-pills-info">
-            {cv.details.map((d) => (
-              <span class="cvd-pill">
-                <span class="cvd-pill-label">{d.label} :</span>
-                <span class="cvd-pill-link">{d.value}</span>
-              </span>
-            ))}
+            {cv.details
+              .filter((d) => d.label !== 'Recherche')
+              .map((d) => (
+                <span class="cvd-pill">
+                  <span class="cvd-pill-label">{d.label} :</span>
+                  <span class="cvd-pill-link">{d.value}</span>
+                </span>
+              ))}
           </div>
         </div>
 
