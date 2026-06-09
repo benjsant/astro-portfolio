@@ -24,6 +24,7 @@ interface Props {
   };
   noindex?: boolean;
   nofollow?: boolean;
+  titleAsIs?: boolean;
   includeOrgSchema?: boolean;
   includePersonSchema?: boolean;
   includeProfessionalServiceSchema?: boolean;
@@ -39,6 +40,7 @@ const {
   article,
   noindex = false,
   nofollow = false,
+  titleAsIs = false,
   includeOrgSchema = false,
   includePersonSchema = false,
   includeProfessionalServiceSchema = false,
@@ -83,6 +85,7 @@ schemas.push(...extraSchemas);
     <!-- SEO -->
     <SEO
       title={title}
+      titleAsIs={titleAsIs}
       description={description}
       image={image}
       imageAlt={imageAlt}
