@@ -19,8 +19,8 @@ const contactIcons: Record<string, string> = {
 ---
 
 <BaseLayout
-  title="CV — Dev IA"
-  description={`Curriculum vitae de ${cv.header.name} — ${cv.header.role}. Téléchargeable en PDF.`}
+  title="CV – Dev IA"
+  description={`Curriculum vitae de ${cv.header.name} – ${cv.header.role}. Téléchargeable en PDF.`}
 >
   <Header slot="header" position="fixed" shape="bar" variant="solid" size="lg" showCta={false} />
 
@@ -159,7 +159,7 @@ const contactIcons: Record<string, string> = {
           <h2 class="cvd-h2"><span class="cvd-dot"></span>Centres d'intérêt</h2>
           {cv.interests.map((i) => (
             <p class="cvd-mini">
-              <strong>{i.title}</strong> — {i.description}
+              <strong>{i.title}</strong> – {i.description}
             </p>
           ))}
         </section>
