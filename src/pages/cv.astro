@@ -28,7 +28,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
 
 <BaseLayout
   title="CV"
-  description={`Curriculum vitae de ${cv.header.name} — ${cv.header.role}. Téléchargeable en PDF.`}
+  description={`Curriculum vitae de ${cv.header.name} – ${cv.header.role}. Téléchargeable en PDF.`}
 >
   <Header
     slot="header"
@@ -161,7 +161,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
         <h2>Centres d'intérêt</h2>
         <div class="cv-interests">
           {cv.interests.map((i) => (
-            <p><strong>{i.title}</strong> &nbsp;—&nbsp; {i.description}</p>
+            <p><strong>{i.title}</strong> &nbsp;–&nbsp; {i.description}</p>
           ))}
         </div>
       </section>
