@@ -10,7 +10,7 @@ featured: false
 locale: "fr"
 ---
 
-Construire un Pokédex complet avec des données fiables, c'est un problème d'intégration de données multi-sources : une partie vient d'un CSV officiel, une partie d'une API REST publique, et les données les plus spécifiques — les capacités apprises dans un jeu précis — ne sont disponibles que sur un wiki communautaire.
+Construire un Pokédex complet avec des données fiables, c'est un problème d'intégration de données multi-sources : une partie vient d'un CSV officiel, une partie d'une API REST publique, et les données les plus spécifiques, les capacités apprises dans un jeu précis, ne sont disponibles que sur un wiki communautaire.
 
 Dans **Let's Go PredictionDex**, j'ai résolu ça avec un pipeline ETL en 4 étapes orchestrées, dont un spider Scrapy pour récupérer les learnsets sur Pokepédia.
 
@@ -64,7 +64,7 @@ L'idempotence est la propriété la plus importante d'un ETL : rejouer le pipeli
 
 ## Étape 3 : enrichissement PokéAPI en parallèle
 
-PokeAPI est une API REST publique sans authentification. Chaque appel est indépendant — `ThreadPoolExecutor` permet de les paralléliser à 10 workers sans blocage :
+PokeAPI est une API REST publique sans authentification. Chaque appel est indépendant, `ThreadPoolExecutor` permet de les paralléliser à 10 workers sans blocage :
 
 ```python
 MAX_WORKERS = 10
@@ -120,7 +120,7 @@ Le `time.sleep(RETRY_DELAY * (attempt + 1))` est un backoff exponentiel basique 
 
 ## Étape 4 : Scrapy pour Pokepédia
 
-La partie intéressante. Les données de capacités pour Pokémon Let's Go Pikachu/Évoli ne sont pas dans PokeAPI — elles sont sur Pokepédia, le wiki Pokémon francophone.
+La partie intéressante. Les données de capacités pour Pokémon Let's Go Pikachu/Évoli ne sont pas dans PokeAPI, elles sont sur Pokepédia, le wiki Pokémon francophone.
 
 ### Le spider piloté par la base de données
 
@@ -168,7 +168,7 @@ class LetsGoPokemonMovesSQLSpider(scrapy.Spider):
 
 ### Le parsing XPath
 
-Les tables Pokepédia ont une structure HTML stable mais complexe — les colonnes LGPE sont identifiées par le titre du lien dans l'en-tête :
+Les tables Pokepédia ont une structure HTML stable mais complexe, les colonnes LGPE sont identifiées par le titre du lien dans l'en-tête :
 
 ```python
 def _find_lgpe_column_index(self, table):
@@ -212,7 +212,7 @@ Les niveaux ont des cas spéciaux à gérer : `"Départ"` (niveau 0, capacité d
 
 ### La pipeline Scrapy : upsert PostgreSQL
 
-Chaque `PokemonMoveItem` est persisté via un upsert PostgreSQL — si la relation Pokémon/Capacité/Méthode existe déjà, seul le niveau est mis à jour :
+Chaque `PokemonMoveItem` est persisté via un upsert PostgreSQL, si la relation Pokémon/Capacité/Méthode existe déjà, seul le niveau est mis à jour :
 
 ```python
 class PokemonMovePipeline:
@@ -289,7 +289,7 @@ RETRY_HTTP_CODES = [500, 502, 503, 504, 408]
 RETRY_TIMES = 2
 ```
 
-L'`AutoThrottle` ajuste automatiquement le délai en fonction des temps de réponse du serveur — si Pokepédia ralentit, le spider ralentit aussi. Le cache HTTP est indispensable en développement : sans lui, chaque debug relance 188 requêtes vers un wiki communautaire.
+L'`AutoThrottle` ajuste automatiquement le délai en fonction des temps de réponse du serveur, si Pokepédia ralentit, le spider ralentit aussi. Le cache HTTP est indispensable en développement : sans lui, chaque debug relance 188 requêtes vers un wiki communautaire.
 
 ---
 

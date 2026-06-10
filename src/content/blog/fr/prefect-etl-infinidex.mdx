@@ -10,17 +10,17 @@ featured: false
 locale: "fr"
 ---
 
-La base de données d'**InfiniDex** (ex-FusionDex-IA) couvre 168 000+ fusions de Pokémon Infinite Fusion — un jeu communautaire dont la base de données évolue en permanence. Plutôt que de rejouer l'ETL complet chaque nuit, deux flows Prefect surveillent les sources amont et ne déclenchent une mise à jour que si quelque chose a vraiment changé. La détection repose sur des SHA de fichiers GitHub plutôt que sur des timestamps.
+La base de données d'**InfiniDex** (ex-FusionDex-IA) couvre 168 000+ fusions de Pokémon Infinite Fusion, un jeu communautaire dont la base de données évolue en permanence. Plutôt que de rejouer l'ETL complet chaque nuit, deux flows Prefect surveillent les sources amont et ne déclenchent une mise à jour que si quelque chose a vraiment changé. La détection repose sur des SHA de fichiers GitHub plutôt que sur des timestamps.
 
 ---
 
 ## Pourquoi Prefect plutôt qu'un simple cron
 
-Un `cron` basique exécute un script Python — il ne sait pas si le script a échoué, ne réessaie pas, et n'alerte pas. Prefect ajoute trois choses concrètes :
+Un `cron` basique exécute un script Python, il ne sait pas si le script a échoué, ne réessaie pas, et n'alerte pas. Prefect ajoute trois choses concrètes :
 
-1. **Retries déclaratifs** — un `@task(retries=3)` réessaie automatiquement si l'API GitHub répond 503
-2. **Observabilité** — chaque run est visible dans l'UI Prefect avec durée, logs, statut
-3. **Déploiements découplés du code** — `prefect.yaml` définit les schedules sans toucher au code Python
+1. **Retries déclaratifs** : un `@task(retries=3)` réessaie automatiquement si l'API GitHub répond 503
+2. **Observabilité** : chaque run est visible dans l'UI Prefect avec durée, logs, statut
+3. **Déploiements découplés du code** : `prefect.yaml` définit les schedules sans toucher au code Python
 
 ---
 
@@ -114,7 +114,7 @@ def save_snapshot(sha: str, snapshot_path: Path, metadata: dict):
     }))
 ```
 
-Le snapshot est un simple fichier JSON persisté sur le volume Docker. Si le SHA GitHub du fichier PBS n'a pas changé depuis la dernière exécution, `detect_changes` retourne `False` et le flow saute l'ETL complet — zéro requête PostgreSQL inutile.
+Le snapshot est un simple fichier JSON persisté sur le volume Docker. Si le SHA GitHub du fichier PBS n'a pas changé depuis la dernière exécution, `detect_changes` retourne `False` et le flow saute l'ETL complet, zéro requête PostgreSQL inutile.
 
 Un timestamp aurait le défaut inverse : le fichier peut avoir la même heure de modification sur un fork/mirror même si le contenu a changé, ou inversement avoir un timestamp différent sans changement de contenu (rechargement de CDN, par exemple).
 
@@ -171,9 +171,9 @@ async def pokedex_watcher_flow(
     return stats
 ```
 
-`asyncio.gather` sur les deux fetches parallélise les appels réseau — le wiki et GitHub répondent indépendamment, inutile de les séquencer.
+`asyncio.gather` sur les deux fetches parallélise les appels réseau, le wiki et GitHub répondent indépendamment, inutile de les séquencer.
 
-Le snapshot n'est sauvegardé qu'**après** le succès de l'ETL. Si l'ETL échoue à mi-chemin, le snapshot conserve l'ancien SHA — le prochain run retraitera les données. C'est la garantie d'idempotence : mieux vaut re-traiter que manquer une mise à jour.
+Le snapshot n'est sauvegardé qu'**après** le succès de l'ETL. Si l'ETL échoue à mi-chemin, le snapshot conserve l'ancien SHA, le prochain run retraitera les données. C'est la garantie d'idempotence : mieux vaut re-traiter que manquer une mise à jour.
 
 ---
 
@@ -201,7 +201,7 @@ async def notify_discord(stats: dict, webhook_url: str):
         await client.post(webhook_url, json={"embeds": [embed]})
 ```
 
-`retries=1` sur la notification : si Discord répond 429 (rate limit), on réessaie une fois. Si ça échoue encore, la notification est perdue mais l'ETL a réussi — ce n'est pas une raison de marquer le flow en erreur.
+`retries=1` sur la notification : si Discord répond 429 (rate limit), on réessaie une fois. Si ça échoue encore, la notification est perdue mais l'ETL a réussi, ce n'est pas une raison de marquer le flow en erreur.
 
 ---
 
@@ -232,20 +232,20 @@ deployments:
         timezone: "UTC"
 ```
 
-`prefect deploy --all` enregistre les deux déploiements dans Prefect Cloud. Le work pool `infinidex-pool` est un pool de type `process` — un worker Prefect tourne sur le serveur Docker et poll le serveur pour les runs à exécuter.
+`prefect deploy --all` enregistre les deux déploiements dans Prefect Cloud. Le work pool `infinidex-pool` est un pool de type `process`, un worker Prefect tourne sur le serveur Docker et poll le serveur pour les runs à exécuter.
 
-Le paramètre `force_run: false` peut être surchargé manuellement depuis l'UI Prefect ou via `prefect deployment run pokedex-watcher-daily --params '{"force_run": true}'` — pratique pour forcer un re-traitement sans modifier le code.
+Le paramètre `force_run: false` peut être surchargé manuellement depuis l'UI Prefect ou via `prefect deployment run pokedex-watcher-daily --params '{"force_run": true}'`, pratique pour forcer un re-traitement sans modifier le code.
 
 ---
 
 ## Ce que j'ai appris
 
-**SHA plutôt que timestamp pour la détection de changements.** Les timestamps sont fragiles — ils changent lors d'un rebuild ou d'un mirror, sans que le contenu ait bougé. Le SHA de l'API GitHub Contents est une empreinte du contenu réel du fichier.
+**SHA plutôt que timestamp pour la détection de changements.** Les timestamps sont fragiles, ils changent lors d'un rebuild ou d'un mirror, sans que le contenu ait bougé. Le SHA de l'API GitHub Contents est une empreinte du contenu réel du fichier.
 
 **Sauvegarder le snapshot après succès, pas avant.** Inverser l'ordre garantit qu'un ETL partiel ne masque pas un changement. Le prochain run rejoue toujours à partir d'un état cohérent.
 
 **`asyncio.gather` pour les fetches indépendants.** Deux appels réseau séquentiels qui n'ont pas de dépendance entre eux, c'est du temps perdu. `gather` les parallélise sans effort supplémentaire dans un contexte async.
 
-**`force_run` comme paramètre de déploiement.** Tester un flow sans modifier le code de détection de changements — passer `force_run=True` depuis l'UI ou le CLI suffit. C'est plus propre qu'une variable d'environnement ou un flag commenté dans le code.
+**`force_run` comme paramètre de déploiement.** Tester un flow sans modifier le code de détection de changements, passer `force_run=True` depuis l'UI ou le CLI suffit. C'est plus propre qu'une variable d'environnement ou un flag commenté dans le code.
 
 Le code source est disponible sur [GitHub](https://github.com/benjsant/InfiniDex).

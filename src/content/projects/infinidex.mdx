@@ -1,6 +1,6 @@
 ---
 title: "InfiniDex"
-description: "Pokédex intelligent pour Pokémon Infinite Fusion — 572 Pokémon, 168 000+ fusions, agent IA à 9 outils, pipeline ETL Prefect, API FastAPI et frontend Next.js 15."
+description: "Pokédex intelligent pour Pokémon Infinite Fusion, 572 Pokémon, 168 000+ fusions, agent IA à 9 outils, pipeline ETL Prefect, API FastAPI et frontend Next.js 15."
 repo: "https://github.com/benjsant/InfiniDex"
 url: "https://benjsant.github.io/InfiniDex/"
 tags: ["Python", "FastAPI", "Next.js", "PostgreSQL", "DeepSeek", "Prefect", "Docker"]
@@ -13,7 +13,7 @@ services: ["Data Engineering", "Agent IA", "API REST", "Frontend"]
 
 ## À propos du projet
 
-InfiniDex (ex-FusionDex-IA) est un Pokédex complet pour Pokémon Infinite Fusion — 572 Pokémon (Kanto + Hoenn), 168 000+ fusions calculées, movepools, types et triple-fusions. Une API officielle n'existe pas : tout est reconstruit depuis le wiki communautaire et PokeAPI.
+InfiniDex (ex-FusionDex-IA) est un Pokédex complet pour Pokémon Infinite Fusion, 572 Pokémon (Kanto + Hoenn), 168 000+ fusions calculées, movepools, types et triple-fusions. Une API officielle n'existe pas : tout est reconstruit depuis le wiki communautaire et PokeAPI.
 
 ## Choix d'archi notables
 
@@ -30,7 +30,7 @@ InfiniDex (ex-FusionDex-IA) est un Pokédex complet pour Pokémon Infinite Fusio
 | ---------- | ----------------------------------------------------------- |
 | ETL        | Python 3.12 + `uv` + MediaWiki API + PokeAPI + Prefect 3    |
 | Base       | PostgreSQL 16 (relationnelle + `INTEGER[]`)                 |
-| Backend    | FastAPI + SQLAlchemy 2 + Pydantic — 54 endpoints            |
-| Frontend   | Next.js 15 App Router + TypeScript + PWA — 23 pages         |
-| IA         | Agent tool-calling — DeepSeek / OpenRouter / Ollama         |
+| Backend    | FastAPI + SQLAlchemy 2 + Pydantic, 54 endpoints            |
+| Frontend   | Next.js 15 App Router + TypeScript + PWA, 23 pages         |
+| IA         | Agent tool-calling, DeepSeek / OpenRouter / Ollama         |
 | Infra      | Docker Compose (5 profils) + 4 lanes CI GitHub Actions      |

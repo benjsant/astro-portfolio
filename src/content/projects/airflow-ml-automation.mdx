@@ -1,6 +1,6 @@
 ---
 title: "Airflow ML Automation"
-description: "Pipeline ML orchestré par Apache Airflow — entraînement automatisé, évaluation et notifications email en cas de succès ou d'échec du DAG."
+description: "Pipeline ML orchestré par Apache Airflow, entraînement automatisé, évaluation et notifications email en cas de succès ou d'échec du DAG."
 repo: "https://github.com/benjsant/airflow_ml_mail_automation"
 tags: ["Apache Airflow", "Python", "ML", "Docker", "CI/CD", "MLOps"]
 featured: true
@@ -18,15 +18,15 @@ Mise en place d'un pipeline de Machine Learning complet orchestré par Apache Ai
 
 Le DAG enchaîne les étapes suivantes :
 
-1. **Chargement des données** — ingestion depuis la source configurée
-2. **Prétraitement** — nettoyage, normalisation, feature engineering
-3. **Entraînement** — régression logistique avec scikit-learn
-4. **Évaluation** — calcul des métriques (accuracy, F1, matrice de confusion)
-5. **Notifications** — email de succès ou d'échec via callbacks Airflow
+1. **Chargement des données** : ingestion depuis la source configurée
+2. **Prétraitement** : nettoyage, normalisation, feature engineering
+3. **Entraînement** : régression logistique avec scikit-learn
+4. **Évaluation** : calcul des métriques (accuracy, F1, matrice de confusion)
+5. **Notifications** : email de succès ou d'échec via callbacks Airflow
 
 ## Monitoring des emails
 
-Intégration de **MailCatcher** pour intercepter et visualiser les emails envoyés par Airflow sans serveur SMTP réel — idéal pour le développement et les tests.
+Intégration de **MailCatcher** pour intercepter et visualiser les emails envoyés par Airflow sans serveur SMTP réel, idéal pour le développement et les tests.
 
 ## Ce que ça démontre
 
