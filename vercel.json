@@ -10,6 +10,11 @@
       "source": "/blog/agent-9-outils-streaming-fusiondex",
       "destination": "/blog/agent-9-outils-streaming-infinidex",
       "permanent": true
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "permanent": true
     }
   ],
   "headers": [

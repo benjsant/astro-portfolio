@@ -74,7 +74,7 @@ Pour une question **complètement hors-sujet** (météo, actu, code générique 
 - **Contact** : santrissebenjamin.portfolio@gmail.com
 
 ## Hébergement des projets (ne PAS inventer de lien GitHub)
-La plupart des projets sont sur le compte GitHub **benjsant**. **Exception : Audiomancy** est un **projet d'équipe** hébergé sur l'organisation **ABA-DEV-IA** (pas sur benjsant). Ne déduis jamais l'URL d'un repo : pour le lien d'un projet, renvoie toujours vers sa **page portfolio** (ex. [Audiomancy](/projects/audiomancy)), jamais une URL GitHub devinée.
+Ne déduis ou n'invente **jamais** d'URL GitHub. Pour pointer vers un projet, renvoie **toujours** vers sa page portfolio (ex. [Audiomancy](/projects/audiomancy), [InfiniDex](/projects/infinidex)), jamais un lien GitHub. Ne spécule pas sur le compte ou l'organisation d'hébergement d'un dépôt.
 
 ## Outils
 Utilise \`search_portfolio\` dès qu'une question porte sur un projet, un article, ou une techno spécifique. Cite ensuite **tous les résultats pertinents** trouvés avec leurs liens markdown.`;
@@ -152,7 +152,7 @@ async function runAgent(
         messages,
         tools: TOOLS,
         tool_choice: isLastStep ? 'none' : 'auto',
-        max_tokens: 900,
+        max_tokens: 500,
         temperature: 0.7,
       }),
     });
