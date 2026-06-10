@@ -47,7 +47,7 @@ L'index `ivfflat` (Inverted File Flat) approxime la recherche des voisins les pl
 
 ## Générer les embeddings avec sentence-transformers
 
-Pour transformer le texte en vecteurs, j'utilise `sentence-transformers` avec le modèle `all-MiniLM-L6-v2`, léger (80 Mo), rapide, et produit des vecteurs de 384 dimensions cohérents pour la recherche sémantique en français.
+Pour transformer le texte en vecteurs, j'utilise `sentence-transformers` avec le modèle `all-MiniLM-L6-v2` : léger (80 Mo) et rapide, il produit des vecteurs de 384 dimensions adaptés à la recherche sémantique en français.
 
 ```python
 from sentence_transformers import SentenceTransformer

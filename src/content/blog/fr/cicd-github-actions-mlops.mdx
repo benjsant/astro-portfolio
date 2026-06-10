@@ -205,7 +205,7 @@ jobs:
 
 `fail-fast: false` est important : si `streamlit` échoue, les 4 autres builds continuent. Le cache Buildx par service + par sha réduit drastiquement le temps de rebuild sur les commits rapides.
 
-Les images buildées sont uploadées en artifact (rétention 1 jour) et téléchargées à l'étape suivante, évite de rebuilder à l'identique pour les tests d'intégration.
+Les images buildées sont uploadées en artifact (rétention 1 jour) et téléchargées à l'étape suivante, ce qui évite de rebuilder à l'identique pour les tests d'intégration.
 
 ---
 
