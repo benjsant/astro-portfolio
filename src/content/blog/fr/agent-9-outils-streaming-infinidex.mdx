@@ -274,7 +274,7 @@ def select_provider() -> LLMProvider | None:
 
 Les trois providers exposent la même interface OpenAI Chat Completions, le `AsyncOpenAI` de DeepSeek pointe sur `https://api.deepseek.com`, celui d'OpenRouter sur `https://openrouter.ai/api/v1`, et celui d'Ollama sur l'URL locale. Le code de l'agent ne sait jamais lequel est actif.
 
-Le `lru_cache(maxsize=1)` réutilise le pool de connexions httpx entre les requêtes, évite de créer un nouveau client à chaque appel.
+Le `lru_cache(maxsize=1)` réutilise le pool de connexions httpx entre les requêtes et évite de créer un nouveau client à chaque appel.
 
 ---
 
