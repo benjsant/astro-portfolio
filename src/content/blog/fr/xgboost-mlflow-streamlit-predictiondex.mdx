@@ -10,7 +10,7 @@ featured: false
 locale: "fr"
 ---
 
-**PredictionDex** prédit le vainqueur d'un combat Pokémon en moins de 500 ms. Le modèle final atteint 96,26 % d'accuracy sur 135 features. Ce qui rend le pipeline intéressant, ce n'est pas le score — c'est la chaîne complète : feature engineering reproductible, tracking MLflow systématique, et promotion automatique en Production quand le seuil de qualité est atteint.
+**PredictionDex** prédit le vainqueur d'un combat Pokémon en moins de 500 ms. Le modèle final atteint 96,26 % d'accuracy sur 135 features. Ce qui rend le pipeline intéressant, ce n'est pas le score, c'est la chaîne complète : feature engineering reproductible, tracking MLflow systématique, et promotion automatique en Production quand le seuil de qualité est atteint.
 
 ---
 
@@ -26,7 +26,7 @@ CSV brut → PokemonFeatureEngineer → XGBoost + GridSearchCV
                                   Streamlit (inference)
 ```
 
-Chaque étape est indépendante — le feature engineering peut tourner sans MLflow, le tracking peut être désactivé avec une variable d'environnement. C'est utile quand on veut itérer vite sans encombrer l'UI MLflow d'expériences de debug.
+Chaque étape est indépendante, le feature engineering peut tourner sans MLflow, le tracking peut être désactivé avec une variable d'environnement. C'est utile quand on veut itérer vite sans encombrer l'UI MLflow d'expériences de debug.
 
 ---
 
@@ -50,7 +50,7 @@ class PokemonFeatureEngineer:
         return self.scaler.transform(features)
 ```
 
-`fit_transform` sur le train set ajuste le `StandardScaler` et mémorise l'ordre des colonnes. `transform` sur le test set — ou en inférence — réutilise exactement le même scaler et le même ordre. Sans ça, la moindre différence de colonne entre train et inférence produit une prédiction silencieusement fausse.
+`fit_transform` sur le train set ajuste le `StandardScaler` et mémorise l'ordre des colonnes. `transform` sur le test set, ou en inférence, réutilise exactement le même scaler et le même ordre. Sans ça, la moindre différence de colonne entre train et inférence produit une prédiction silencieusement fausse.
 
 ### Les features construites
 
@@ -77,7 +77,7 @@ def _build_features(self, df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(features)
 ```
 
-Le `+ 1` dans les ratios évite les divisions par zéro sans changer significativement les ratios élevés. Le one-hot encoding des types produit 2×18 colonnes supplémentaires — c'est la majorité des 135 features.
+Le `+ 1` dans les ratios évite les divisions par zéro sans changer significativement les ratios élevés. Le one-hot encoding des types produit 2×18 colonnes supplémentaires, c'est la majorité des 135 features.
 
 ---
 
@@ -124,9 +124,9 @@ def train_model(X_train, y_train, mode: str = 'fast') -> XGBClassifier:
     return search.best_estimator_
 ```
 
-`StratifiedKFold` garantit que chaque fold a la même proportion de victoires P1/P2 — indispensable si le dataset n'est pas parfaitement équilibré. `n_jobs=-1` utilise tous les cœurs disponibles.
+`StratifiedKFold` garantit que chaque fold a la même proportion de victoires P1/P2, indispensable si le dataset n'est pas parfaitement équilibré. `n_jobs=-1` utilise tous les cœurs disponibles.
 
-L'`early_stopping_rounds=10` est passé au constructeur XGBoost (XGBoost ≥ 2.0) et non à `.fit()` — c'est un breaking change de l'API que beaucoup de tutoriels ratent encore.
+L'`early_stopping_rounds=10` est passé au constructeur XGBoost (XGBoost ≥ 2.0) et non à `.fit()`, c'est un breaking change de l'API que beaucoup de tutoriels ratent encore.
 
 ---
 
@@ -214,9 +214,9 @@ class MLflowTracker:
         )
 ```
 
-La promotion est entièrement automatique — si le modèle dépasse 85 % d'accuracy, il remplace l'ancienne version Production sans intervention manuelle. L'ancienne version passe en `Archived` (pas `Deleted`) pour garder la traçabilité.
+La promotion est entièrement automatique, si le modèle dépasse 85 % d'accuracy, il remplace l'ancienne version Production sans intervention manuelle. L'ancienne version passe en `Archived` (pas `Deleted`) pour garder la traçabilité.
 
-Si `DISABLE_MLFLOW_TRACKING=true`, le `MLflowTracker` est remplacé par un no-op — utile en CI ou en dev rapide pour ne pas avoir MLflow en dépendance d'exécution.
+Si `DISABLE_MLFLOW_TRACKING=true`, le `MLflowTracker` est remplacé par un no-op, utile en CI ou en dev rapide pour ne pas avoir MLflow en dépendance d'exécution.
 
 ---
 
@@ -253,15 +253,15 @@ if st.button("Prédire"):
     st.progress(confidence / 100, f"{confidence:.1f}% de confiance")
 ```
 
-`@st.cache_resource` évite de recharger le modèle MLflow à chaque interaction — le modèle est chargé une fois et réutilisé. Sans ça, chaque clic sur "Prédire" re-télécharge les artefacts MLflow, ce qui prend 2-3 secondes.
+`@st.cache_resource` évite de recharger le modèle MLflow à chaque interaction, le modèle est chargé une fois et réutilisé. Sans ça, chaque clic sur "Prédire" re-télécharge les artefacts MLflow, ce qui prend 2-3 secondes.
 
-Le `engineer.transform(df)` utilise le même `StandardScaler` ajusté sur le train set — le scaler est sérialisé avec pickle comme artifact MLflow lors de l'entraînement, chargé ici.
+Le `engineer.transform(df)` utilise le même `StandardScaler` ajusté sur le train set, le scaler est sérialisé avec pickle comme artifact MLflow lors de l'entraînement, chargé ici.
 
 ---
 
 ## Ce que j'ai appris
 
-**Le `fit`/`transform` séparé est non négociable.** Appeler `fit_transform` sur le test set est l'erreur la plus fréquente en ML — elle donne des métriques optimistes et un modèle qui sous-performe en production. Le pattern `fit_transform` sur train + `transform` sur test (et inférence) l'empêche structurellement.
+**Le `fit`/`transform` séparé est non négociable.** Appeler `fit_transform` sur le test set est l'erreur la plus fréquente en ML, elle donne des métriques optimistes et un modèle qui sous-performe en production. Le pattern `fit_transform` sur train + `transform` sur test (et inférence) l'empêche structurellement.
 
 **`early_stopping_rounds` au constructeur, pas à `.fit()`.** Depuis XGBoost 2.0, passer `early_stopping_rounds` à `.fit()` est déprécié et produit un warning. Beaucoup de code en ligne est encore à l'ancienne API.
 

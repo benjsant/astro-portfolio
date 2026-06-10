@@ -14,7 +14,7 @@ locale: "fr"
 
 Sous Linux, on se retrouve souvent face à un dilemme : on a une distribution stable qui fonctionne bien (Mint, Debian, MX Linux...) mais on aurait besoin d'un paquet récent disponible uniquement sur Fedora, ou d'un outil AUR d'Arch Linux, ou d'un environnement Python propre pour un projet.
 
-Les solutions classiques — dual boot, machines virtuelles, chroot — fonctionnent mais sont lourdes. **Distrobox** prend une approche différente : lancer n'importe quelle distribution dans un conteneur Podman ou Docker, totalement intégré au système hôte.
+Les solutions classiques, dual boot, machines virtuelles, chroot, fonctionnent mais sont lourdes. **Distrobox** prend une approche différente : lancer n'importe quelle distribution dans un conteneur Podman ou Docker, totalement intégré au système hôte.
 
 Concrètement, les applications installées dans le conteneur peuvent accéder au réseau, au son, à l'affichage graphique, aux fichiers du home, et même apparaître dans le menu d'applications. On a l'impression d'être sur la distro en question, sans avoir quitté la sienne.
 
@@ -76,7 +76,7 @@ distrobox create --name dev-fedora --image fedora:40
 distrobox enter dev-fedora
 ```
 
-On se retrouve dans un shell Fedora. On peut installer des paquets avec `dnf`, compiler du code, lancer des applications graphiques — tout fonctionne.
+On se retrouve dans un shell Fedora. On peut installer des paquets avec `dnf`, compiler du code, lancer des applications graphiques, tout fonctionne.
 
 ### Quelques exemples de conteneurs utiles
 
@@ -144,7 +144,7 @@ Envie de voir à quoi ressemble Fedora ou openSUSE ? Un conteneur Distrobox pren
 
 ### Séparer les usages
 
-Un conteneur pour le dev, un pour le gaming (avec Steam/Lutris), un pour l'IA — chacun avec ses propres paquets et configurations, sans qu'ils interfèrent entre eux.
+Un conteneur pour le dev, un pour le gaming (avec Steam/Lutris), un pour l'IA, chacun avec ses propres paquets et configurations, sans qu'ils interfèrent entre eux.
 
 ---
 

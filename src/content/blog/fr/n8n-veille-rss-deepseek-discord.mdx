@@ -10,7 +10,7 @@ featured: false
 locale: "fr"
 ---
 
-Rester à jour sur l'IA, le Data Engineering et le MLOps sans y passer 30 minutes par jour — c'est le problème que résout **n8n Veille Auto**. Deux workflows indépendants tournent en autonomie : l'un agrège les flux RSS et envoie un digest Discord chaque matin, l'autre demande à DeepSeek de générer un rapport de tendances structuré en JSON.
+Rester à jour sur l'IA, le Data Engineering et le MLOps sans y passer 30 minutes par jour, c'est le problème que résout **n8n Veille Auto**. Deux workflows indépendants tournent en autonomie : l'un agrège les flux RSS et envoie un digest Discord chaque matin, l'autre demande à DeepSeek de générer un rapport de tendances structuré en JSON.
 
 ---
 
@@ -39,11 +39,11 @@ medium.com/feed/tag/data-engineering             → data engineering
 practicaldataengineering.substack.com/feed       → newsletter data
 ```
 
-Les nœuds RSS sont branchés sur un `Merge` avec `numberInputs: 4`. n8n attend que les 4 flux aient répondu avant de continuer — pas de concurrence à gérer manuellement.
+Les nœuds RSS sont branchés sur un `Merge` avec `numberInputs: 4`. n8n attend que les 4 flux aient répondu avant de continuer, pas de concurrence à gérer manuellement.
 
 ### Filtre sur les 24 dernières heures
 
-Le nœud `If` filtre les articles publiés dans les dernières 24h. Les formats de date RSS ne sont pas standardisés — chaque source utilise un champ différent (`isoDate`, `pubDate`, `published`, `date`) :
+Le nœud `If` filtre les articles publiés dans les dernières 24h. Les formats de date RSS ne sont pas standardisés, chaque source utilise un champ différent (`isoDate`, `pubDate`, `published`, `date`) :
 
 ```javascript
 // Nœud If — condition
@@ -53,7 +53,7 @@ new Date($json.isoDate || $json.pubDate || $json.published || $json.date || 0)
 
 ### Déduplication avec WorkflowStaticData
 
-Le nœud `Dedup & Sort` utilise `$getWorkflowStaticData('global')` — une mémoire persistante côté n8n qui survit entre les exécutions. Elle stocke les liens déjà envoyés avec leur timestamp :
+Le nœud `Dedup & Sort` utilise `$getWorkflowStaticData('global')`, une mémoire persistante côté n8n qui survit entre les exécutions. Elle stocke les liens déjà envoyés avec leur timestamp :
 
 ```javascript
 const store = $getWorkflowStaticData('global');
@@ -95,7 +95,7 @@ newItems.sort((a, b) => pickDate(b.json) - pickDate(a.json));
 return newItems;
 ```
 
-`$getWorkflowStaticData` persiste en base SQLite de n8n. C'est la solution la plus simple pour une déduplication sans base externe — pas de Redis, pas de PostgreSQL.
+`$getWorkflowStaticData` persiste en base SQLite de n8n. C'est la solution la plus simple pour une déduplication sans base externe, pas de Redis, pas de PostgreSQL.
 
 La limite à 3 articles Medium évite le spam : Medium publie parfois 20+ articles par jour sur le tag `data-engineering`, dont beaucoup sont du contenu recyclé.
 
@@ -124,7 +124,7 @@ if (message.length > 1950) {
 
 ### Le prompt structuré JSON
 
-Le nœud HTTP appelle directement l'API DeepSeek avec un prompt qui force une sortie JSON parseable — pas de markdown, pas de texte libre :
+Le nœud HTTP appelle directement l'API DeepSeek avec un prompt qui force une sortie JSON parseable, pas de markdown, pas de texte libre :
 
 ```json
 {
@@ -144,7 +144,7 @@ Le nœud HTTP appelle directement l'API DeepSeek avec un prompt qui force une so
 }
 ```
 
-`temperature: 0.0` est important ici — on veut un JSON reproductible et structuré, pas de créativité. Les contraintes de longueur (`max 110 caractères`, `max 180 caractères`) évitent que les embeds Discord soient tronqués.
+`temperature: 0.0` est important ici, on veut un JSON reproductible et structuré, pas de créativité. Les contraintes de longueur (`max 110 caractères`, `max 180 caractères`) évitent que les embeds Discord soient tronqués.
 
 ### Parser la réponse et construire les embeds Discord
 
@@ -201,7 +201,7 @@ Le `content.match(/\{[\s\S]*\}/)` est une défense : malgré le prompt strict, c
 }
 ```
 
-Deux webhooks Discord distincts (`DISCORD_WEBHOOK_URL` et `DISCORD_WEBHOOK_URL_AI`) permettent de router les deux types de messages dans des channels différents — le digest RSS dans `#veille-articles`, le rapport IA dans `#veille-tendances`.
+Deux webhooks Discord distincts (`DISCORD_WEBHOOK_URL` et `DISCORD_WEBHOOK_URL_AI`) permettent de router les deux types de messages dans des channels différents, le digest RSS dans `#veille-articles`, le rapport IA dans `#veille-tendances`.
 
 ---
 
@@ -229,9 +229,9 @@ services:
 
 ## Ce que j'ai appris
 
-**`$getWorkflowStaticData` est la clé pour la déduplication sans infrastructure.** Pas besoin de Redis ou de base externe pour stocker les liens déjà traités — n8n persiste cette mémoire en SQLite. Le nettoyage automatique des entrées > 30 jours évite la croissance infinie.
+**`$getWorkflowStaticData` est la clé pour la déduplication sans infrastructure.** Pas besoin de Redis ou de base externe pour stocker les liens déjà traités, n8n persiste cette mémoire en SQLite. Le nettoyage automatique des entrées > 30 jours évite la croissance infinie.
 
-**`temperature: 0.0` pour les sorties JSON structurées.** Un LLM créatif produit un JSON légèrement différent à chaque appel — parfois avec des champs renommés, des tableaux de taille variable. À température 0, le format est stable et parseable sans surprises.
+**`temperature: 0.0` pour les sorties JSON structurées.** Un LLM créatif produit un JSON légèrement différent à chaque appel, parfois avec des champs renommés, des tableaux de taille variable. À température 0, le format est stable et parseable sans surprises.
 
 **La regex de fallback JSON est indispensable.** Même avec un prompt explicite ("renvoie UNIQUEMENT du JSON"), les LLMs ajoutent parfois du texte. Une regex `\{[\s\S]*\}` extrait le JSON quelle que soit la pollution textuelle autour.
 

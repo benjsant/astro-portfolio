@@ -10,7 +10,7 @@ featured: true
 locale: "fr"
 ---
 
-Le RAG (Retrieval-Augmented Generation) est devenu incontournable pour construire des assistants IA capables de répondre sur une base de connaissances spécifique — sans halluciner, sans fine-tuning coûteux. Dans ce projet, j'ai implémenté un agent RAG complet pour **Let's Go Dex**, un Pokédex interactif avec assistant conversationnel.
+Le RAG (Retrieval-Augmented Generation) est devenu incontournable pour construire des assistants IA capables de répondre sur une base de connaissances spécifique, sans halluciner, sans fine-tuning coûteux. Dans ce projet, j'ai implémenté un agent RAG complet pour **Let's Go Dex**, un Pokédex interactif avec assistant conversationnel.
 
 Voici comment ça fonctionne, du stockage des embeddings jusqu'à l'agent multi-outils.
 
@@ -20,7 +20,7 @@ Voici comment ça fonctionne, du stockage des embeddings jusqu'à l'agent multi-
 
 La première question quand on aborde le RAG : où stocker les embeddings ? Pinecone, Chroma, Weaviate sont les choix habituels. J'ai choisi **pgvector**, l'extension PostgreSQL pour la recherche vectorielle.
 
-La raison est simple : le projet utilise déjà PostgreSQL pour stocker les données du Pokédex. Ajouter pgvector évite d'introduire un service supplémentaire — tout reste dans la même base, les données structurées et les vecteurs sont interrogeables ensemble dans une seule requête SQL.
+La raison est simple : le projet utilise déjà PostgreSQL pour stocker les données du Pokédex. Ajouter pgvector évite d'introduire un service supplémentaire, tout reste dans la même base, les données structurées et les vecteurs sont interrogeables ensemble dans une seule requête SQL.
 
 ```sql
 -- Activer l'extension
@@ -41,13 +41,13 @@ USING ivfflat (embedding vector_cosine_ops)
 WITH (lists = 100);
 ```
 
-L'index `ivfflat` (Inverted File Flat) approxime la recherche des voisins les plus proches — bien plus rapide qu'une recherche exacte sur 188 Pokémon × plusieurs chunks chacun.
+L'index `ivfflat` (Inverted File Flat) approxime la recherche des voisins les plus proches, bien plus rapide qu'une recherche exacte sur 188 Pokémon × plusieurs chunks chacun.
 
 ---
 
 ## Générer les embeddings avec sentence-transformers
 
-Pour transformer le texte en vecteurs, j'utilise `sentence-transformers` avec le modèle `all-MiniLM-L6-v2` — léger (80 Mo), rapide, et produit des vecteurs de 384 dimensions cohérents pour la recherche sémantique en français.
+Pour transformer le texte en vecteurs, j'utilise `sentence-transformers` avec le modèle `all-MiniLM-L6-v2`, léger (80 Mo), rapide, et produit des vecteurs de 384 dimensions cohérents pour la recherche sémantique en français.
 
 ```python
 from sentence_transformers import SentenceTransformer
@@ -85,7 +85,7 @@ def build_chunks(pokemon: Pokemon) -> dict:
     }
 ```
 
-Le chunking est intentionnellement simple : un chunk par type d'information (description, stats, capacités). Pour une base de données structurée comme celle-ci, c'est plus efficace qu'un découpage par taille de texte — chaque chunk répond à un type de question précis.
+Le chunking est intentionnellement simple : un chunk par type d'information (description, stats, capacités). Pour une base de données structurée comme celle-ci, c'est plus efficace qu'un découpage par taille de texte, chaque chunk répond à un type de question précis.
 
 ---
 
@@ -123,7 +123,7 @@ def vector_search(db: Session, query: str, limit: int = 5) -> list[dict]:
     ]
 ```
 
-La distance cosinus est adaptée ici car les vecteurs sentence-transformers sont déjà normalisés — une distance proche de 0 signifie une forte similarité sémantique.
+La distance cosinus est adaptée ici car les vecteurs sentence-transformers sont déjà normalisés, une distance proche de 0 signifie une forte similarité sémantique.
 
 ---
 
@@ -286,6 +286,6 @@ async def chat(payload: ChatRequest, db: Session = Depends(get_db)):
 
 **Le chunking doit coller à la structure des données.** Chunker par type d'information (stats / description / capacités) donne de meilleurs résultats que chunker par taille de texte sur des données structurées. L'agent sait exactement ce qu'il va trouver dans chaque chunk.
 
-**L'agent multi-outils est plus robuste qu'un pipeline RAG fixe.** Un pipeline classique (retrieve → augment → generate) aurait du mal sur des questions SQL précises. L'agent choisit dynamiquement — et se trompe moins.
+**L'agent multi-outils est plus robuste qu'un pipeline RAG fixe.** Un pipeline classique (retrieve → augment → generate) aurait du mal sur des questions SQL précises. L'agent choisit dynamiquement, et se trompe moins.
 
 Le code source est disponible sur [GitHub](https://github.com/benjsant/lets-go-dex).

@@ -1,6 +1,6 @@
 ---
 title: "Monitoring d'une API FastAPI avec Prometheus, Grafana et Loki"
-description: "Instrumenter une API FastAPI avec prometheus_client, collecter les métriques HTTP/LLM/cache, visualiser dans Grafana et recevoir des alertes Discord — stack complète dans Audiomancy."
+description: "Instrumenter une API FastAPI avec prometheus_client, collecter les métriques HTTP/LLM/cache, visualiser dans Grafana et recevoir des alertes Discord, stack complète dans Audiomancy."
 publishedAt: 2026-04-07
 author: "Benjamin Santrisse"
 tags: ["Prometheus", "Grafana", "FastAPI", "Monitoring", "Docker", "Python"]
@@ -10,7 +10,7 @@ featured: false
 locale: "fr"
 ---
 
-Déployer une API sans monitoring, c'est piloter à l'aveugle. Sur **Audiomancy** — un assistant musical avec un agent DeepSeek et un cache MongoDB — j'ai mis en place une stack de monitoring complète : métriques Prometheus depuis FastAPI, dashboards Grafana, logs Loki, et alertes vers Discord.
+Déployer une API sans monitoring, c'est piloter à l'aveugle. Sur **Audiomancy**, un assistant musical avec un agent DeepSeek et un cache MongoDB, j'ai mis en place une stack de monitoring complète : métriques Prometheus depuis FastAPI, dashboards Grafana, logs Loki, et alertes vers Discord.
 
 Voici comment tout s'assemble.
 
@@ -170,7 +170,7 @@ class DeepSeekClient:
             raise RuntimeError(f"DeepSeek API call failed: {exc}") from exc
 ```
 
-Le suivi par `type` (prompt/completion) permet de calculer les coûts réels en post-traitement — les tokens de prompt sont bien moins chers que les tokens de complétion chez DeepSeek.
+Le suivi par `type` (prompt/completion) permet de calculer les coûts réels en post-traitement, les tokens de prompt sont bien moins chers que les tokens de complétion chez DeepSeek.
 
 ---
 
@@ -267,7 +267,7 @@ scrape_configs:
     scrape_interval: 15s
 ```
 
-Le frontend Next.js expose ses métriques sur `/api/metrics` plutôt que `/metrics` — Prometheus supporte `metrics_path` pour ce cas.
+Le frontend Next.js expose ses métriques sur `/api/metrics` plutôt que `/metrics`, Prometheus supporte `metrics_path` pour ce cas.
 
 ---
 
@@ -316,7 +316,7 @@ groups:
           summary: "P95 latency > 2s on {{ $labels.job }}"
 ```
 
-Le seuil `HighErrorRate > 0.05` signifie plus de 5% des requêtes en erreur sur 5 minutes — ce qui correspond à une dégradation réelle, pas à une erreur isolée.
+Le seuil `HighErrorRate > 0.05` signifie plus de 5% des requêtes en erreur sur 5 minutes, ce qui correspond à une dégradation réelle, pas à une erreur isolée.
 
 Les alertes sont routées vers Discord via un webhook :
 
@@ -330,7 +330,7 @@ receivers:
       - url: 'http://alertmanager-discord:9094/alert'
 ```
 
-`alertmanager-discord` est un petit service intermédiaire qui traduit le format Alertmanager en message Discord — il reçoit le webhook d'Alertmanager et forward vers l'URL Discord.
+`alertmanager-discord` est un petit service intermédiaire qui traduit le format Alertmanager en message Discord, il reçoit le webhook d'Alertmanager et forward vers l'URL Discord.
 
 ---
 
@@ -350,7 +350,7 @@ scrape_configs:
         target_label: container
 ```
 
-Dans Grafana, les logs Loki et les métriques Prometheus s'affichent sur le même dashboard — une erreur 500 dans les métriques est directement corrélable avec le traceback dans les logs.
+Dans Grafana, les logs Loki et les métriques Prometheus s'affichent sur le même dashboard, une erreur 500 dans les métriques est directement corrélable avec le traceback dans les logs.
 
 ---
 
@@ -358,7 +358,7 @@ Dans Grafana, les logs Loki et les métriques Prometheus s'affichent sur le mêm
 
 **Séparer le stack monitoring du stack applicatif.** Un `docker-compose.monitoring.yml` distinct permet d'activer ou désactiver le monitoring sans toucher à l'application. En dev, on ne démarre pas toujours les 7 services de monitoring.
 
-**Les histogrammes ont besoin de buckets calibrés.** Les buckets par défaut de Prometheus (`[0.005, 0.01, 0.025, ...]`) sont faits pour des APIs HTTP classiques. Pour un LLM qui répond en 1-15 secondes, il faut des buckets adaptés — sinon 100% des requêtes tombent dans le dernier bucket et les percentiles sont inutilisables.
+**Les histogrammes ont besoin de buckets calibrés.** Les buckets par défaut de Prometheus (`[0.005, 0.01, 0.025, ...]`) sont faits pour des APIs HTTP classiques. Pour un LLM qui répond en 1-15 secondes, il faut des buckets adaptés, sinon 100% des requêtes tombent dans le dernier bucket et les percentiles sont inutilisables.
 
 **`finally` dans le middleware HTTP.** Sans `finally`, une exception non gérée échappe à l'instrumentation. Le status 500 par défaut dans un bloc `finally` garantit qu'aucune requête ne passe sans métrique, même les crashs inattendus.
 

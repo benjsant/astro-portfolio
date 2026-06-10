@@ -10,9 +10,9 @@ featured: false
 locale: "fr"
 ---
 
-**MintyForge** est une interface web pour automatiser la post-installation d'un environnement Linux Mint Cinnamon — installation de paquets par profil, configuration dconf, gestion de thèmes GTK. Le problème : une installation Flatpak peut prendre 3 minutes. Sans feedback visuel, l'utilisateur ne sait pas si l'application est bloquée ou si `apt` télécharge 800 Mo de dépendances.
+**MintyForge** est une interface web pour automatiser la post-installation d'un environnement Linux Mint Cinnamon, installation de paquets par profil, configuration dconf, gestion de thèmes GTK. Le problème : une installation Flatpak peut prendre 3 minutes. Sans feedback visuel, l'utilisateur ne sait pas si l'application est bloquée ou si `apt` télécharge 800 Mo de dépendances.
 
-La solution : les **Server-Sent Events** — une connexion HTTP unidirectionnelle qui pousse les lignes de log au navigateur au fur et à mesure que les commandes Bash s'exécutent.
+La solution : les **Server-Sent Events**, une connexion HTTP unidirectionnelle qui pousse les lignes de log au navigateur au fur et à mesure que les commandes Bash s'exécutent.
 
 ---
 
@@ -45,7 +45,7 @@ app.register_blueprint(logs_bp, url_prefix='/api/logs')
 app.register_blueprint(packages_bp, url_prefix='/api/packages')
 ```
 
-La séparation en blueprints permet de tester chaque route indépendamment et d'isoler les imports — `themes.py` n'importe pas ce dont `dconf.py` a besoin.
+La séparation en blueprints permet de tester chaque route indépendamment et d'isoler les imports, `themes.py` n'importe pas ce dont `dconf.py` a besoin.
 
 ---
 
@@ -73,7 +73,7 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(QueueHandler())
 ```
 
-`maxsize=1000` avec `put_nowait` : si la queue est pleine (client SSE déconnecté, logs trop rapides), on ignore silencieusement le message plutôt que de bloquer le thread d'installation. L'installation continue — les logs perdus sont un problème d'affichage, pas un problème fonctionnel.
+`maxsize=1000` avec `put_nowait` : si la queue est pleine (client SSE déconnecté, logs trop rapides), on ignore silencieusement le message plutôt que de bloquer le thread d'installation. L'installation continue, les logs perdus sont un problème d'affichage, pas un problème fonctionnel.
 
 ---
 
@@ -117,11 +117,11 @@ def stream_logs():
     )
 ```
 
-`stream_with_context` est nécessaire dans Flask — sans lui, le générateur n'a pas accès au contexte de requête et Flask lève une `RuntimeError` à la première utilisation d'un proxy de contexte.
+`stream_with_context` est nécessaire dans Flask, sans lui, le générateur n'a pas accès au contexte de requête et Flask lève une `RuntimeError` à la première utilisation d'un proxy de contexte.
 
 Le keepalive toutes les 15 secondes (`yield "data: \n\n"`) évite que les proxies (nginx, Cloudflare) ferment la connexion idle. Un événement SSE vide est ignoré par le navigateur mais maintient la connexion TCP active.
 
-Le signal `__DONE__` dans la queue termine proprement le générateur côté serveur — la connexion SSE se ferme après la dernière ligne de log, sans que le client doive poller ou deviner quand l'installation est terminée.
+Le signal `__DONE__` dans la queue termine proprement le générateur côté serveur, la connexion SSE se ferme après la dernière ligne de log, sans que le client doive poller ou deviner quand l'installation est terminée.
 
 ---
 
@@ -172,7 +172,7 @@ def install_packages():
     return {'status': 'started', 'count': len(body.packages)}, 202
 ```
 
-Le `POST /install` retourne `202 Accepted` immédiatement — l'installation tourne dans un thread séparé. Le client ouvre ensuite la connexion SSE pour suivre la progression. Ce découplage est important : si le client ferme la connexion SSE (tab fermé), l'installation continue dans le thread daemon.
+Le `POST /install` retourne `202 Accepted` immédiatement, l'installation tourne dans un thread séparé. Le client ouvre ensuite la connexion SSE pour suivre la progression. Ce découplage est important : si le client ferme la connexion SSE (tab fermé), l'installation continue dans le thread daemon.
 
 `timeout=300` sur `subprocess.run` évite qu'un `dnf` bloqué sur un miroir indisponible gèle le thread indéfiniment.
 
@@ -209,9 +209,9 @@ class InstallRequest(BaseModel):
         return packages
 ```
 
-La validation du nom de paquet avec la regex `[a-zA-Z0-9_\-\.]+` empêche l'injection de commandes (`; rm -rf /`, `$(evil)`, etc.) avant que le nom arrive dans `subprocess.run`. C'est la frontière système — tout ce qui passe par là doit être validé.
+La validation du nom de paquet avec la regex `[a-zA-Z0-9_\-\.]+` empêche l'injection de commandes (`; rm -rf /`, `$(evil)`, etc.) avant que le nom arrive dans `subprocess.run`. C'est la frontière système, tout ce qui passe par là doit être validé.
 
-`subprocess.run` avec une liste de strings (pas une string) désactive l'interprétation shell (`shell=False` par défaut) — même si la validation échouait, le shell ne verrait jamais les arguments.
+`subprocess.run` avec une liste de strings (pas une string) désactive l'interprétation shell (`shell=False` par défaut), même si la validation échouait, le shell ne verrait jamais les arguments.
 
 ---
 
@@ -258,18 +258,18 @@ class StateManager:
         return installed
 ```
 
-`state.json` est mis à jour après chaque paquet installé avec succès — si l'installation s'interrompt à mi-chemin, le rollback ne désinstalle que ce qui a réellement été installé, pas ce qui était prévu.
+`state.json` est mis à jour après chaque paquet installé avec succès, si l'installation s'interrompt à mi-chemin, le rollback ne désinstalle que ce qui a réellement été installé, pas ce qui était prévu.
 
 ---
 
 ## Ce que j'ai appris
 
-**`stream_with_context` est obligatoire dans Flask.** Sans lui, le générateur SSE n'a pas accès au contexte de requête Flask. L'erreur ne se manifeste pas immédiatement — elle apparaît dès qu'une route dans le générateur tente d'accéder à `request` ou `g`.
+**`stream_with_context` est obligatoire dans Flask.** Sans lui, le générateur SSE n'a pas accès au contexte de requête Flask. L'erreur ne se manifeste pas immédiatement, elle apparaît dès qu'une route dans le générateur tente d'accéder à `request` ou `g`.
 
 **Séparer le déclenchement (POST) du suivi (GET SSE).** Un POST qui bloque jusqu'à la fin de l'installation timeout en 30-60 s sur la plupart des clients HTTP. Le 202 immédiat + SSE séparé permet des installations de plusieurs minutes sans friction.
 
-**`put_nowait` plutôt que `put` dans un handler de logging.** Le thread d'installation ne doit jamais se bloquer sur une queue pleine. Un log perdu est acceptable — un thread d'installation bloqué indéfiniment ne l'est pas.
+**`put_nowait` plutôt que `put` dans un handler de logging.** Le thread d'installation ne doit jamais se bloquer sur une queue pleine. Un log perdu est acceptable, un thread d'installation bloqué indéfiniment ne l'est pas.
 
-**Valider les entrées système à la frontière, pas au fond.** La regex sur les noms de paquets est dans le schéma Pydantic, avant tout code d'installation. Valider au plus tôt réduit la surface d'injection — et Pydantic v2 retourne une erreur structurée que le frontend peut afficher directement.
+**Valider les entrées système à la frontière, pas au fond.** La regex sur les noms de paquets est dans le schéma Pydantic, avant tout code d'installation. Valider au plus tôt réduit la surface d'injection, et Pydantic v2 retourne une erreur structurée que le frontend peut afficher directement.
 
 Le code source est disponible sur [GitHub](https://github.com/benjsant/minty_forge).

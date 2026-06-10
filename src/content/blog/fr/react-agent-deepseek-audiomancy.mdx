@@ -1,6 +1,6 @@
 ---
 title: "Implémenter un agent ReAct from scratch avec DeepSeek"
-description: "Construire un agent ReAct sans framework lourd : boucle Thought/Action/Observation, outil web_search DuckDuckGo, métriques Prometheus, et extraction robuste des tags — dans le projet Audiomancy."
+description: "Construire un agent ReAct sans framework lourd : boucle Thought/Action/Observation, outil web_search DuckDuckGo, métriques Prometheus, et extraction robuste des tags, dans le projet Audiomancy."
 publishedAt: 2026-03-17
 author: "Benjamin Santrisse"
 tags: ["ReAct", "DeepSeek", "Agent IA", "Python", "FastAPI", "Prometheus"]
@@ -10,7 +10,7 @@ featured: false
 locale: "fr"
 ---
 
-Le pattern ReAct (Reasoning + Acting) est l'architecture de référence pour les agents LLM qui doivent raisonner en plusieurs étapes avant de répondre. La plupart des implémentations passent par LangChain ou LlamaIndex. Dans **Audiomancy** — un assistant musical qui génère des tags pour des morceaux — j'ai choisi de l'implémenter directement, sans framework intermédiaire.
+Le pattern ReAct (Reasoning + Acting) est l'architecture de référence pour les agents LLM qui doivent raisonner en plusieurs étapes avant de répondre. La plupart des implémentations passent par LangChain ou LlamaIndex. Dans **Audiomancy**, un assistant musical qui génère des tags pour des morceaux, j'ai choisi de l'implémenter directement, sans framework intermédiaire.
 
 Voici pourquoi et comment.
 
@@ -18,7 +18,7 @@ Voici pourquoi et comment.
 
 ## Le problème : générer des tags musicaux fiables
 
-Audiomancy génère des tags Jamendo (genre, ambiance, instrument) à partir d'une description de morceau. Un simple appel LLM suffisait pour les cas simples, mais la qualité chutait sur les genres de niche — le modèle hallucine des tags inexistants ou trop génériques.
+Audiomancy génère des tags Jamendo (genre, ambiance, instrument) à partir d'une description de morceau. Un simple appel LLM suffisait pour les cas simples, mais la qualité chutait sur les genres de niche, le modèle hallucine des tags inexistants ou trop génériques.
 
 La solution : laisser l'agent chercher des informations réelles sur le web avant de répondre. D'où le pattern ReAct.
 
@@ -89,7 +89,7 @@ class AIAgent:
         return filter_final_answer(scratchpad)
 ```
 
-Le `scratchpad` accumule tout l'historique de raisonnement et est réinjecté à chaque itération dans le prompt — c'est le mécanisme de mémoire de l'agent.
+Le `scratchpad` accumule tout l'historique de raisonnement et est réinjecté à chaque itération dans le prompt, c'est le mécanisme de mémoire de l'agent.
 
 ---
 
@@ -113,7 +113,7 @@ def web_search(query: str) -> str:
     return "NO RESULT"
 ```
 
-La source est incluse dans l'observation pour que le LLM puisse citer d'où vient l'information — ce qui améliore la cohérence des tags générés.
+La source est incluse dans l'observation pour que le LLM puisse citer d'où vient l'information, ce qui améliore la cohérence des tags générés.
 
 ---
 
@@ -162,7 +162,7 @@ class DeepSeekClient:
             raise RuntimeError(f"DeepSeek API call failed: {exc}") from exc
 ```
 
-Le `stop=["Observation:"]` est crucial : sans lui, le modèle génère lui-même les résultats de ses outils — c'est-à-dire qu'il hallucine les observations au lieu de laisser le code les fournir. En stoppant sur `"Observation:"`, on reprend la main exactement là où l'agent attend un résultat réel.
+Le `stop=["Observation:"]` est crucial : sans lui, le modèle génère lui-même les résultats de ses outils, c'est-à-dire qu'il hallucine les observations au lieu de laisser le code les fournir. En stoppant sur `"Observation:"`, on reprend la main exactement là où l'agent attend un résultat réel.
 
 ---
 
@@ -202,7 +202,7 @@ La limite à 7 tags est métier : Jamendo affiche mal les listes de plus de 7 ta
 
 LangChain aurait fourni `AgentExecutor`, `Tool`, et des callbacks Prometheus prêts à l'emploi. J'ai choisi de ne pas l'utiliser pour deux raisons :
 
-**Debugging plus simple.** La boucle ReAct custom est lisible en entier dans un fichier de 100 lignes. Quand l'agent boucle ou produit des tags incorrects, le `scratchpad` est directement loggé — pas besoin de comprendre les couches d'abstraction de LangChain pour voir ce qui se passe.
+**Debugging plus simple.** La boucle ReAct custom est lisible en entier dans un fichier de 100 lignes. Quand l'agent boucle ou produit des tags incorrects, le `scratchpad` est directement loggé, pas besoin de comprendre les couches d'abstraction de LangChain pour voir ce qui se passe.
 
 **Contrôle des cas limites.** Le cap à `MAX_WEB_SEARCH = 3` et la reprise en main forcée ("I must now give the Final Answer") sont des comportements difficiles à câbler proprement dans LangChain sans surcharger des méthodes internes. En custom, c'est 5 lignes.
 

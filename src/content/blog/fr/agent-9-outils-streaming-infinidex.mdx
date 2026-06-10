@@ -1,6 +1,6 @@
 ---
 title: "Agent DeepSeek à 9 outils avec streaming SSE réel"
-description: "Architecture d'un agent tool-calling avec streaming token par token, cascade multi-provider (DeepSeek/OpenRouter/Ollama), attribution de sources et feedback Discord — dans InfiniDex."
+description: "Architecture d'un agent tool-calling avec streaming token par token, cascade multi-provider (DeepSeek/OpenRouter/Ollama), attribution de sources et feedback Discord, dans InfiniDex."
 publishedAt: 2026-05-12
 author: "Benjamin Santrisse"
 tags: ["DeepSeek", "Agent IA", "SSE", "FastAPI", "Python", "LLM", "Tool Calling"]
@@ -10,7 +10,7 @@ featured: true
 locale: "fr"
 ---
 
-La plupart des agents LLM ont le même défaut : l'utilisateur voit une réponse complète apparaître d'un coup, sans savoir ce que le modèle fait pendant les 5 secondes d'attente. Dans **InfiniDex** (ex-FusionDex-IA) — un Pokédex pour Pokémon Infinite Fusion avec 168 000+ fusions — j'ai implémenté un agent à 9 outils qui streame les tokens en temps réel *et* notifie l'interface de chaque appel d'outil avant son exécution.
+La plupart des agents LLM ont le même défaut : l'utilisateur voit une réponse complète apparaître d'un coup, sans savoir ce que le modèle fait pendant les 5 secondes d'attente. Dans **InfiniDex** (ex-FusionDex-IA), un Pokédex pour Pokémon Infinite Fusion avec 168 000+ fusions, j'ai implémenté un agent à 9 outils qui streame les tokens en temps réel *et* notifie l'interface de chaque appel d'outil avant son exécution.
 
 Voici comment ça fonctionne de bout en bout.
 
@@ -80,7 +80,7 @@ async def dispatch_tool(db: Session, name: str, args: dict) -> dict:
 
 ## Le streaming SSE avec assemblage des tool calls
 
-La partie la plus délicate : les tool calls arrivent fragmentés dans le stream. OpenAI et DeepSeek envoient les arguments JSON caractère par caractère dans des `delta.tool_calls` successifs — il faut les assembler avant de pouvoir les parser.
+La partie la plus délicate : les tool calls arrivent fragmentés dans le stream. OpenAI et DeepSeek envoient les arguments JSON caractère par caractère dans des `delta.tool_calls` successifs, il faut les assembler avant de pouvoir les parser.
 
 ```python
 async def _stream_turn(provider: LLMProvider, messages: list[dict]):
@@ -133,7 +133,7 @@ async def _stream_turn(provider: LLMProvider, messages: list[dict]):
         yield {"type": "empty"}
 ```
 
-L'accumulation par `idx` est nécessaire car le LLM peut demander plusieurs outils en parallèle dans le même tour — chacun a son propre index.
+L'accumulation par `idx` est nécessaire car le LLM peut demander plusieurs outils en parallèle dans le même tour, chacun a son propre index.
 
 ---
 
@@ -212,7 +212,7 @@ async def stream_ai_response(...) -> AsyncIterator[AgentEvent]:
             })
 ```
 
-Le `ToolCallEvent` est émis **avant** l'exécution de l'outil — l'interface peut afficher "🔍 Recherche dans la base..." dès que le LLM décide d'appeler l'outil, sans attendre le résultat.
+Le `ToolCallEvent` est émis **avant** l'exécution de l'outil, l'interface peut afficher "🔍 Recherche dans la base..." dès que le LLM décide d'appeler l'outil, sans attendre le résultat.
 
 ---
 
@@ -244,7 +244,7 @@ async def ask_ai(request: AiRequest, db: Session = Depends(get_db)):
     )
 ```
 
-Le header `X-Accel-Buffering: no` est indispensable si l'app est derrière nginx — sans lui, nginx bufferise la réponse et le streaming n'arrive jamais au client.
+Le header `X-Accel-Buffering: no` est indispensable si l'app est derrière nginx, sans lui, nginx bufferise la réponse et le streaming n'arrive jamais au client.
 
 ---
 
@@ -272,9 +272,9 @@ def select_provider() -> LLMProvider | None:
     return None  # → 503 avec instructions de configuration
 ```
 
-Les trois providers exposent la même interface OpenAI Chat Completions — le `AsyncOpenAI` de DeepSeek pointe sur `https://api.deepseek.com`, celui d'OpenRouter sur `https://openrouter.ai/api/v1`, et celui d'Ollama sur l'URL locale. Le code de l'agent ne sait jamais lequel est actif.
+Les trois providers exposent la même interface OpenAI Chat Completions, le `AsyncOpenAI` de DeepSeek pointe sur `https://api.deepseek.com`, celui d'OpenRouter sur `https://openrouter.ai/api/v1`, et celui d'Ollama sur l'URL locale. Le code de l'agent ne sait jamais lequel est actif.
 
-Le `lru_cache(maxsize=1)` réutilise le pool de connexions httpx entre les requêtes — évite de créer un nouveau client à chaque appel.
+Le `lru_cache(maxsize=1)` réutilise le pool de connexions httpx entre les requêtes, évite de créer un nouveau client à chaque appel.
 
 ---
 
@@ -299,18 +299,18 @@ async def submit_feedback(request: FeedbackRequest):
     return {"ok": True}
 ```
 
-Le feedback est best-effort — si le webhook échoue, la réponse reste `200`. L'utilisateur ne doit jamais voir une erreur pour un simple retour.
+Le feedback est best-effort, si le webhook échoue, la réponse reste `200`. L'utilisateur ne doit jamais voir une erreur pour un simple retour.
 
 ---
 
 ## Ce que j'ai appris
 
-**Assembler les tool calls fragmentés est non trivial.** Le stream envoie les arguments JSON en morceaux — parfois `{"name":` dans un chunk, `" "Pikachu"}` dans le suivant. L'accumulation par index et la concaténation des chaînes sont obligatoires avant tout `json.loads`.
+**Assembler les tool calls fragmentés est non trivial.** Le stream envoie les arguments JSON en morceaux, parfois `{"name":` dans un chunk, `" "Pikachu"}` dans le suivant. L'accumulation par index et la concaténation des chaînes sont obligatoires avant tout `json.loads`.
 
-**Émettre `ToolCallEvent` avant l'exécution.** Yield l'événement dès que le LLM décide d'appeler un outil, pas après le retour du résultat. L'utilisateur voit "Recherche en base..." pendant que l'outil tourne — la latence perçue chute drastiquement.
+**Émettre `ToolCallEvent` avant l'exécution.** Yield l'événement dès que le LLM décide d'appeler un outil, pas après le retour du résultat. L'utilisateur voit "Recherche en base..." pendant que l'outil tourne, la latence perçue chute drastiquement.
 
-**`X-Accel-Buffering: no` en production.** Sans ce header, tout proxy (nginx, Vercel, Cloudflare) peut bufferiser la réponse SSE. Le résultat ressemble alors à un appel bloquant — tout le texte arrive d'un coup à la fin.
+**`X-Accel-Buffering: no` en production.** Sans ce header, tout proxy (nginx, Vercel, Cloudflare) peut bufferiser la réponse SSE. Le résultat ressemble alors à un appel bloquant, tout le texte arrive d'un coup à la fin.
 
-**La cascade multi-provider simplifie le dev local.** Ollama fonctionne sans clé — `docker compose --profile ollama up` suffit pour tester l'agent entier en local, sans consommer de tokens cloud.
+**La cascade multi-provider simplifie le dev local.** Ollama fonctionne sans clé, `docker compose --profile ollama up` suffit pour tester l'agent entier en local, sans consommer de tokens cloud.
 
 Le code source est disponible sur [GitHub](https://github.com/benjsant/InfiniDex).
