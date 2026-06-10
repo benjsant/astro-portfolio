@@ -1,6 +1,6 @@
 ---
 title: "Audiomancy"
-description: "Plateforme de génération de playlists musicales assistée par IA, agent DeepSeek + API Jamendo, monitoring Prometheus/Grafana, déployée sur Azure."
+description: "Plateforme de génération de playlists musicales assistée par IA, agent DeepSeek + API Jamendo, monitoring Prometheus/Grafana, conteneurisée avec Docker."
 repo: "https://github.com/ABA-DEV-IA/Audiomancy"
 tags: ["Python", "FastAPI", "Next.js", "MongoDB", "DeepSeek", "Docker", "Azure", "Prometheus"]
 featured: true
@@ -27,9 +27,9 @@ L'agent utilise **DeepSeek** pour comprendre les préférences musicales de l'ut
 - **Base de données** : MongoDB pour les playlists et préférences utilisateur
 - **Monitoring** : Prometheus + Grafana pour observer les métriques en production
 
-## Déploiement Azure
+## Déploiement & conteneurisation
 
-L'application est conteneurisée avec **Docker** et déployée sur **Azure**, pipeline CI/CD automatisé pour les mises en production.
+L'application est conteneurisée avec **Docker** et pilotée par un pipeline CI/CD automatisé. Elle a été déployée sur **Azure** pendant la phase active du projet ; l'hébergement cloud est aujourd'hui arrêté.
 
 ## Stack technique
 
