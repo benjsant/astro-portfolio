@@ -1,0 +1,25 @@
+name: gitleaks
+
+# Scan automatique de secrets (clés API, tokens) à chaque push / PR.
+# Échoue le job si un secret est détecté dans le diff ou l'historique.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    name: Scan secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # historique complet pour scanner tous les commits
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
