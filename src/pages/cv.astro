@@ -366,7 +366,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     border-color: var(--brand-500);
     color: var(--brand-600);
   }
-  .cv-label { color: var(--foreground-subtle); }
+  .cv-label { color: var(--foreground); font-weight: 700; }
   /* Même rendu que .cv-contact (police mono, libellés .cv-label) pour que
      les 3 lignes du header soient parfaitement homogènes. */
   .cv-meta {
@@ -423,8 +423,8 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   .cv-skill-cat {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10px;
-    font-weight: 700;
-    color: var(--foreground);
+    font-weight: 600;
+    color: var(--brand-600);
     padding-top: 1px;
   }
   .cv-skill-val { color: var(--foreground); }
