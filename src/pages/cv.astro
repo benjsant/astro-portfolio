@@ -74,16 +74,19 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
       <!-- CONTACT -->
       <div class="cv-contact">
-        {cv.contact.map((item) => (
-          <span>
-            <span class="cv-label">{item.label} :</span>{' '}
-            <CvContactValue item={item} />
-          </span>
+        {cv.contact.map((item, i) => (
+          <Fragment>
+            {i > 0 && <span class="cv-dot">·</span>}
+            <span class="cv-ci"><span class="cv-label">{item.label} :</span> <CvContactValue item={item} /></span>
+          </Fragment>
         ))}
       </div>
       <div class="cv-meta">
-        {otherDetails.map((d) => (
-          <span><strong>{d.label} :</strong> {d.value}</span>
+        {otherDetails.map((d, i) => (
+          <Fragment>
+            {i > 0 && <span class="cv-dot">·</span>}
+            <span class="cv-ci"><strong>{d.label} :</strong> {d.value}</span>
+          </Fragment>
         ))}
       </div>
 
@@ -184,9 +187,9 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     /* Vars portfolio en mode clair fixé */
     --background: oklch(100% 0 0);
     --background-secondary: oklch(97.5% 0.010 190);
-    --foreground: oklch(20% 0.01 250);
-    --foreground-muted: oklch(45% 0.01 250);
-    --foreground-subtle: oklch(60% 0.005 250);
+    --foreground: oklch(18% 0.01 250);
+    --foreground-muted: oklch(36% 0.012 250);
+    --foreground-subtle: oklch(46% 0.008 250);
     --border: oklch(92% 0.006 220);
     --border-strong: oklch(85% 0.006 220);
 
@@ -345,19 +348,16 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
   /* Contact strip */
   .cv-contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 32px;
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10.5px;
     padding: 10px 0 3px;
     color: var(--foreground-muted);
+    line-height: 1.7;
   }
-  /* 2 colonnes équilibrées : Mail | Portfolio puis LinkedIn | GitHub
-     (évite qu'un seul élément reste orphelin sur une ligne) */
-  .cv-contact > span {
-    flex: 0 0 calc(50% - 16px);
-  }
+  /* Lignes fluides : chaque "Label : valeur" reste insécable, les · marquent
+     les coupures possibles (pas de colonnes rigides). */
+  .cv-ci { white-space: nowrap; }
+  .cv-dot { margin: 0 9px; color: var(--foreground-subtle); }
   .cv-contact a {
     color: var(--foreground);
     text-decoration: none;
@@ -369,19 +369,12 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     color: var(--brand-600);
   }
   .cv-label { color: var(--foreground-subtle); }
-  /* Même grille 2 colonnes que .cv-contact, pour aligner Permis | Mobilité
-     sous les contacts (Mail|Portfolio, LinkedIn|GitHub). */
   .cv-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 32px;
     font-size: 10.5px;
     color: var(--foreground-muted);
     padding-top: 5px;
     margin: 0;
-  }
-  .cv-meta > span {
-    flex: 0 0 calc(50% - 16px);
+    line-height: 1.6;
   }
   .cv-meta strong { color: var(--foreground); font-weight: 600; }
 
@@ -582,9 +575,9 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       --brand-500: #4f46e5 !important;
       --brand-600: #4338ca !important;
       --brand-700: #3730a3 !important;
-      --foreground: #1a2228 !important;
-      --foreground-muted: #5a6670 !important;
-      --foreground-subtle: #8a949c !important;
+      --foreground: #141a1f !important;
+      --foreground-muted: #3c454d !important;
+      --foreground-subtle: #57616a !important;
       --border: #e3e8eb !important;
     }
 
