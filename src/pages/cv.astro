@@ -187,9 +187,9 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     /* Vars portfolio en mode clair fixé */
     --background: oklch(100% 0 0);
     --background-secondary: oklch(97.5% 0.010 190);
-    --foreground: oklch(18% 0.01 250);
-    --foreground-muted: oklch(36% 0.012 250);
-    --foreground-subtle: oklch(46% 0.008 250);
+    --foreground: oklch(16% 0.01 250);
+    --foreground-muted: oklch(31% 0.013 250);
+    --foreground-subtle: oklch(40% 0.01 250);
     --border: oklch(92% 0.006 220);
     --border-strong: oklch(85% 0.006 220);
 
@@ -383,7 +383,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   .cv-section h2 {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.13em;
     color: var(--foreground);
@@ -417,15 +417,15 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     font-size: 11.5px;
     padding: 2px 0;
   }
-  .cv-skill-row + .cv-skill-row { border-top: 1px solid var(--brand-100); }
+  .cv-skill-row + .cv-skill-row { border-top: 1px solid var(--border); }
   .cv-skill-cat {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10px;
-    font-weight: 600;
-    color: var(--brand-600);
+    font-weight: 700;
+    color: var(--brand-700);
     padding-top: 1px;
   }
-  .cv-skill-val { color: var(--foreground); }
+  .cv-skill-val { color: var(--foreground); font-weight: 500; }
 
   /* Projects */
   .cv-project { margin-bottom: 7px; }
@@ -439,7 +439,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   }
   .cv-project-title {
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--foreground);
   }
   .cv-project-title a {
@@ -478,7 +478,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     gap: 12px;
     flex-wrap: wrap;
   }
-  .cv-job-org { font-size: 12.5px; font-weight: 600; color: var(--foreground); }
+  .cv-job-org { font-size: 12.5px; font-weight: 700; color: var(--foreground); }
   .cv-job-role { font-size: 11.5px; color: var(--brand-600); font-weight: 500; }
   .cv-job-date {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
@@ -527,14 +527,14 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     font-size: 11.5px;
     padding: 2px 0;
   }
-  .cv-entry + .cv-entry { border-top: 1px solid var(--brand-100); }
+  .cv-entry + .cv-entry { border-top: 1px solid var(--border); }
   .cv-entry-date {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10px;
     color: var(--brand-600);
     font-weight: 600;
   }
-  .cv-entry-body strong { color: var(--foreground); font-weight: 600; }
+  .cv-entry-body strong { color: var(--foreground); font-weight: 700; }
   .cv-entry-body span { color: var(--foreground-muted); display: block; font-size: 10.5px; }
 
   /* Interests */
@@ -575,9 +575,9 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       --brand-500: #4f46e5 !important;
       --brand-600: #4338ca !important;
       --brand-700: #3730a3 !important;
-      --foreground: #141a1f !important;
-      --foreground-muted: #3c454d !important;
-      --foreground-subtle: #57616a !important;
+      --foreground: #111619 !important;
+      --foreground-muted: #333b42 !important;
+      --foreground-subtle: #4a535b !important;
       --border: #e3e8eb !important;
     }
 
