@@ -81,14 +81,11 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
           </span>
         ))}
       </div>
-      <p class="cv-meta">
-        {otherDetails.map((d, i) => (
-          <Fragment>
-            {i > 0 ? <span>&nbsp;·&nbsp;</span> : null}
-            <strong>{d.label} :</strong> {d.value}
-          </Fragment>
+      <div class="cv-meta">
+        {otherDetails.map((d) => (
+          <span><strong>{d.label} :</strong> {d.value}</span>
         ))}
-      </p>
+      </div>
 
       <!-- COMPÉTENCES -->
       <section class="cv-section">
@@ -372,11 +369,19 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     color: var(--brand-600);
   }
   .cv-label { color: var(--foreground-subtle); }
+  /* Même grille 2 colonnes que .cv-contact, pour aligner Permis | Mobilité
+     sous les contacts (Mail|Portfolio, LinkedIn|GitHub). */
   .cv-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 32px;
     font-size: 10.5px;
     color: var(--foreground-muted);
     padding-top: 5px;
     margin: 0;
+  }
+  .cv-meta > span {
+    flex: 0 0 calc(50% - 16px);
   }
   .cv-meta strong { color: var(--foreground); font-weight: 600; }
 
