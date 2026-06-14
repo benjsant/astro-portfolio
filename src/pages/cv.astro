@@ -80,7 +80,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       </div>
       <div class="cv-meta">
         {otherDetails.map((d) => (
-          <span class="cv-ci"><strong>{d.label} :</strong> {d.value}</span>
+          <span class="cv-ci"><span class="cv-label">{d.label} :</span> {d.value}</span>
         ))}
       </div>
 
@@ -367,16 +367,18 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     color: var(--brand-600);
   }
   .cv-label { color: var(--foreground-subtle); }
+  /* Même rendu que .cv-contact (police mono, libellés .cv-label) pour que
+     les 3 lignes du header soient parfaitement homogènes. */
   .cv-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 4px 32px;
+    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10.5px;
     color: var(--foreground-muted);
     padding-top: 5px;
     margin: 0;
   }
-  .cv-meta strong { color: var(--foreground); font-weight: 600; }
 
   /* Sections */
   .cv-section { margin-top: 11px; }
