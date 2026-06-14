@@ -513,13 +513,14 @@ const pillContact = cv.contact.map((item) => ({
     overflow: visible !important;
   }
 
-  /* Hero indigo doit s'imprimer */
+  /* Hero en encadré (identique à l'écran) : fond très clair + bordure indigo,
+     texte indigo/foncé. Plus d'aplat de couleur = moins d'encre, impression
+     fiable. (Les couleurs de texte/bordure viennent des styles de base.) */
   .cvd-hero {
-    background: linear-gradient(135deg, #3730a3 0%, #4338ca 45%, #4f46e5 100%) !important;
-    padding: 4mm 11mm !important;
+    background: var(--b50) !important;
+    margin: 5mm 7mm 2mm !important;
+    padding: 3.5mm 6mm !important;
   }
-  .cvd-name, .cvd-pill-link { color: #fff !important; }
-  .cvd-role { color: #e0e7ff !important; }
 
   .cvd-body { padding: 4mm 11mm 5mm !important; }
 
