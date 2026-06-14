@@ -102,7 +102,7 @@ export const cv: CVData = {
 
   details: [
     { label: 'Recherche', value: 'CDI ou alternance · disponible immédiatement' },
-    { label: 'Permis', value: 'B + véhicule (mobilité départementale)' },
+    { label: 'Permis', value: 'B + véhicule' },
     { label: 'Mobilité', value: 'Métropole Valenciennoise + Lilloise' },
   ],
 

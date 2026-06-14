@@ -330,11 +330,16 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
   .cv-contact {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px 18px;
+    gap: 4px 32px;
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10.5px;
     padding: 10px 0 3px;
     color: var(--foreground-muted);
+  }
+  /* 2 colonnes équilibrées : Mail | Portfolio puis LinkedIn | GitHub
+     (évite qu'un seul élément reste orphelin sur une ligne) */
+  .cv-contact > span {
+    flex: 0 0 calc(50% - 16px);
   }
   .cv-contact a {
     color: var(--foreground);
