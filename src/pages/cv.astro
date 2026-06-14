@@ -74,19 +74,13 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
       <!-- CONTACT -->
       <div class="cv-contact">
-        {cv.contact.map((item, i) => (
-          <Fragment>
-            {i > 0 && <span class="cv-dot">·</span>}
-            <span class="cv-ci"><span class="cv-label">{item.label} :</span> <CvContactValue item={item} /></span>
-          </Fragment>
+        {cv.contact.map((item) => (
+          <span class="cv-ci"><span class="cv-label">{item.label} :</span> <CvContactValue item={item} /></span>
         ))}
       </div>
       <div class="cv-meta">
-        {otherDetails.map((d, i) => (
-          <Fragment>
-            {i > 0 && <span class="cv-dot">·</span>}
-            <span class="cv-ci"><strong>{d.label} :</strong> {d.value}</span>
-          </Fragment>
+        {otherDetails.map((d) => (
+          <span class="cv-ci"><strong>{d.label} :</strong> {d.value}</span>
         ))}
       </div>
 
@@ -348,16 +342,20 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
   /* Contact strip */
   .cv-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 32px;
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 10.5px;
     padding: 10px 0 3px;
     color: var(--foreground-muted);
-    line-height: 1.7;
   }
-  /* Lignes fluides : chaque "Label : valeur" reste insécable, les · marquent
-     les coupures possibles (pas de colonnes rigides). */
+  /* Grille 2 colonnes : Mail | Portfolio, LinkedIn | GitHub, Permis | Mobilité */
+  .cv-contact > span,
+  .cv-meta > span {
+    flex: 0 0 calc(50% - 16px);
+  }
   .cv-ci { white-space: nowrap; }
-  .cv-dot { margin: 0 9px; color: var(--foreground-subtle); }
   .cv-contact a {
     color: var(--foreground);
     text-decoration: none;
@@ -370,11 +368,13 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   }
   .cv-label { color: var(--foreground-subtle); }
   .cv-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 32px;
     font-size: 10.5px;
     color: var(--foreground-muted);
     padding-top: 5px;
     margin: 0;
-    line-height: 1.6;
   }
   .cv-meta strong { color: var(--foreground); font-weight: 600; }
 
