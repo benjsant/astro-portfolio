@@ -24,6 +24,11 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
+
+// La disponibilité est mise en avant en haut (sous le titre) ; les autres
+// infos (permis, mobilité) restent dans la ligne meta plus bas.
+const recherche = cv.details.find((d) => d.label === 'Recherche');
+const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 ---
 
 <BaseLayout
@@ -53,6 +58,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
         <div class="cv-identity">
           <h1 class="cv-name">{cv.header.name}</h1>
           <p class="cv-role">{cv.header.role}</p>
+          {recherche && <p class="cv-avail">{recherche.value}</p>}
           <p class="cv-summary">{cv.header.summary}</p>
         </div>
         {photoExists ? (
@@ -76,7 +82,7 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
         ))}
       </div>
       <p class="cv-meta">
-        {cv.details.map((d, i) => (
+        {otherDetails.map((d, i) => (
           <Fragment>
             {i > 0 ? <span>&nbsp;·&nbsp;</span> : null}
             <strong>{d.label} :</strong> {d.value}
@@ -283,6 +289,20 @@ const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
     font-weight: 600;
     color: var(--brand-600);
     margin: 5px 0 0;
+  }
+  /* Disponibilité mise en avant sous le titre (pastille verte = dispo) */
+  .cv-avail {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--foreground);
+    margin: 6px 0 0;
+  }
+  .cv-avail::before {
+    content: "●";
+    color: #16a34a;
+    margin-right: 6px;
+    font-size: 9px;
+    vertical-align: middle;
   }
   .cv-summary {
     font-size: 11.5px;
