@@ -244,21 +244,17 @@ const pillContact = cv.contact.map((item) => ({
   justify-content: space-between;
   align-items: flex-start;
   gap: 24px;
-  padding: 20px 38px;
-  background: linear-gradient(135deg, var(--b700) 0%, var(--b600) 45%, var(--b500) 100%);
-  color: #fff;
+  margin: 16px 16px 4px;
+  padding: 16px 22px;
+  background: var(--b50);
+  color: var(--fg);
+  border: 2px solid var(--b500);
+  border-radius: 10px;
   overflow: hidden;
 }
 
-/* Halo décoratif dans le hero */
-.cvd-hero::after {
-  content: '';
-  position: absolute;
-  top: -40%; right: -10%;
-  width: 320px; height: 320px;
-  background: radial-gradient(circle, rgb(255 255 255 / .12) 0%, transparent 65%);
-  pointer-events: none;
-}
+/* Plus de halo : on évite les aplats (encre + plantages d'impression) */
+.cvd-hero::after { display: none; }
 
 .cvd-hero-text { position: relative; z-index: 1; flex: 1; }
 
@@ -268,20 +264,20 @@ const pillContact = cv.contact.map((item) => ({
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.05;
-  color: #fff;
+  color: var(--b700);
   margin: 0 0 4px;
 }
 
 .cvd-role {
   font-size: 13.5px;
   font-weight: 700;
-  color: var(--b100);
+  color: var(--b600);
   margin: 0 0 7px;
 }
 
 .cvd-summary {
   font-size: 11px;
-  color: rgb(255 255 255 / .94);
+  color: var(--fg-muted);
   max-width: 60ch;
   line-height: 1.5;
   margin: 0 0 9px;
@@ -293,23 +289,23 @@ const pillContact = cv.contact.map((item) => ({
   display: inline-flex; align-items: baseline; gap: 3px;
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
   font-size: 8.5px;
-  background: rgb(255 255 255 / .12);
-  border: 1px solid rgb(255 255 255 / .22);
+  background: #fff;
+  border: 1px solid var(--border);
   border-radius: 9999px;
   padding: 2px 7px;
 }
-.cvd-pill-label { color: rgb(255 255 255 / .8); }
+.cvd-pill-label { color: var(--fg-muted); }
 .cvd-pill-link {
-  color: #fff !important;
+  color: var(--b700) !important;
   text-decoration: none;
   border-bottom: none !important;
   font-weight: 600;
 }
-.cvd-pill-link:hover { color: var(--b100) !important; }
+.cvd-pill-link:hover { color: var(--b600) !important; }
 
 /* Icône dans les pills (remplace le label texte) */
 .cvd-pill { align-items: center; }
-.cvd-pill-icon { width: 11px; height: 11px; color: rgb(255 255 255 / .9); flex-shrink: 0; }
+.cvd-pill-icon { width: 11px; height: 11px; color: var(--b600); flex-shrink: 0; }
 
 .cvd-pills-info { margin-top: 2px; }
 
@@ -323,9 +319,9 @@ const pillContact = cv.contact.map((item) => ({
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #fff;
-  background: rgb(255 255 255 / .14);
-  border: 1px solid rgb(255 255 255 / .25);
+  color: var(--b700);
+  background: #fff;
+  border: 1px solid var(--border);
   border-radius: 9999px;
   padding: 2px 10px;
   margin-bottom: 8px;
@@ -344,8 +340,8 @@ const pillContact = cv.contact.map((item) => ({
   object-fit: cover;
   border-radius: 9px;
   display: block;
-  border: 3px solid rgb(255 255 255 / .9);
-  box-shadow: 0 4px 14px rgb(0 0 0 / .25);
+  border: 2px solid var(--b500);
+  box-shadow: 0 2px 8px rgb(0 0 0 / .12);
 }
 
 /* ════ BODY ════ */
