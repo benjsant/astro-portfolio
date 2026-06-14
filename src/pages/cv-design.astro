@@ -16,6 +16,17 @@ const contactIcons: Record<string, string> = {
   LinkedIn: 'brand-linkedin',
   GitHub: 'brand-github',
 };
+
+// Sur le CV design, l'icône indique déjà la plateforme : on affiche un handle
+// court dans les pills (LinkedIn/GitHub sans le domaine) pour rester compact.
+// Le lien (href) reste complet, et le CV ATS garde l'URL entière (utile à l'impression).
+const pillContact = cv.contact.map((item) => ({
+  ...item,
+  value: item.value
+    .replace(/^https?:\/\//, '')
+    .replace(/^linkedin\.com\/in\//, '')
+    .replace(/^github\.com\//, ''),
+}));
 ---
 
 <BaseLayout
@@ -45,7 +56,7 @@ const contactIcons: Record<string, string> = {
           <p class="cvd-summary">{cv.header.summary}</p>
 
           <div class="cvd-pills">
-            {cv.contact.map((item) => (
+            {pillContact.map((item) => (
               <span class="cvd-pill">
                 <Icon name={contactIcons[item.label] ?? 'link'} size="xs" class="cvd-pill-icon" />
                 <CvContactValue item={item} linkClass="cvd-pill-link" />
