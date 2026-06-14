@@ -245,16 +245,29 @@ const pillContact = cv.contact.map((item) => ({
   align-items: flex-start;
   gap: 24px;
   margin: 16px 16px 4px;
-  padding: 16px 22px;
+  padding: 18px 24px;
   background: var(--b50);
   color: var(--fg);
-  border: 2px solid var(--b500);
-  border-radius: 10px;
   overflow: hidden;
 }
 
-/* Plus de halo : on évite les aplats (encre + plantages d'impression) */
-.cvd-hero::after { display: none; }
+/* Marques d'angle (brackets indigo) au lieu d'un cadre plein : effet
+   « blueprint » designé, encre minimale. 8 fins traits = 4 coins en L. */
+.cvd-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--b500), var(--b500)) top left / 15px 2px no-repeat,
+    linear-gradient(var(--b500), var(--b500)) top left / 2px 15px no-repeat,
+    linear-gradient(var(--b500), var(--b500)) top right / 15px 2px no-repeat,
+    linear-gradient(var(--b500), var(--b500)) top right / 2px 15px no-repeat,
+    linear-gradient(var(--b500), var(--b500)) bottom left / 15px 2px no-repeat,
+    linear-gradient(var(--b500), var(--b500)) bottom left / 2px 15px no-repeat,
+    linear-gradient(var(--b500), var(--b500)) bottom right / 15px 2px no-repeat,
+    linear-gradient(var(--b500), var(--b500)) bottom right / 2px 15px no-repeat;
+}
 
 .cvd-hero-text { position: relative; z-index: 1; flex: 1; }
 
