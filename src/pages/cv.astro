@@ -381,7 +381,12 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   }
 
   /* Sections */
-  .cv-section { margin-top: 11px; }
+  /* Sections aérées + séparées par un trait pleine largeur */
+  .cv-section {
+    margin-top: 13px;
+    padding-top: 11px;
+    border-top: 1px solid var(--border-strong);
+  }
   .cv-section h2 {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 11px;
@@ -392,7 +397,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 0 0 5px;
+    margin: 0 0 7px;
   }
   .cv-section h2::before {
     /* Caractère Unicode ■ au lieu d'un div avec background-color :
@@ -404,12 +409,9 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     line-height: 1;
     flex-shrink: 0;
   }
-  .cv-section h2::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+  /* Le trait en bout de titre est retiré : le séparateur pleine largeur
+     au-dessus de la section fait déjà la coupure (évite le double trait). */
+  .cv-section h2::after { display: none; }
 
   /* Skills */
   .cv-skill-row {
