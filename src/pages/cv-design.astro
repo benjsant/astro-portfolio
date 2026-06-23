@@ -39,7 +39,8 @@ const pillContact = cv.contact.map((item) => ({
   <div class="cvd-root">
 
     <div class="cvd-toolbar no-print">
-      <button class="cvd-btn" onclick="window.print()">↓ Télécharger en PDF</button>
+      <button class="cvd-btn cvd-btn--ghost" onclick="document.querySelector('.cvd-paper').classList.remove('cvd-aere'); window.print();">↓ PDF · 1 page</button>
+      <button class="cvd-btn" onclick="document.querySelector('.cvd-paper').classList.add('cvd-aere'); window.print();">↓ PDF · 2 pages (aéré)</button>
     </div>
 
     <main class="cvd-paper" role="main">
@@ -214,7 +215,9 @@ const pillContact = cv.contact.map((item) => ({
 }
 
 /* ── Toolbar ── */
-.cvd-toolbar { max-width: 820px; margin: 0 auto 14px; display: flex; justify-content: flex-end; }
+.cvd-toolbar { max-width: 820px; margin: 0 auto 14px; display: flex; justify-content: flex-end; gap: 8px; }
+.cvd-btn--ghost { background: #fff; color: var(--b600); border: 1.5px solid var(--b100); box-shadow: none; }
+.cvd-btn--ghost:hover { background: var(--b50); }
 .cvd-btn {
   font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
   font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
@@ -537,12 +540,22 @@ const pillContact = cv.contact.map((item) => ({
 
   .cvd-body { padding: 4mm 11mm 5mm !important; }
 
-  /* Compression print pour tenir sur 1 page */
+  /* Compression print pour tenir sur 1 page (mode compact = défaut) */
   .cvd-section { margin-bottom: 6px !important; }
   .cvd-h2 { margin-bottom: 4px !important; }
   .cvd-project { margin-bottom: 5px !important; }
   .cvd-tl-item { margin-bottom: 6px !important; }
   .cvd-skill-row { padding: 1.5px 0 !important; }
+
+  /* Mode AÉRÉ (bouton « 2 pages ») : dé-comprime tout. La spécificité
+     « .cvd-aere .x » bat « .x » à !important égal → ces règles gagnent. */
+  .cvd-aere .cvd-section { margin-bottom: 16px !important; }
+  .cvd-aere .cvd-h2 { margin-bottom: 9px !important; }
+  .cvd-aere .cvd-project { margin-bottom: 13px !important; }
+  .cvd-aere .cvd-tl-item { margin-bottom: 13px !important; }
+  .cvd-aere .cvd-skill-row { padding: 4px 0 !important; }
+  .cvd-aere .cvd-body { padding: 7mm 11mm 9mm !important; }
+  .cvd-aere .cvd-summary { line-height: 1.6 !important; }
 
   /* On évite seulement les coupures DANS les petits blocs, jamais sur une
      section entière (sinon une section trop grande saute en bloc en page 2
