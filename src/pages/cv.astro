@@ -47,8 +47,11 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
   <main class="cv-page pt-20 pb-12">
     <div class="cv-toolbar">
-      <button type="button" class="cv-print-btn" onclick="window.print()">
-        ↓ Télécharger en PDF
+      <button type="button" class="cv-print-btn cv-print-btn--ghost" onclick="document.querySelector('.cv-sheet').classList.remove('cv-aere'); window.print();">
+        ↓ PDF · 1 page (compact)
+      </button>
+      <button type="button" class="cv-print-btn" onclick="document.querySelector('.cv-sheet').classList.add('cv-aere'); window.print();">
+        ↓ PDF · 2 pages (aéré)
       </button>
     </div>
 
@@ -217,7 +220,16 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     margin: 0 auto 16px;
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
   }
+  /* Variante « contour » pour le bouton compact (différencie les 2 options) */
+  .cv-print-btn--ghost {
+    background: #fff;
+    color: var(--brand-600);
+    border: 1.5px solid var(--brand-100);
+    box-shadow: none;
+  }
+  .cv-print-btn--ghost:hover { background: var(--brand-50); }
   .cv-print-btn {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 12px;
@@ -381,10 +393,11 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   }
 
   /* Sections */
-  /* Sections aérées + séparées par un trait pleine largeur */
+  /* Sections : compactes par défaut (bouton 1 page), avec trait de séparation
+     pleine largeur. Le mode .cv-aere (bouton 2 pages) gonfle tout l'espacement. */
   .cv-section {
-    margin-top: 13px;
-    padding-top: 11px;
+    margin-top: 8px;
+    padding-top: 6px;
     border-top: 1px solid var(--border-strong);
   }
   .cv-section h2 {
@@ -397,7 +410,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 0 0 7px;
+    margin: 0 0 5px;
   }
   .cv-section h2::before {
     /* Caractère Unicode ■ au lieu d'un div avec background-color :
@@ -412,6 +425,19 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   /* Le trait en bout de titre est retiré : le séparateur pleine largeur
      au-dessus de la section fait déjà la coupure (évite le double trait). */
   .cv-section h2::after { display: none; }
+
+  /* ── Mode AÉRÉ (bouton « 2 pages ») ───────────────────────────────────
+     Ajoute de la respiration partout pour un rendu beau sur ~2 pages. */
+  .cv-aere .cv-section { margin-top: 20px; padding-top: 15px; }
+  .cv-aere .cv-section h2 { margin-bottom: 9px; }
+  .cv-aere .cv-contact, .cv-aere .cv-meta { line-height: 1.8; }
+  .cv-aere .cv-summary { font-size: 12.5px; line-height: 1.6; }
+  .cv-aere .cv-skill-row { padding: 5px 0; }
+  .cv-aere .cv-project { margin-bottom: 14px; }
+  .cv-aere .cv-project-desc { line-height: 1.6; margin-top: 3px; }
+  .cv-aere .cv-entry { padding: 5px 0; }
+  .cv-aere ul.cv-tasks li { margin-bottom: 4px; line-height: 1.5; }
+  .cv-aere .cv-interests { line-height: 1.7; }
 
   /* Skills */
   .cv-skill-row {
