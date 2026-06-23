@@ -49,3 +49,12 @@ SPOOFING_GUIDE.md
 # CV PDFs de test à la racine (les officiels restent dans public/)
 /CV*.pdf
 /cv*.pdf
+
+# Lettres de motivation (perso, ne pas pousser)
+lettres-motivation/
+
+# Bannière LinkedIn (asset perso, non publié)
+linkedin/
+
+# Fiche pitch salon (perso, non publié)
+salon-emploi/
