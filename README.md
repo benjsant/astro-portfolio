@@ -1,48 +1,79 @@
-<h1 align="center">Benjamin Santrisse</h1>
-<p align="center"><b>Développeur IA &amp; Data Engineering</b> · Python · Backend · LLM · MLOps</p>
+# astro-portfolio
 
-<p align="center">
-  <a href="https://benjamin-santrisse.vercel.app">🌐 Portfolio</a> ·
-  <a href="https://benjamin-santrisse.vercel.app/cv">📄 CV</a> ·
-  <a href="https://www.linkedin.com/in/benjamin-santrisse/">💼 LinkedIn</a> ·
-  <a href="mailto:santrissebenjamin.portfolio@gmail.com">✉️ Email</a>
-</p>
+Portfolio et blog personnel de **Benjamin Santrisse** — Développeur IA & Data Engineering.
 
----
+Site statique généré avec Astro 6, Tailwind CSS v4, MDX et déploiement Docker. Inclut un agent conversationnel embarqué (DeepSeek + tool-calling) qui répond aux questions des visiteurs sur le portfolio.
 
-🟢 **Disponible immédiatement** (CDI ou CDD) · Hauts-de-France, mobile Lille / Valenciennes · télétravail OK
+## Stack
 
-Développeur Python spécialisé en **IA appliquée et backend**, reconverti via une
-certification **Développeur IA RNCP 6**. Je conçois et déploie des projets concrets :
-agents LLM, pipelines MLOps, ETL et APIs FastAPI. Des produits réellement déployés,
-pas des démos.
+| Couche       | Stack                                                    |
+| ------------ | -------------------------------------------------------- |
+| Framework    | Astro 6 · React 19 · TypeScript                          |
+| Styling      | Tailwind CSS v4 · OKLCH theming                          |
+| Contenu      | MDX · Content Layer API (Zod schemas)                    |
+| Agent IA     | DeepSeek API · tool-calling · rate-limit IP              |
+| Formulaires  | Resend · Zod · honeypot anti-spam                        |
+| SEO          | JSON-LD (Person, BlogPosting, FAQ) · sitemap · OG · RSS  |
+| Recherche    | Pagefind (statique, no JS dependency on the user)        |
+| Déploiement  | Docker · Vercel · Netlify · Cloudflare Pages (adapter)   |
 
-## 🚀 Projets phares
+## Démarrage
 
-- **[InfiniDex](https://github.com/benjsant/InfiniDex)** · Pokédex augmenté par IA :
-  agent LLM multi-provider à 9 outils (streaming temps réel) et pipeline ETL Prefect
-  sur 168 000+ fusions. `FastAPI · PostgreSQL · Next.js · Docker`
-- **[PredictionDex](https://github.com/benjsant/lets-go-predictiondex)** · pipeline
-  MLOps de bout en bout : XGBoost (96 % de précision), MLflow, promotion auto en prod.
-  `Python · FastAPI · Streamlit`
-- **[MintyForge](https://github.com/benjsant/minty_forge)** · outil de post-installation
-  pour Linux Mint : interface web Flask (dry-run, profils, thèmes GTK, rollback,
-  streaming SSE des logs en temps réel). `Flask · Pydantic · Bash`
+```bash
+pnpm install
+cp .env.example .env       # renseigner DEEPSEEK_API_KEY, RESEND_API_KEY si besoin
+pnpm dev                   # http://localhost:4321
+```
 
-## 🛠️ Stack
+### Avec Docker
 
-![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
-![Prefect](https://img.shields.io/badge/Prefect-024DFD?logo=prefect&logoColor=white)
-![MLflow](https://img.shields.io/badge/MLflow-0194E2?logo=mlflow&logoColor=white)
+```bash
+docker compose up
+```
 
-**IA** &nbsp;LLMs · RAG · Agents (ReAct, tool-calling) · DeepSeek &nbsp;&nbsp;|&nbsp;&nbsp;
-**Data / MLOps** &nbsp;Pandas · scikit-learn · XGBoost · ETL Prefect &nbsp;&nbsp;|&nbsp;&nbsp;
-**Web** &nbsp;Next.js · React · Astro
+## Scripts
 
-## 📫 Me contacter
+| Commande            | Action                                       |
+| ------------------- | -------------------------------------------- |
+| `pnpm dev`          | Serveur de dev sur :4321                     |
+| `pnpm build`        | Build statique dans `dist/`                  |
+| `pnpm preview`      | Preview du build                             |
+| `pnpm check`        | Type-check Astro + TypeScript                |
+| `pnpm lint`         | ESLint                                       |
+| `pnpm validate`     | lint + check + build                         |
+| `pnpm test`         | Tests Vitest (validation des schemas API)    |
 
-Le plus simple : **[mon portfolio](https://benjamin-santrisse.vercel.app)**, avec mes
-projets, articles, CV téléchargeable, et un assistant IA que j'ai développé.
+## Architecture
+
+```
+src/
+├── components/    # UI réutilisable (cards, badges, hero, etc.)
+├── content/
+│   ├── blog/fr/   # Articles MDX (FR)
+│   ├── projects/  # Projets MDX
+│   └── stack/     # Fiches techno MDX
+├── layouts/       # BaseLayout, BlogLayout, ProjectLayout
+├── pages/
+│   ├── api/       # /api/chat (agent DeepSeek), /api/contact (Resend), /api/newsletter
+│   ├── blog/      # listing + [...slug]
+│   ├── projects/  # listing + [slug]
+│   └── *.astro    # accueil, about, contact, 404
+├── config/        # site.config.ts, nav.config.ts, consent.config.ts
+└── lib/           # portfolio-data, schema JSON-LD, utils
+```
+
+## Choix d'archi notables
+
+- **Agent chat embarqué.** `/api/chat` ([src/pages/api/chat.ts](src/pages/api/chat.ts)) — agent DeepSeek tool-calling avec `search_portfolio`, rate-limit IP (10 req/h), origin check, system prompt scope-locked au portfolio.
+- **Sécurité API.** `checkOrigin: true`, `envField` typés avec Zod, honeypot anti-bot, rate-limit en mémoire.
+- **Contenu typé.** Collections Zod pour blog/projects/stack/authors/faqs — toutes les frontmatter MDX sont validées au build.
+- **SEO complet.** JSON-LD Person + ProfessionalService + BlogPosting + FAQ, OG par page, sitemap auto, RSS, robots, manifest PWA.
+- **Multi-déploiement.** Variable `DEPLOY_TARGET` qui switch l'adapter Astro (Vercel / Netlify / Node).
+
+## Crédits
+
+Démarré depuis le thème [Astro Rocket](https://github.com/hansmartens68/astro-rocket) (MIT) puis fortement personnalisé : agent DeepSeek, contenus, branding, structure pages.
+
+## Licence
+
+MIT — voir [LICENSE](LICENSE).
