@@ -24,22 +24,22 @@ export function createWebsiteSchema(): WithContext<WebSite> {
 }
 
 /**
- * Create Person schema for Astro Rocket
+ * Create Person schema for Benjamin Santrisse (référencement de la personne)
  */
 export function createPersonSchema(): WithContext<Person> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Astro Rocket',
-    jobTitle: 'Web Designer & Developer',
+    name: siteConfig.name,
+    jobTitle: 'Développeur IA & Data Engineering',
     url: siteConfig.url,
     email: siteConfig.email,
     ...(siteConfig.authorImage ? { image: `${siteConfig.url}${siteConfig.authorImage}` } : {}),
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Veghel',
-      addressRegion: 'Noord-Brabant',
-      addressCountry: 'NL',
+      addressLocality: siteConfig.address?.city || 'Marly',
+      addressRegion: 'Hauts-de-France',
+      addressCountry: 'FR',
     },
     sameAs: siteConfig.socialLinks,
   };
@@ -59,13 +59,13 @@ export function createProfessionalServiceSchema(): WithContext<LocalBusiness> {
     ...(siteConfig.authorImage ? { image: `${siteConfig.url}${siteConfig.authorImage}` } : {}),
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Veghel',
-      addressRegion: 'Noord-Brabant',
-      addressCountry: 'NL',
+      addressLocality: siteConfig.address?.city || 'Marly',
+      addressRegion: 'Hauts-de-France',
+      addressCountry: 'FR',
     },
     areaServed: [
-      { '@type': 'Country', name: 'Netherlands' },
-      { '@type': 'Country', name: 'Worldwide' },
+      { '@type': 'Country', name: 'France' },
+      { '@type': 'Place', name: 'Télétravail / remote' },
     ],
     sameAs: siteConfig.socialLinks,
   };

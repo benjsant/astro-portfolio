@@ -16,7 +16,7 @@ import type { APIRoute } from 'astro';
  *   et CCPA/GDPR pour les données personnelles.
  */
 export const GET: APIRoute = ({ site }) => {
-  const siteUrl = site?.toString() || 'https://example.com';
+  const siteUrl = site?.toString() || 'https://benjamin-santrisse.vercel.app';
 
   // Bots d'entraînement IA à exclure (mise à jour 2026)
   const aiCrawlers = [
