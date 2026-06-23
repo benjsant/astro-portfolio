@@ -101,7 +101,7 @@ export const cv: CVData = {
   ],
 
   details: [
-    { label: 'Recherche', value: 'CDI ou alternance · disponible immédiatement' },
+    { label: 'Recherche', value: 'CDI ou CDD · disponible immédiatement' },
     { label: 'Permis', value: 'B + véhicule' },
     { label: 'Mobilité', value: 'Métropole Valenciennoise + Lilloise' },
   ],
