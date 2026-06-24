@@ -3,7 +3,7 @@
  * UI icons  → Lucide  (lucide.dev)
  * Brand/social icons → Simple Icons (simpleicons.org)
  *
- * Same public API as before — callers pass the short name (e.g. "arrow-right",
+ * Same public API as before - callers pass the short name (e.g. "arrow-right",
  * "github", "x-twitter"). This wrapper resolves it to the correct Iconify set.
  */
 import { Icon as IconifyIcon } from '@iconify/react';

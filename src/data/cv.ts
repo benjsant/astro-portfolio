@@ -1,5 +1,5 @@
 /**
- * CV – données structurées
+ * CV - données structurées
  *
  * Tout le contenu du CV vit ici. La page `/cv` boucle sur ces données et
  * génère le HTML automatiquement.
@@ -33,7 +33,7 @@ export interface SkillRow {
 export interface Project {
   title: string;
   repo: string;
-  /** Période courte du projet (ex: "Janvier – Mars 2026"). Optionnel. */
+  /** Période courte du projet (ex: "Janvier - Mars 2026"). Optionnel. */
   period?: string;
   stack: string;
   description: string;
@@ -70,7 +70,7 @@ export interface CVData {
     summary: string;
   };
   contact: ContactItem[];
-  /** Infos complémentaires (permis, mobilité…) – affichées comme les contacts. */
+  /** Infos complémentaires (permis, mobilité…) - affichées comme les contacts. */
   details: { label: string; value: string }[];
   skills: SkillRow[];
   projects: Project[];
@@ -92,7 +92,7 @@ export const cv: CVData = {
   },
 
   contact: [
-    // Email principal – visible dans le CV PDF téléchargé (destiné aux recruteurs).
+    // Email principal - visible dans le CV PDF téléchargé (destiné aux recruteurs).
     // Sur les pages site, c'est l'email portfolio dédié + obfuscation JS.
     { label: 'Mail', value: 'santrissebenjamin@gmail.com', href: 'mailto:santrissebenjamin@gmail.com' },
     { label: 'Portfolio', value: 'benjamin-santrisse.vercel.app', href: 'https://benjamin-santrisse.vercel.app' },
@@ -118,25 +118,25 @@ export const cv: CVData = {
 
   projects: [
     {
-      title: 'InfiniDex – Pokédex augmenté par IA',
+      title: 'InfiniDex - Pokédex augmenté par IA',
       repo: 'https://github.com/benjsant/InfiniDex',
-      period: 'Avril 2026 – en cours',
+      period: 'Avril 2026 - en cours',
       stack: 'Python · FastAPI · Next.js · PostgreSQL · Prefect · Docker',
       description:
         "Agent LLM multi-provider à 9 outils (DeepSeek/OpenRouter/Ollama, sans LangChain) avec streaming SSE temps réel. Pipeline ETL Prefect automatisé (orchestration, détection de changements par SHA, alertes Discord) sur 572 Pokémon et 168 000+ fusions.",
     },
     {
-      title: 'PredictionDex – prédiction de combats Pokémon',
+      title: 'PredictionDex - prédiction de combats Pokémon',
       repo: 'https://github.com/benjsant/lets-go-predictiondex',
-      period: 'Janvier – Mars 2026',
+      period: 'Janvier - Mars 2026',
       stack: 'Python · XGBoost · FastAPI · PostgreSQL · Docker',
       description:
         "Modèle XGBoost entraîné sur un dataset de combats simulés. Pipeline MLOps end-to-end : tracking MLflow, promotion auto en production, API FastAPI + interface Streamlit.",
     },
     {
-      title: 'Audiomancy – génération de playlists assistée par IA',
+      title: 'Audiomancy - génération de playlists assistée par IA',
       repo: 'https://github.com/ABA-DEV-IA/Audiomancy',
-      period: 'Juillet 2025 – Mars 2026',
+      period: 'Juillet 2025 - Mars 2026',
       stack: 'Python · FastAPI · Next.js · MongoDB · Docker',
       description:
         "Projet en équipe. Agent ReAct DeepSeek (boucle Thought/Action/Observation) + API Jamendo pour générer des playlists musicales. Stack monitoring Prometheus/Grafana, déploiement Azure (anciennement).",
@@ -145,9 +145,9 @@ export const cv: CVData = {
 
   experiences: [
     {
-      org: 'CAF du Nord – Agence de Valenciennes',
-      role: 'Développeur Web Symfony – Stages successifs',
-      date: 'Mai 2016 – Mai 2019 · 6 mois cumulés (24 sem.)',
+      org: 'CAF du Nord - Agence de Valenciennes',
+      role: 'Développeur Web Symfony - Stages successifs',
+      date: 'Mai 2016 - Mai 2019 · 6 mois cumulés (24 sem.)',
       tasks: [
         "Développement et intégration d'interfaces web avec Symfony et Bootstrap dans des applications internes",
         "Participation au développement d'une plateforme de gestion des espaces de travail",
@@ -160,17 +160,17 @@ export const cv: CVData = {
 
   education: [
     {
-      date: '2025–26',
-      title: 'Formation Développeur IA – RNCP niveau 6 (bac+3/4)',
+      date: '2025-26',
+      title: 'Formation Développeur IA - RNCP niveau 6 (bac+3/4)',
       school: 'Simplon, Lille',
     },
     {
-      date: '2018–19',
+      date: '2018-19',
       title: 'Licence Pro SIO, option Développement',
       school: 'ISTV de Valenciennes (UVHC)',
     },
     {
-      date: '2015–17',
+      date: '2015-17',
       title: 'BTS SIO, option SLAM',
       school: 'Lycée Henri Wallon, Valenciennes',
     },

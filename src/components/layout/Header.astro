@@ -553,7 +553,7 @@ const buttonId = `${menuId}-button`;
   // Header scroll behaviour + scroll-progress bar driven by a single rAF.
   // All layout reads are taken before any DOM writes, and `docMaxScrollY`
   // is cached via ResizeObserver so the scroll path never reads
-  // `scrollHeight` — which would force a synchronous layout recompute
+  // `scrollHeight` - which would force a synchronous layout recompute
   // after attribute writes earlier in the same frame.
   const SCROLL_THRESHOLD = 60;
   const AUTO_HIDE_THRESHOLD = 150;

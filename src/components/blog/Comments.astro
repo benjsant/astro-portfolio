@@ -1,10 +1,10 @@
 ---
 /**
- * Comments — Giscus integration
+ * Comments - Giscus integration
  *
  * Renders nothing on the server except a placeholder section with a
  * reserved height (prevents CLS). The Giscus script is only loaded when
- * the user actually scrolls toward the comments — readers who never
+ * the user actually scrolls toward the comments - readers who never
  * scroll that far pay zero network cost.
  *
  * Configure in `site.config.ts` → articleFeatures.comments.giscus.
@@ -14,7 +14,7 @@ import siteConfig from '@/config/site.config';
 
 const giscus = siteConfig.articleFeatures?.comments?.giscus;
 
-// Don't render anything if config is incomplete — fail soft.
+// Don't render anything if config is incomplete - fail soft.
 const isConfigured =
   giscus &&
   giscus.repo &&
@@ -75,7 +75,7 @@ const dataAttrs = isConfigured
 
 <script>
   // Lazy-load Giscus only when the comments area scrolls into view.
-  // Until then, zero network requests are made — keeps article pages fast
+  // Until then, zero network requests are made - keeps article pages fast
   // for readers who don't scroll all the way to the bottom.
   const mount = document.querySelector<HTMLElement>('[data-giscus]');
   if (mount && !mount.dataset.loaded) {
@@ -113,7 +113,7 @@ const dataAttrs = isConfigured
       );
       io.observe(mount);
     } else {
-      // Old browsers — just load it.
+      // Old browsers - just load it.
       load();
     }
   }

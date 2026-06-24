@@ -11,7 +11,7 @@ import type { APIRoute } from 'astro';
  *
  * Note légale :
  *   Le `robots.txt` n'est pas juridiquement contraignant en droit français/européen
- *   mais documente clairement le refus de l'auteur — utile en cas de litige.
+ *   mais documente clairement le refus de l'auteur - utile en cas de litige.
  *   Les bots qui ignorent ce fichier engagent leur responsabilité civile (CPI L.122-5)
  *   et CCPA/GDPR pour les données personnelles.
  */

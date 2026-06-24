@@ -46,7 +46,7 @@ const codeExamples: Record<
 > = {
   theming: {
     lang: 'css',
-    code: `/* src/styles/themes/default.css — swap this file to re-theme */
+    code: `/* src/styles/themes/default.css - swap this file to re-theme */
 :root {
   /* Semantic Tokens - Light Mode */
   --background: var(--gray-0);

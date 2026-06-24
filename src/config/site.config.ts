@@ -32,14 +32,14 @@ export interface SiteConfig {
    */
   blogImageOverlay?: boolean;
   /**
-   * Article features — opt-in modules for blog posts.
+   * Article features - opt-in modules for blog posts.
    * Each is OFF by default so the theme stays as light as it is today
    * for users who don't enable them.
    */
   articleFeatures?: {
     /** Table of contents shown on blog posts (auto-generated from headings) */
     toc?: {
-      /** Master switch — set to true to enable site-wide */
+      /** Master switch - set to true to enable site-wide */
       enabled: boolean;
       /**
        * Where to render the TOC.
@@ -58,7 +58,7 @@ export interface SiteConfig {
     };
     /** Comments at the bottom of blog posts (powered by Giscus) */
     comments?: {
-      /** Master switch — set to true to enable site-wide */
+      /** Master switch - set to true to enable site-wide */
       enabled: boolean;
       /** Comments provider. Currently only 'giscus' is supported. */
       provider?: 'giscus';

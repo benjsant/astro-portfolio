@@ -4,7 +4,7 @@
  * URL: /cv
  *
  * Toutes les données viennent de `src/data/cv.ts`. Pour modifier le contenu,
- * édite ce fichier — pas besoin de toucher au HTML/CSS ci-dessous.
+ * édite ce fichier - pas besoin de toucher au HTML/CSS ci-dessous.
  *
  * Photo :
  *   - Pose `public/photo.jpg` (ratio ~3:4, idéal ~432×528 px)
@@ -34,7 +34,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 <BaseLayout
   title="CV_Benjamin_Santrisse"
   titleAsIs
-  description={`Curriculum vitae de ${cv.header.name} – ${cv.header.role}. Téléchargeable en PDF.`}
+  description={`Curriculum vitae de ${cv.header.name} - ${cv.header.role}. Téléchargeable en PDF.`}
 >
   <Header
     slot="header"
@@ -165,7 +165,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
         <h2>Centres d'intérêt</h2>
         <div class="cv-interests">
           {cv.interests.map((i) => (
-            <p><strong>{i.title}</strong> &nbsp;–&nbsp; {i.description}</p>
+            <p><strong>{i.title}</strong> &nbsp;-&nbsp; {i.description}</p>
           ))}
         </div>
       </section>
@@ -175,7 +175,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
 <style is:global>
   /* ──────────────────────────────────────────────────────────────────────────
-     CV page — palette portfolio (teal), mode clair fixé.
+     CV page - palette portfolio (teal), mode clair fixé.
      L'écran et le PDF utilisent les mêmes proportions : ce que tu vois à
      l'écran = ce que tu auras dans le PDF (à 1 ou 2 px près).
   ────────────────────────────────────────────────────────────────────────── */
@@ -190,7 +190,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     --border: oklch(92% 0.006 220);
     --border-strong: oklch(85% 0.006 220);
 
-    /* Indigo profond — couleur signature du CV (distincte du teal du
+    /* Indigo profond - couleur signature du CV (distincte du teal du
        portfolio pour différencier les 2 supports visuellement). */
     --brand-50:  oklch(97% 0.02 274);
     --brand-100: oklch(93% 0.045 274);
@@ -248,7 +248,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   .cv-print-btn:hover { background: var(--brand-600); }
   .cv-print-btn:active { transform: translateY(1px); }
 
-  /* La feuille — proportions A4 fidèles (1 page) */
+  /* La feuille - proportions A4 fidèles (1 page) */
   .cv-sheet {
     max-width: 820px;
     margin: 0 auto;
@@ -578,13 +578,13 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   }
 
   /* ────────────────────────────────────────────────────────────────────────
-     PRINT / PDF — sync avec l'écran
+     PRINT / PDF - sync avec l'écran
      Mêmes proportions, juste les chrome retirés. Pas de re-flow brutal.
   ──────────────────────────────────────────────────────────────────────── */
   @page { size: A4; margin: 0; }
 
   @media print {
-    /* Force l'impression des couleurs partout — Firefox/Chrome n'imprime
+    /* Force l'impression des couleurs partout - Firefox/Chrome n'imprime
        pas les couleurs (text, background) par défaut. Les `!important`
        sont nécessaires car certains navigateurs ignorent la cascade en print. */
     *,
@@ -597,7 +597,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
     html, body { background: #fff !important; }
 
-    /* Fallback HEX pour les couleurs brand — oklch() est parfois mal rendu
+    /* Fallback HEX pour les couleurs brand - oklch() est parfois mal rendu
        en print sur Firefox/Chrome. Indigo profond (signature CV). */
     .cv-page {
       --brand-50: #eef2ff !important;
