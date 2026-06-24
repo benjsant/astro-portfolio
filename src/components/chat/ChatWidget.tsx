@@ -5,7 +5,7 @@ interface Message {
   content: string;
 }
 
-// Raccourcis thématiques permanents (les "volets") — toujours visibles au-dessus
+// Raccourcis thématiques permanents (les "volets") - toujours visibles au-dessus
 // de l'input. Chaque clic envoie la question préparée associée.
 const TOPICS: { label: string; q: string }[] = [
   { label: 'Projets', q: 'Quels sont ses projets en IA ?' },
@@ -15,7 +15,7 @@ const TOPICS: { label: string; q: string }[] = [
   { label: 'Contact', q: 'Comment le contacter ?' },
 ];
 
-// Pool de relances — questions de suivi plus précises, proposées après chaque
+// Pool de relances - questions de suivi plus précises, proposées après chaque
 // réponse de l'assistant (on retire celles déjà posées).
 const FOLLOWUPS: string[] = [
   "Parle-moi d'InfiniDex",

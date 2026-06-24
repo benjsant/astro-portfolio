@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import siteConfig from '@/config/site.config';
 
 // Pre-render at build time so the favicon is a plain static file in the
-// output — no serverless function needed, no runtime overhead.
+// output - no serverless function needed, no runtime overhead.
 export const prerender = true;
 
 export const GET: APIRoute = () => {

@@ -67,7 +67,7 @@ const faqs = defineCollection({
   }),
 });
 
-// Projects collection — one MDX file per project
+// Projects collection - one MDX file per project
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
   schema: ({ image }) =>
@@ -89,7 +89,7 @@ const projects = defineCollection({
     }),
 });
 
-// Stack collection — one MDX file per tool, editable like blog posts
+// Stack collection - one MDX file per tool, editable like blog posts
 const stack = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/stack' }),
   schema: z.object({

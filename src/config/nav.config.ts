@@ -2,7 +2,7 @@
  * Navigation Configuration
  *
  * Defines navigation menus for the site. Astro handles routing via the
- * filesystem — this only controls which links appear in nav menus.
+ * filesystem - this only controls which links appear in nav menus.
  *
  * - `navItems`       → main (header) navigation
  * - `footerNavItems` → footer navigation, configured independently from
@@ -54,7 +54,7 @@ export function getNavItems(): NavItem[] {
 
 /**
  * Get footer navigation items sorted by order.
- * Configured independently from the header — edit `footerNavItems`
+ * Configured independently from the header - edit `footerNavItems`
  * above to add/remove links in the footer only.
  */
 export function getFooterNavItems(): NavItem[] {
@@ -63,7 +63,7 @@ export function getFooterNavItems(): NavItem[] {
 
 /**
  * Get configured legal links (Privacy, Terms, etc.).
- * Returned as-is — order matches declaration order.
+ * Returned as-is - order matches declaration order.
  */
 export function getLegalLinks(): LegalLink[] {
   return [...legalLinks];

@@ -14,7 +14,7 @@ interface Props {
   };
   noindex?: boolean;
   nofollow?: boolean;
-  /** Utilise `title` tel quel, sans ajouter « — {siteName} » (ex. nom de PDF). */
+  /** Utilise `title` tel quel, sans ajouter « - {siteName} » (ex. nom de PDF). */
   titleAsIs?: boolean;
 }
 
@@ -31,7 +31,7 @@ const {
 
 const pageTitle = titleAsIs
   ? (title ?? siteConfig.name)
-  : (title ? `${title} — ${siteConfig.name}` : siteConfig.name);
+  : (title ? `${title} - ${siteConfig.name}` : siteConfig.name);
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 

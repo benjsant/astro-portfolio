@@ -8,7 +8,7 @@
 /** Built-in consent categories (provided for reference / convenience) */
 export type DefaultConsentCategory = 'necessary' | 'analytics' | 'marketing' | 'preferences';
 
-/** Consent category key — any string so users can add custom categories */
+/** Consent category key - any string so users can add custom categories */
 export type ConsentCategory = string;
 
 /** Consent enforcement mode */

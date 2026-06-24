@@ -185,7 +185,7 @@ schemas.push(...extraSchemas);
 
         function applyColorTheme(el) {
           try {
-            // Color palette — sessionStorage so it resets to default on each new visit
+            // Color palette - sessionStorage so it resets to default on each new visit
             const saved = sessionStorage.getItem('color-theme');
             if (saved && COLOR_THEMES.indexOf(saved) !== -1) {
               el.setAttribute('data-theme', saved);

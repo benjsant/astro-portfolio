@@ -1,7 +1,7 @@
 ---
 /**
  * LighthouseScoresGrid
- * Just the four animated count-up cards — no badge, no h2, no section
+ * Just the four animated count-up cards - no badge, no h2, no section
  * wrapper. Embeddable inside other layouts (e.g. MDX project pages)
  * where the surrounding context already supplies its own heading.
  *
@@ -109,7 +109,7 @@ const wrapperProps = staggered ? { 'data-reveal-children': true } : {};
         if (progress < 1) {
           requestAnimationFrame(tick);
         } else {
-          // Landed — quick pulse, then auto-reset so it can replay if needed
+          // Landed - quick pulse, then auto-reset so it can replay if needed
           el.classList.add('is-landed');
           window.setTimeout(() => el.classList.remove('is-landed'), 600);
         }

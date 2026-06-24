@@ -3,7 +3,7 @@
  * Table of Contents
  *
  * Auto-generates a TOC from MDX headings. Renders nothing when there are
- * fewer than `minHeadings` headings — keeps short posts uncluttered.
+ * fewer than `minHeadings` headings - keeps short posts uncluttered.
  *
  * - Server-rendered HTML (no JS by default)
  * - Optional scroll-spy highlights the active section while scrolling
@@ -33,7 +33,7 @@ const {
 
 const items = headings.filter((h) => h.depth >= 2 && h.depth <= maxDepth);
 const shouldRender = items.length >= minHeadings;
-// Unique heading id per instance — multiple TOCs can mount on the same
+// Unique heading id per instance - multiple TOCs can mount on the same
 // page (e.g. layout: 'auto' renders both inline + sidebar variants and
 // CSS swaps which is visible). Duplicate `id` attributes would be invalid
 // HTML and break aria-labelledby.
@@ -92,7 +92,7 @@ const headingId = `toc-heading-${Math.random().toString(36).slice(2, 9)}`;
 
 <script>
   // Scroll-spy: highlight the link whose heading is currently in view.
-  // Tiny, no dependencies — uses IntersectionObserver.
+  // Tiny, no dependencies - uses IntersectionObserver.
   // Multiple TOC instances can be on the same page (e.g. layout: 'auto'
   // renders an inline TOC for narrow viewports and a sidebar TOC for
   // xl+, with CSS hiding whichever isn't appropriate). Each instance

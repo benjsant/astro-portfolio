@@ -32,7 +32,7 @@ const pillContact = cv.contact.map((item) => ({
 <BaseLayout
   title="CV_Dev_IA_Benjamin_Santrisse"
   titleAsIs
-  description={`Curriculum vitae de ${cv.header.name} – ${cv.header.role}. Téléchargeable en PDF.`}
+  description={`Curriculum vitae de ${cv.header.name} - ${cv.header.role}. Téléchargeable en PDF.`}
 >
   <Header slot="header" position="fixed" shape="bar" variant="solid" size="lg" showCta={false} />
 
@@ -116,7 +116,7 @@ const pillContact = cv.contact.map((item) => ({
           ))}
         </section>
 
-        <!-- EXPÉRIENCES — timeline -->
+        <!-- EXPÉRIENCES - timeline -->
         <section class="cvd-section">
           <h2 class="cvd-h2"><span class="cvd-dot"></span>Expériences professionnelles</h2>
           <div class="cvd-timeline">
@@ -140,7 +140,7 @@ const pillContact = cv.contact.map((item) => ({
           </div>
         </section>
 
-        <!-- FORMATIONS — timeline -->
+        <!-- FORMATIONS - timeline -->
         <section class="cvd-section">
           <h2 class="cvd-h2"><span class="cvd-dot"></span>Formations</h2>
           <div class="cvd-timeline">
@@ -174,7 +174,7 @@ const pillContact = cv.contact.map((item) => ({
           <h2 class="cvd-h2"><span class="cvd-dot"></span>Centres d'intérêt</h2>
           {cv.interests.map((i) => (
             <p class="cvd-mini">
-              <strong>{i.title}</strong> – {i.description}
+              <strong>{i.title}</strong> - {i.description}
             </p>
           ))}
         </section>
@@ -187,7 +187,7 @@ const pillContact = cv.contact.map((item) => ({
 <style is:global>
 
 /* ══════════════════════════════════════════════════════════════
-   CV DESIGN — Hero indigo plein + timeline. Light mode, 1 page A4.
+   CV DESIGN - Hero indigo plein + timeline. Light mode, 1 page A4.
 ══════════════════════════════════════════════════════════════ */
 
 .cvd-root {
@@ -387,7 +387,7 @@ const pillContact = cv.contact.map((item) => ({
   background: linear-gradient(90deg, var(--b200), transparent);
 }
 
-/* ── Compétences — 1 colonne (comme le CV ATS) ── */
+/* ── Compétences - 1 colonne (comme le CV ATS) ── */
 .cvd-skills { display: flex; flex-direction: column; }
 .cvd-skill-row {
   display: grid; grid-template-columns: 150px 1fr; gap: 4px 14px;
@@ -490,7 +490,7 @@ const pillContact = cv.contact.map((item) => ({
 }
 
 /* ════════════════════════════════════════════════════════════
-   PRINT — 1 page A4
+   PRINT - 1 page A4
 ════════════════════════════════════════════════════════════ */
 @page { size: A4; margin: 0; }
 

@@ -29,7 +29,7 @@ const svgContent = svgs[`/src/assets/blog/${slug}.svg`] ?? '';
   }
 
   /* ── Light mode ─────────────────────────────────────────────────────────
-     Brand-500 background — the saturated mid-tone brand colour. Light
+     Brand-500 background - the saturated mid-tone brand colour. Light
      icons and text sit on top for vivid, colourful images in both modes.
   ── */
   .svg-host :global(.bg)  { fill: var(--brand-500); }
@@ -42,7 +42,7 @@ const svgContent = svgs[`/src/assets/blog/${slug}.svg`] ?? '';
   .svg-host :global(.num) { fill: var(--brand-100); fill-opacity: 0.18; }
 
   /* ── Dark mode ───────────────────────────────────────────────────────────
-     Deep background with all brand colors at full opacity — vivid, not faded.
+     Deep background with all brand colors at full opacity - vivid, not faded.
   ── */
   :global(html.dark) .svg-host :global(.bg)  { fill: var(--brand-600); }
   :global(html.dark) .svg-host :global(.ico) { stroke: var(--brand-200); }

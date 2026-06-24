@@ -9,7 +9,7 @@
  * Intentionally desktop-only:
  *  - Skipped on (hover: none) / (pointer: coarse) devices
  *  - Skipped on prefers-reduced-motion
- *  - Native cursor stays visible — this is purely additive
+ *  - Native cursor stays visible - this is purely additive
  */
 
 const PARTICLE_COUNT = 16;
@@ -121,7 +121,7 @@ const PARTICLE_COUNT = 16;
     }
 
     function tick() {
-      // Elastic lerp toward mouse — 0.18 = soft, smooth follow
+      // Elastic lerp toward mouse - 0.18 = soft, smooth follow
       ringX += (mouseX - ringX) * 0.18;
       ringY += (mouseY - ringY) * 0.18;
       // 40px ring → -20 offset to centre on cursor
