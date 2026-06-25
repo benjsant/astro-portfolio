@@ -1,9 +1,9 @@
 import type { APIRoute } from 'astro';
-import { searchPortfolio } from '@/lib/portfolio-data';
+import { getPortfolioContext } from '@/lib/portfolio-data';
 
 export const prerender = false;
 
-// ── Rate limiting ────────────────────────────────────────────────────────────
+// -- Rate limiting -----------------------------------------------------------
 const RATE_LIMIT_MAX = 10;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
@@ -33,8 +33,8 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number; rese
   return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count, resetIn: entry.resetAt - now };
 }
 
-// ── System prompt ────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `Tu es l'assistant du portfolio de Benjamin Santrisse, développeur IA & Data Engineering. Tu aides les visiteurs à découvrir son profil, ses projets et ses articles - de façon claire, directe et concrète.
+// -- System prompt -----------------------------------------------------------
+const SYSTEM_PROMPT_BASE = `Tu es l'assistant du portfolio de Benjamin Santrisse, développeur IA & Data Engineering. Tu aides les visiteurs à découvrir son profil, ses projets et ses articles, de façon claire, directe et concrète.
 
 ## Ton & style
 - **Tutoie le visiteur.** Le site est tutoyé partout, garde la même voix.
@@ -45,68 +45,58 @@ const SYSTEM_PROMPT = `Tu es l'assistant du portfolio de Benjamin Santrisse, dé
   - listes à puces dès que tu cites plusieurs projets, plusieurs technos, ou plusieurs étapes
   - liens markdown **systématiques** pour chaque projet ou article cité : [Titre](url)
 - Longueur adaptée :
-  - question simple (dispo, contact, profil) → 2-4 phrases
-  - question sur un projet ou une techno → réponse structurée avec bullets, sections si besoin (6-12 phrases acceptable)
+  - question simple (dispo, contact, profil) -> 2-4 phrases
+  - question sur un projet ou une techno -> réponse structurée avec bullets (6-12 phrases max)
   - jamais de bloc monolithique : aère avec des sauts de ligne
+- Ne renvoie JAMAIS de bloc de code brut, de JSON, ni de balises internes : tu écris des réponses en langage naturel pour un visiteur.
 
 ## Toujours finir par une action
-Termine **chaque réponse** par une suggestion concrète et cliquable, choisie selon le contexte :
-- question sur un projet → lien direct vers la page projet + 1 article de blog lié si pertinent
-- question profil / dispo / recrutement → propose le CV : [version classique](/cv) (sobre, ATS-friendly) ou [version design](/cv-design) (vitrine, plus visuelle) - les deux contiennent email, LinkedIn, GitHub et portfolio
-- question exploratoire → propose 2-3 projets ou articles pertinents en bullets
+Termine **chaque réponse** par une suggestion concrète et cliquable :
+- question sur un projet -> lien direct vers la page projet + 1 article de blog lié si pertinent
+- question profil / dispo / recrutement -> propose le CV : [version classique](/cv) (sobre, ATS-friendly) ou [version design](/cv-design) (vitrine, plus visuelle)
+- question exploratoire -> propose 2-3 projets ou articles pertinents en bullets
 
-Format de l'action : un mini-paragraphe court qui invite à cliquer. Pas de section "## Actions" formelle - reste naturel.
+Reste naturel : un mini-paragraphe court qui invite à cliquer. Pas de section "## Actions" formelle.
 
 ## Scope
-Tu réponds :
-- aux questions sur Benjamin (profil, projets, articles, stack, dispo, contact, parcours)
-- aux questions techniques **qui peuvent rebondir vers ses projets** (ex: "c'est quoi le RAG ?" → réponse courte + lien vers [son article RAG/pgvector](/blog/rag-pgvector-deepseek))
+Tu réponds aux questions sur Benjamin (profil, projets, articles, stack, dispo, contact, parcours) et aux questions techniques qui peuvent rebondir vers ses projets.
 
 Pour une question **complètement hors-sujet** (météo, actu, code générique sans lien avec son travail), réponds simplement :
-"Je suis dédié au portfolio de Benjamin - pose-moi une question sur ses projets IA/Data, sa stack ou sa dispo. Tu peux aussi le joindre directement : santrissebenjamin.portfolio@gmail.com"
+"Je suis dédié au portfolio de Benjamin : pose-moi une question sur ses projets IA/Data, sa stack ou sa dispo. Tu peux aussi le joindre directement : santrissebenjamin.portfolio@gmail.com"
 
 ## Profil de Benjamin (résumé)
 - **Développeur IA certifié RNCP Niveau 6** (Simplon, 2026)
 - **Spécialités** : Python, FastAPI, LLMs (DeepSeek, RAG, agents tool-calling), MLOps (MLflow, XGBoost), Data Engineering (ETL, Prefect, Scrapy), PostgreSQL, Docker
-- **Projet phare** : [InfiniDex](/projects/infinidex) - Pokédex IA avec agent à 9 outils, ETL Prefect, 572 Pokémon, 168 000+ fusions
-- **Disponibilité** : recherche active (IA / ML Engineering / Data Engineering), démarrage immédiat
-- **Localisation** : Marly (Nord), mobilité totale, télétravail OK
+- **Disponibilité** : recherche active (CDI ou CDD), démarrage immédiat
+- **Localisation** : Marly (Nord), mobilité Lille / Valenciennes, télétravail OK
 - **Contact** : santrissebenjamin.portfolio@gmail.com
 
-## Hébergement des projets (ne PAS inventer de lien GitHub)
-Ne déduis ou n'invente **jamais** d'URL GitHub. Pour pointer vers un projet, renvoie **toujours** vers sa page portfolio (ex. [Audiomancy](/projects/audiomancy), [InfiniDex](/projects/infinidex)), jamais un lien GitHub. Ne spécule pas sur le compte ou l'organisation d'hébergement d'un dépôt.
+## Règle sur les liens
+Ne déduis ou n'invente **jamais** d'URL GitHub. Pour pointer vers un projet ou un article, utilise **uniquement** les liens fournis dans la liste ci-dessous (pages /projects/... et /blog/...). Ne spécule jamais sur le compte ou l'organisation d'hébergement d'un dépôt.
 
-## Outils
-Utilise \`search_portfolio\` dès qu'une question porte sur un projet, un article, ou une techno spécifique. Cite ensuite **tous les résultats pertinents** trouvés avec leurs liens markdown.`;
+## Exactitude (aucune invention)
+N'invente **jamais** d'information. Tu ne cites que ce qui figure dans le profil ci-dessus et dans la liste de projets/articles ci-dessous. Si un détail précis n'est pas fourni (type de base de données, chiffre, date, nom d'outil exact, version), **reste général plutôt que de combler le trou** : écris "une base de données" plutôt que d'inventer "Redis", "plusieurs outils" plutôt qu'un nombre. En cas de doute, renvoie vers la page du projet ou propose à la personne de contacter Benjamin directement. Une réponse prudente vaut mieux qu'une réponse fausse.`;
 
-// ── DeepSeek tools definition ─────────────────────────────────────────────────
-const TOOLS = [
-  {
-    type: 'function',
-    function: {
-      name: 'search_portfolio',
-      description:
-        "Cherche dans les projets et articles du portfolio de Benjamin. À utiliser quand la question porte sur un projet précis, une technologie, ou un article.",
-      parameters: {
-        type: 'object',
-        properties: {
-          query: {
-            type: 'string',
-            description: 'Mots-clés décrivant ce que cherche le visiteur (ex: "RAG pgvector", "Scrapy ETL", "monitoring")',
-          },
-        },
-        required: ['query'],
-      },
-    },
-  },
-];
+// La liste complète des projets et articles est injectée une seule fois, mise en
+// cache au niveau du module (elle ne change pas entre deux requêtes).
+let systemPromptCache: string | null = null;
+async function getSystemPrompt(): Promise<string> {
+  if (systemPromptCache) return systemPromptCache;
+  const context = await getPortfolioContext();
+  systemPromptCache = `${SYSTEM_PROMPT_BASE}
 
-// ── Historique ────────────────────────────────────────────────────────────────
+## Projets et articles de Benjamin (liste complète, source unique de vérité)
+Appuie-toi UNIQUEMENT sur cette liste pour citer ses projets/articles et leurs liens.
+
+${context}`;
+  return systemPromptCache;
+}
+
+// -- Historique --------------------------------------------------------------
 type ChatTurn = { role: 'user' | 'assistant'; content: string };
 
 // Nettoie l'historique reçu du client : ne garde que des tours user/assistant
-// valides, borne le nombre de tours et la longueur de chaque message pour
-// éviter l'abus de tokens / injections de rôles arbitraires.
+// valides, borne le nombre de tours et la longueur de chaque message.
 function sanitizeHistory(raw: unknown): ChatTurn[] {
   if (!Array.isArray(raw)) return [];
   const turns: ChatTurn[] = [];
@@ -119,103 +109,44 @@ function sanitizeHistory(raw: unknown): ChatTurn[] {
     if (!trimmed) continue;
     turns.push({ role, content: trimmed.slice(0, 1000) });
   }
-  // On garde au plus les 8 derniers tours (≈ 4 allers-retours).
+  // On garde au plus les 8 derniers tours (environ 4 allers-retours).
   return turns.slice(-8);
 }
 
-// ── Agent loop ────────────────────────────────────────────────────────────────
-async function runAgent(
-  userMessage: string,
+// -- Appel DeepSeek (un seul appel, sans outil ni boucle d'agent) ------------
+async function askDeepSeek(
+  systemPrompt: string,
   history: ChatTurn[],
+  userMessage: string,
   apiKey: string
 ): Promise<string> {
-  const messages: object[] = [
-    { role: 'system', content: SYSTEM_PROMPT },
-    ...history,
-    { role: 'user', content: userMessage },
-  ];
+  const res = await fetch('https://api.deepseek.com/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...history,
+        { role: 'user', content: userMessage },
+      ],
+      max_tokens: 500,
+      temperature: 0.7,
+    }),
+  });
 
-  const MAX_STEPS = 4;
-  for (let i = 0; i < MAX_STEPS; i++) {
-    // À la dernière passe, on interdit les appels d'outils (tool_choice: 'none')
-    // pour forcer le modèle à rédiger une réponse texte avec ce qu'il a déjà,
-    // au lieu de boucler sur l'outil et de tomber sur le fallback générique.
-    const isLastStep = i === MAX_STEPS - 1;
-    const res = await fetch('https://api.deepseek.com/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages,
-        tools: TOOLS,
-        tool_choice: isLastStep ? 'none' : 'auto',
-        max_tokens: 500,
-        temperature: 0.7,
-      }),
-    });
+  if (!res.ok) throw new Error(`DeepSeek error: ${res.status}`);
 
-    if (!res.ok) throw new Error(`DeepSeek error: ${res.status}`);
-
-    const data = await res.json();
-    const choice = data.choices?.[0];
-    const message = choice?.message;
-
-    if (!message) throw new Error('No message in response');
-    messages.push(message);
-
-    // Final answer - no tool call
-    if (choice.finish_reason === 'stop') {
-      return message.content ?? 'Pas de réponse.';
-    }
-
-    // Tool call requested
-    if (choice.finish_reason === 'tool_calls' && message.tool_calls?.length) {
-      for (const toolCall of message.tool_calls) {
-        if (toolCall.function?.name === 'search_portfolio') {
-          let args: { query?: string };
-          try {
-            args = JSON.parse(toolCall.function.arguments);
-          } catch {
-            args = { query: userMessage };
-          }
-
-          const results = await searchPortfolio(args.query ?? userMessage);
-          const content =
-            results.length > 0
-              ? JSON.stringify(
-                  results.map((r) => ({
-                    type: r.type,
-                    title: r.title,
-                    description: r.description,
-                    tags: r.tags,
-                    url: r.url,
-                  }))
-                )
-              : JSON.stringify({ message: 'Aucun résultat trouvé.' });
-
-          messages.push({
-            role: 'tool',
-            tool_call_id: toolCall.id,
-            content,
-          });
-        }
-      }
-      continue;
-    }
-
-    // Fallback
-    return message.content ?? 'Pas de réponse.';
-  }
-
-  return "Désolé, je n'ai pas pu générer de réponse.";
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content ?? "Désolé, je n'ai pas pu générer de réponse.";
 }
 
-// ── Origin check ─────────────────────────────────────────────────────────────
+// -- Origin check ------------------------------------------------------------
 function isAllowedOrigin(request: Request): boolean {
-  // En dev Astro (import.meta.env.DEV), on bypass pour ne pas bloquer localhost
+  // En dev Astro, on bypass pour ne pas bloquer localhost.
   if (import.meta.env.DEV) return true;
 
   const origin = request.headers.get('origin');
@@ -223,15 +154,13 @@ function isAllowedOrigin(request: Request): boolean {
   const siteUrl = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
 
   if (!siteUrl) return true;
-
   if (origin) return origin.startsWith(siteUrl);
   if (referer) return referer.startsWith(siteUrl);
-
-  // Pas d'Origin ni de Referer → curl/Postman brut → rejeter
+  // Pas d'Origin ni de Referer -> curl/Postman brut -> rejeter
   return false;
 }
 
-// ── Route handler ─────────────────────────────────────────────────────────────
+// -- Route handler -----------------------------------------------------------
 export const POST: APIRoute = async ({ request }) => {
   if (!isAllowedOrigin(request)) {
     return new Response(JSON.stringify({ error: 'Accès refusé.' }), {
@@ -289,7 +218,8 @@ export const POST: APIRoute = async ({ request }) => {
   const history = sanitizeHistory(body.history);
 
   try {
-    const reply = await runAgent(userMessage, history, apiKey);
+    const systemPrompt = await getSystemPrompt();
+    const reply = await askDeepSeek(systemPrompt, history, userMessage, apiKey);
     return new Response(JSON.stringify({ reply, remaining }), {
       status: 200,
       headers: {
@@ -298,7 +228,7 @@ export const POST: APIRoute = async ({ request }) => {
       },
     });
   } catch (err) {
-    console.error('Agent error:', err);
+    console.error('Chat error:', err);
     return new Response(
       JSON.stringify({ error: 'Erreur lors de la génération de la réponse.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
