@@ -45,6 +45,19 @@ async function getPortfolioItems(): Promise<PortfolioItem[]> {
   return [...projectItems, ...articleItems];
 }
 
+/**
+ * Contexte complet (tous les projets + articles) formaté en markdown, à injecter
+ * dans le system prompt du chat. Le portfolio est assez petit pour tenir dans le
+ * contexte : plus besoin d'un agent qui « cherche », on lui donne tout d'un coup.
+ */
+export async function getPortfolioContext(): Promise<string> {
+  const items = await getPortfolioItems();
+  const fmt = (i: PortfolioItem) => `- [${i.title}](${i.url}) : ${i.description}`;
+  const projects = items.filter((i) => i.type === 'project').map(fmt);
+  const articles = items.filter((i) => i.type === 'article').map(fmt);
+  return ['### Projets', ...projects, '', '### Articles de blog', ...articles].join('\n');
+}
+
 export async function searchPortfolio(query: string, limit = 4): Promise<PortfolioItem[]> {
   const items = await getPortfolioItems();
 
