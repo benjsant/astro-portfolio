@@ -1,29 +1,26 @@
 ---
 /**
- * CV page
+ * CV page - version ATS STRICTE
  * URL: /cv
  *
- * Toutes les données viennent de `src/data/cv.ts`. Pour modifier le contenu,
- * édite ce fichier - pas besoin de toucher au HTML/CSS ci-dessous.
+ * 1 colonne, texte à plat, HTML sémantique (h1/h2/p/ul), AUCUNE photo, aucune
+ * grille ni tableau : parsing ATS maximal. Le pendant « design » (avec photo,
+ * mise en page riche) est sur /cv-design.
  *
- * Photo :
- *   - Pose `public/photo.jpg` (ratio ~3:4, idéal ~432×528 px)
- *   - Détection auto au build
+ * Toutes les données viennent de `src/data/cv.ts` (partagées avec /cv-design).
+ * Pour modifier le contenu, édite ce fichier - pas le HTML/CSS ci-dessous.
  *
- * Téléchargement PDF :
- *   - Bouton "Télécharger en PDF" → window.print()
- *   - Le rendu print est compact mais reste proche du rendu écran
- *   - `@page margin: 0` supprime les en-têtes du navigateur (URL, "Firefox"…)
- *   - Le chat widget et les overlays sont masqués en print
+ * Anti-ATS évité : pas de `·` (converti en virgule), pas de tiret cadratin,
+ * pas de colonnes. Téléchargement PDF via window.print() (`@page margin: 0`).
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import CvContactValue from '@/components/patterns/CvContactValue.astro';
 import { cv } from '@/data/cv';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 
-const photoExists = existsSync(join(process.cwd(), 'public', 'photo.jpg'));
+// Anti-IA / anti-ATS : tiret cadratin/demi-cadratin (— –) -> trait d'union,
+// point médian (·) -> virgule. Rend le texte parfaitement linéaire.
+const clean = (s: string) => String(s ?? '').replace(/[—–]/g, '-').replace(/\s*·\s*/g, ', ');
 
 // La disponibilité est mise en avant en haut (sous le titre) ; les autres
 // infos (permis, mobilité) restent dans la ligne meta plus bas.
@@ -34,7 +31,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 <BaseLayout
   title="CV_Benjamin_Santrisse"
   titleAsIs
-  description={`Curriculum vitae de ${cv.header.name} - ${cv.header.role}. Téléchargeable en PDF.`}
+  description={`Curriculum vitae de ${cv.header.name} - ${cv.header.role}. Version ATS, téléchargeable en PDF.`}
 >
   <Header
     slot="header"
@@ -57,44 +54,31 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
     <article class="cv-sheet">
       <!-- HEADER -->
-      <header class="cv-header">
-        <div class="cv-identity">
-          <h1 class="cv-name">{cv.header.name}</h1>
-          <p class="cv-role">{cv.header.role}</p>
-          {recherche && <p class="cv-avail">{recherche.value}</p>}
-          <p class="cv-summary">{cv.header.summary}</p>
-        </div>
-        {photoExists ? (
-          <img class="cv-photo" src="/photo.jpg" alt={cv.header.name} width="108" height="132" />
-        ) : (
-          <div class="cv-photo cv-photo-placeholder">
-            <span>Photo</span>
-            <span>108 × 132</span>
-            <span class="cv-photo-hint">public/photo.jpg</span>
-          </div>
+      <header class="cv-head">
+        <h1 class="cv-name">{cv.header.name}</h1>
+        <p class="cv-role">{cv.header.role}</p>
+        {recherche && <p class="cv-avail">{clean(recherche.value)}</p>}
+        <p class="cv-summary">{cv.header.summary}</p>
+
+        <p class="cv-contact">
+          {cv.contact.map((item, i) => (
+            <Fragment>{i > 0 ? ' | ' : ''}<span class="cv-label">{item.label} :</span> <CvContactValue item={item} linkClass="cv-link" /></Fragment>
+          ))}
+        </p>
+        {otherDetails.length > 0 && (
+          <p class="cv-contact">
+            {otherDetails.map((d, i) => (
+              <Fragment>{i > 0 ? ' | ' : ''}<span class="cv-label">{d.label} :</span> {clean(d.value)}</Fragment>
+            ))}
+          </p>
         )}
       </header>
-
-      <!-- CONTACT -->
-      <div class="cv-contact">
-        {cv.contact.map((item) => (
-          <span class="cv-ci"><span class="cv-label">{item.label} :</span> <CvContactValue item={item} /></span>
-        ))}
-      </div>
-      <div class="cv-meta">
-        {otherDetails.map((d) => (
-          <span class="cv-ci"><span class="cv-label">{d.label} :</span> {d.value}</span>
-        ))}
-      </div>
 
       <!-- COMPÉTENCES -->
       <section class="cv-section">
         <h2>Compétences</h2>
         {cv.skills.map((row) => (
-          <div class="cv-skill-row">
-            <div class="cv-skill-cat">{row.category}</div>
-            <div class="cv-skill-val">{row.value}</div>
-          </div>
+          <p class="cv-line"><strong>{row.category} :</strong> {clean(row.value)}</p>
         ))}
       </section>
 
@@ -102,15 +86,10 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       <section class="cv-section">
         <h2>Projets réalisés</h2>
         {cv.projects.map((project) => (
-          <div class="cv-project">
-            <div class="cv-project-head">
-              <div class="cv-project-title">
-                <a href={project.repo} target="_blank" rel="noopener noreferrer">{project.title}</a>
-              </div>
-              <div class="cv-stack">{project.stack}</div>
-            </div>
-            {project.period && <div class="cv-project-period">{project.period}</div>}
-            <p class="cv-project-desc">{project.description}</p>
+          <div class="cv-item">
+            <p class="cv-item-head"><strong>{project.title}</strong>{project.period ? ` (${clean(project.period)})` : ''}</p>
+            <p class="cv-item-tech">{clean(project.stack)}</p>
+            <p class="cv-item-desc">{project.description}</p>
           </div>
         ))}
       </section>
@@ -119,18 +98,12 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       <section class="cv-section">
         <h2>Expériences professionnelles</h2>
         {cv.experiences.map((exp) => (
-          <div class="cv-experience">
-            <div class="cv-job-head">
-              <div>
-                <div class="cv-job-org">{exp.org}</div>
-                <div class="cv-job-role">{exp.role}</div>
-              </div>
-              <div class="cv-job-date">{exp.date}</div>
-            </div>
+          <div class="cv-item">
+            <p class="cv-item-head"><strong>{exp.org}</strong>, {exp.role}, {clean(exp.date)}</p>
             <ul class="cv-tasks">
               {exp.tasks.map((t) => <li>{t}</li>)}
             </ul>
-            <span class="cv-env">{exp.stack}</span>
+            {exp.stack && <p class="cv-item-tech">Environnement : {clean(exp.stack)}</p>}
           </div>
         ))}
       </section>
@@ -139,13 +112,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       <section class="cv-section">
         <h2>Formations</h2>
         {cv.education.map((entry) => (
-          <div class="cv-entry">
-            <div class="cv-entry-date">{entry.date}</div>
-            <div class="cv-entry-body">
-              <strong>{entry.title}</strong>
-              <span>{entry.school}</span>
-            </div>
-          </div>
+          <p class="cv-line"><strong>{entry.title}</strong>, {entry.school} ({entry.date})</p>
         ))}
       </section>
 
@@ -153,21 +120,16 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       <section class="cv-section">
         <h2>Certifications</h2>
         {cv.certifications.map((c) => (
-          <div class="cv-entry">
-            <div class="cv-entry-date">{c.date}</div>
-            <div class="cv-entry-body"><strong>{c.title}</strong></div>
-          </div>
+          <p class="cv-line"><strong>{c.title}</strong> ({c.date})</p>
         ))}
       </section>
 
       <!-- INTÉRÊTS -->
       <section class="cv-section">
         <h2>Centres d'intérêt</h2>
-        <div class="cv-interests">
-          {cv.interests.map((i) => (
-            <p><strong>{i.title}</strong> &nbsp;-&nbsp; {i.description}</p>
-          ))}
-        </div>
+        {cv.interests.map((i) => (
+          <p class="cv-line"><strong>{i.title}</strong> : {i.description}</p>
+        ))}
       </section>
     </article>
   </main>
@@ -175,46 +137,33 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
 <style is:global>
   /* ──────────────────────────────────────────────────────────────────────────
-     CV page - palette portfolio (teal), mode clair fixé.
-     L'écran et le PDF utilisent les mêmes proportions : ce que tu vois à
-     l'écran = ce que tu auras dans le PDF (à 1 ou 2 px près).
+     CV ATS strict : 1 colonne, texte à plat, HTML sémantique, aucune photo.
+     Couleur (indigo) purement visuelle : un ATS lit le TEXTE, pas les couleurs,
+     donc on garde une identité sobre sans nuire au parsing. Écran = PDF.
   ────────────────────────────────────────────────────────────────────────── */
 
   .cv-page {
-    /* Vars portfolio en mode clair fixé */
     --background: oklch(100% 0 0);
     --background-secondary: oklch(97.5% 0.010 190);
     --foreground: oklch(16% 0.01 250);
     --foreground-muted: oklch(31% 0.013 250);
-    --foreground-subtle: oklch(40% 0.01 250);
-    --border: oklch(92% 0.006 220);
-    --border-strong: oklch(85% 0.006 220);
+    --border: oklch(88% 0.006 220);
 
-    /* Indigo profond - couleur signature du CV (distincte du teal du
-       portfolio pour différencier les 2 supports visuellement). */
-    --brand-50:  oklch(97% 0.02 274);
-    --brand-100: oklch(93% 0.045 274);
+    /* Indigo signature du CV (distinct du teal du portfolio). */
     --brand-500: oklch(53% 0.22 274);
-    --brand-600: oklch(46% 0.21 274);
     --brand-700: oklch(38% 0.17 274);
-
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-foreground-muted: var(--foreground-muted);
-    --color-border: var(--border);
-    --color-brand-500: var(--brand-500);
 
     background: var(--background-secondary);
     min-height: 100vh;
     padding-left: 1rem;
     padding-right: 1rem;
     color: var(--foreground);
-    font-family: 'Manrope Variable', Manrope, system-ui, -apple-system, sans-serif;
-    line-height: 1.5;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    line-height: 1.47;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Toolbar */
+  /* Toolbar (UI seulement, masquée en print) */
   .cv-toolbar {
     max-width: 820px;
     margin: 0 auto 16px;
@@ -222,14 +171,13 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     justify-content: flex-end;
     gap: 10px;
   }
-  /* Variante « contour » pour le bouton compact (différencie les 2 options) */
   .cv-print-btn--ghost {
     background: #fff;
-    color: var(--brand-600);
-    border: 1.5px solid var(--brand-100);
+    color: var(--brand-700);
+    border: 1.5px solid oklch(93% 0.045 274);
     box-shadow: none;
   }
-  .cv-print-btn--ghost:hover { background: var(--brand-50); }
+  .cv-print-btn--ghost:hover { background: oklch(97% 0.02 274); }
   .cv-print-btn {
     font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
     font-size: 12px;
@@ -243,9 +191,8 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
-    box-shadow: 0 1px 2px oklch(20% 0.05 274 / 0.08);
   }
-  .cv-print-btn:hover { background: var(--brand-600); }
+  .cv-print-btn:hover { background: var(--brand-700); }
   .cv-print-btn:active { transform: translateY(1px); }
 
   /* La feuille - proportions A4 fidèles (1 page) */
@@ -253,55 +200,36 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     max-width: 820px;
     margin: 0 auto;
     background: var(--background);
-    padding: 30px 42px 24px;
+    padding: 30px 42px 26px;
     border-radius: 8px;
     border: 1px solid var(--border);
     box-shadow: 0 18px 50px oklch(20% 0.05 274 / 0.08), 0 4px 12px oklch(20% 0.05 274 / 0.04);
-    position: relative;
-    font-size: 11.5px;
-    line-height: 1.4;
-  }
-  .cv-sheet::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: var(--brand-500);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    color: var(--foreground);
+    font-size: 12px;
+    line-height: 1.47;
   }
 
-  /* Header */
-  .cv-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .cv-identity { flex: 1; }
+  /* Header : bloc texte pur, aucune colonne, aucune photo */
+  .cv-head { padding-bottom: 4px; }
   .cv-name {
-    font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     line-height: 1.05;
     color: var(--foreground);
     margin: 0;
   }
   .cv-role {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--brand-600);
-    margin: 5px 0 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-700);
+    margin: 3px 0 0;
   }
-  /* Disponibilité mise en avant sous le titre (pastille verte = dispo) */
   .cv-avail {
     font-size: 11.5px;
     font-weight: 600;
     color: var(--foreground);
-    margin: 6px 0 0;
+    margin: 4px 0 0;
   }
   .cv-avail::before {
     content: "●";
@@ -311,285 +239,68 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
     vertical-align: middle;
   }
   .cv-summary {
+    font-size: 12px;
+    color: var(--foreground-muted);
+    margin: 6px 0 0;
+    line-height: 1.47;
+  }
+  /* Contacts : lignes de texte à plat, séparateur sobre " | " */
+  .cv-contact {
     font-size: 11.5px;
     color: var(--foreground-muted);
-    margin: 7px 0 0;
-    max-width: 58ch;
-    line-height: 1.45;
-  }
-
-  /* Photo */
-  .cv-photo {
-    width: 92px;
-    height: 112px;
-    flex-shrink: 0;
-    border-radius: 6px;
-    object-fit: cover;
-    display: block;
-    border: 1px solid var(--border);
-  }
-  .cv-photo-placeholder {
-    border: 1.5px dashed var(--border-strong);
-    background: var(--background-secondary);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 9px;
-    line-height: 1.4;
-    color: var(--foreground-subtle);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    gap: 2px;
-  }
-  .cv-photo-hint {
-    font-size: 7.5px;
-    margin-top: 3px;
-    text-transform: none;
-    letter-spacing: 0.02em;
-    opacity: 0.7;
-  }
-
-  /* Contact strip */
-  .cv-contact {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 32px;
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 10.5px;
-    padding: 10px 0 3px;
-    color: var(--foreground-muted);
-  }
-  /* Grille 2 colonnes : Mail | Portfolio, LinkedIn | GitHub, Permis | Mobilité */
-  .cv-contact > span,
-  .cv-meta > span {
-    flex: 0 0 calc(50% - 16px);
-  }
-  .cv-ci { white-space: nowrap; }
-  .cv-contact a {
-    color: var(--foreground);
-    text-decoration: none;
-    border-bottom: 1px solid var(--brand-100);
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .cv-contact a:hover {
-    border-color: var(--brand-500);
-    color: var(--brand-600);
+    margin: 5px 0 0;
+    line-height: 1.5;
   }
   .cv-label { color: var(--foreground); font-weight: 700; }
-  /* Même rendu que .cv-contact (police mono, libellés .cv-label) pour que
-     les 3 lignes du header soient parfaitement homogènes. */
-  .cv-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 32px;
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 10.5px;
-    color: var(--foreground-muted);
-    padding-top: 5px;
-    margin: 0;
+  .cv-link {
+    color: var(--foreground);
+    text-decoration: none;
+    border-bottom: 1px solid oklch(93% 0.045 274);
   }
+  .cv-link:hover { color: var(--brand-700); border-color: var(--brand-500); }
 
-  /* Sections */
-  /* Sections : compactes par défaut (bouton 1 page), avec trait de séparation
-     pleine largeur. Le mode .cv-aere (bouton 2 pages) gonfle tout l'espacement. */
-  .cv-section {
-    margin-top: 8px;
-    padding-top: 6px;
-    border-top: 1px solid var(--border-strong);
-  }
+  /* Sections : titre standard souligné, contenu à plat */
+  .cv-section { margin-top: 11px; }
   .cv-section h2 {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.06em;
     color: var(--brand-700);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 0 5px;
-  }
-  .cv-section h2::before {
-    /* Caractère Unicode ■ au lieu d'un div avec background-color :
-       imprimable sur tous les navigateurs (les background ne s'impriment
-       pas par défaut en print). */
-    content: "■";
-    color: var(--brand-500);
-    font-size: 11px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-  /* Le trait en bout de titre est retiré : le séparateur pleine largeur
-     au-dessus de la section fait déjà la coupure (évite le double trait). */
-  .cv-section h2::after { display: none; }
-
-  /* ── Mode AÉRÉ (bouton « 2 pages ») ───────────────────────────────────
-     Ajoute de la respiration partout pour un rendu beau sur ~2 pages. */
-  .cv-aere .cv-section { margin-top: 20px; padding-top: 15px; }
-  .cv-aere .cv-section h2 { margin-bottom: 9px; }
-  .cv-aere .cv-contact, .cv-aere .cv-meta { line-height: 1.8; }
-  .cv-aere .cv-summary { font-size: 12.5px; line-height: 1.6; }
-  .cv-aere .cv-skill-row { padding: 5px 0; }
-  .cv-aere .cv-project { margin-bottom: 14px; }
-  .cv-aere .cv-project-desc { line-height: 1.6; margin-top: 3px; }
-  .cv-aere .cv-entry { padding: 5px 0; }
-  .cv-aere ul.cv-tasks li { margin-bottom: 4px; line-height: 1.5; }
-  .cv-aere .cv-interests { line-height: 1.7; }
-
-  /* Skills */
-  .cv-skill-row {
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    gap: 4px 16px;
-    font-size: 11.5px;
-    padding: 2px 0;
-  }
-  .cv-skill-row + .cv-skill-row { border-top: 1px solid var(--border); }
-  .cv-skill-cat {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--brand-600);
-    padding-top: 1px;
-  }
-  .cv-skill-val { color: var(--foreground); }
-
-  /* Projects */
-  .cv-project { margin-bottom: 7px; }
-  .cv-project:last-child { margin-bottom: 0; }
-  .cv-project-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .cv-project-title {
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--brand-700);
-  }
-  .cv-project-title a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1.5px solid var(--brand-500);
-    transition: color 0.2s;
-  }
-  .cv-project-title a:hover { color: var(--brand-600); }
-  .cv-stack {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 9.5px;
-    color: var(--foreground-muted);
-  }
-  .cv-project-period {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 10px;
-    color: var(--brand-600);
-    font-weight: 600;
-    margin-top: 2px;
-    letter-spacing: 0.02em;
-  }
-  .cv-project-desc {
-    font-size: 11px;
-    color: var(--foreground-muted);
-    margin: 2px 0 0;
-    line-height: 1.45;
+    border-bottom: 1.5px solid oklch(90% 0.05 274);
+    padding-bottom: 2px;
+    margin: 0 0 6px;
   }
 
-  /* Experience */
-  .cv-experience { margin-bottom: 4px; }
-  .cv-job-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .cv-job-org { font-size: 12.5px; font-weight: 700; color: var(--foreground); }
-  .cv-job-role { font-size: 11.5px; color: var(--brand-600); font-weight: 500; }
-  .cv-job-date {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 9.5px;
-    color: var(--foreground-muted);
-    text-align: right;
-    max-width: 60%;
-    line-height: 1.4;
-  }
-  ul.cv-tasks {
-    list-style: none;
-    margin: 4px 0 4px;
-    padding: 0;
-  }
-  ul.cv-tasks li {
-    position: relative;
-    padding-left: 14px;
-    font-size: 11px;
-    color: var(--foreground-muted);
-    margin-bottom: 0;
-    line-height: 1.35;
-  }
-  ul.cv-tasks li::before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: var(--brand-500);
-    font-size: 10px;
-  }
-  .cv-env {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 9.5px;
-    color: var(--brand-700);
-    background: var(--brand-50);
-    display: inline-block;
-    padding: 2px 7px;
-    border-radius: 4px;
-    border: 1px solid var(--brand-100);
-  }
+  .cv-line { font-size: 12px; color: var(--foreground-muted); margin: 3px 0; line-height: 1.47; }
+  .cv-line strong { color: var(--foreground); }
 
-  /* Education / certs */
-  .cv-entry {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 10px;
-    font-size: 11.5px;
-    padding: 2px 0;
-  }
-  .cv-entry + .cv-entry { border-top: 1px solid var(--border); }
-  .cv-entry-date {
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 10px;
-    color: var(--brand-600);
-    font-weight: 600;
-  }
-  .cv-entry-body strong { color: var(--foreground); font-weight: 700; }
-  .cv-entry-body span { color: var(--foreground-muted); display: block; font-size: 10.5px; }
+  .cv-item { margin-bottom: 7px; }
+  .cv-item:last-child { margin-bottom: 0; }
+  .cv-item-head { font-size: 12.5px; color: var(--foreground); margin: 0; }
+  .cv-item-head strong { color: var(--foreground); }
+  .cv-item-tech { font-size: 11px; color: var(--foreground-muted); margin: 1px 0 0; }
+  .cv-item-desc { font-size: 11.5px; color: var(--foreground-muted); margin: 1px 0 0; line-height: 1.47; }
 
-  /* Interests */
-  .cv-interests { font-size: 11px; color: var(--foreground-muted); }
-  .cv-interests p { padding: 1px 0; margin: 0; }
-  .cv-interests strong {
-    color: var(--foreground);
-    font-weight: 600;
-    font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 10px;
-  }
+  ul.cv-tasks { margin: 3px 0; padding-left: 18px; }
+  ul.cv-tasks li { font-size: 11.5px; color: var(--foreground-muted); line-height: 1.4; margin: 0; }
+
+  /* ── Mode AÉRÉ (bouton « 2 pages ») : respiration en plus ─────────────── */
+  .cv-aere .cv-section { margin-top: 20px; }
+  .cv-aere .cv-section h2 { margin-bottom: 10px; }
+  .cv-aere .cv-summary { line-height: 1.6; }
+  .cv-aere .cv-line { margin: 6px 0; line-height: 1.6; }
+  .cv-aere .cv-item { margin-bottom: 14px; }
+  .cv-aere .cv-item-desc { line-height: 1.6; }
+  .cv-aere ul.cv-tasks li { margin-bottom: 4px; line-height: 1.55; }
 
   /* ────────────────────────────────────────────────────────────────────────
-     PRINT / PDF - sync avec l'écran
-     Mêmes proportions, juste les chrome retirés. Pas de re-flow brutal.
+     PRINT / PDF - mêmes proportions, chrome retiré.
   ──────────────────────────────────────────────────────────────────────── */
   @page { size: A4; margin: 0; }
 
   @media print {
-    /* Force l'impression des couleurs partout - Firefox/Chrome n'imprime
-       pas les couleurs (text, background) par défaut. Les `!important`
-       sont nécessaires car certains navigateurs ignorent la cascade en print. */
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
       color-adjust: exact !important;
@@ -597,18 +308,13 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
     html, body { background: #fff !important; }
 
-    /* Fallback HEX pour les couleurs brand - oklch() est parfois mal rendu
-       en print sur Firefox/Chrome. Indigo profond (signature CV). */
+    /* Fallback HEX (oklch parfois mal rendu en print sur Firefox/Chrome). */
     .cv-page {
-      --brand-50: #eef2ff !important;
-      --brand-100: #e0e7ff !important;
       --brand-500: #4f46e5 !important;
-      --brand-600: #4338ca !important;
       --brand-700: #3730a3 !important;
       --foreground: #111619 !important;
       --foreground-muted: #333b42 !important;
-      --foreground-subtle: #4a535b !important;
-      --border: #e3e8eb !important;
+      --border: #dfe4e8 !important;
     }
 
     header[data-menu-id],
@@ -617,32 +323,21 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
     [class*="z-50"]:not(.cv-sheet):not(.cv-sheet *) { display: none !important; }
 
-    .cv-page {
-      background: #fff !important;
-      padding: 0;
-      min-height: 0;
-    }
+    .cv-page { background: #fff !important; padding: 0; min-height: 0; }
     .cv-sheet {
       max-width: none;
       width: 100%;
-      padding: 9mm 12mm 8mm;
+      padding: 10mm 14mm 8mm;
       margin: 0;
       box-shadow: none !important;
       border: none !important;
       border-radius: 0 !important;
     }
-    .cv-sheet::before { display: none; }
-    .cv-photo-placeholder { border-color: #bbb; }
     .cv-page a { color: var(--foreground) !important; }
 
-    /* Forcer la couleur indigo des éléments décoratifs en print */
-    .cv-section h2::before,
-    ul.cv-tasks li::before { color: #4f46e5 !important; }
-
     .cv-section,
-    .cv-project,
-    .cv-job-head,
-    .cv-entry,
+    .cv-item,
+    .cv-line,
     ul.cv-tasks li { page-break-inside: avoid; }
   }
 </style>
