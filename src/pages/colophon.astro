@@ -1,0 +1,219 @@
+---
+/**
+ * Colophon page
+ * URL: /colophon
+ *
+ * Page vitrine qui explique honnêtement comment ce site est construit : la base
+ * (theme Astro Rocket, MIT), ce qui a été re-architecturé, et les choix
+ * techniques. Objectif : transformer "j'ai parti d'un theme" en démonstration
+ * d'ingénierie. La doc technique détaillée vit dans le dossier docs/ du repo.
+ */
+import PageLayout from '@/layouts/PageLayout.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import Badge from '@/components/ui/data-display/Badge/Badge.astro';
+import Card from '@/components/ui/data-display/Card/Card.astro';
+import Button from '@/components/ui/form/Button/Button.astro';
+import { Hero } from '@/components/hero';
+import siteConfig from '@/config/site.config';
+
+const repoUrl = 'https://github.com/benjsant/astro-portfolio';
+
+// Ce que j'ai re-architecturé au-dessus du theme de base.
+const rebuilds = [
+  {
+    icon: 'bot',
+    title: 'Chatbot repensé',
+    text: "Assistant conversationnel basé sur DeepSeek. Refonte d'un agent multi-étapes vers un appel unique avec le contexte du portfolio injecté dans le prompt : plus fiable, plus rapide, moins cher. Rate-limit par IP, contrôle d'origine, prompt cadré anti-invention.",
+  },
+  {
+    icon: 'file-text',
+    title: 'Deux CV, dont un ATS strict',
+    text: "Un CV design (mise en page, photo) et un CV en version ATS stricte (une colonne, texte à plat, sans photo, sans grille) pour passer les filtres de recrutement. Données partagées, imprimables en PDF depuis le navigateur.",
+  },
+  {
+    icon: 'database',
+    title: 'Contenu typé de bout en bout',
+    text: "Articles, projets et fiches techno en MDX, avec des schémas Zod qui valident chaque frontmatter au build. Une donnée invalide casse le build plutôt que de passer en production.",
+  },
+  {
+    icon: 'shield',
+    title: 'Identité SEO et sécurité',
+    text: "Données structurées JSON-LD (Person, ProfessionalService, BlogPosting, FAQ) reconstruites à ma vraie identité, en-têtes de sécurité stricts, robots qui bloque les crawlers d'entrainement d'IA, scan de secrets en intégration continue.",
+  },
+];
+
+// Les partis pris d'architecture.
+const choices = [
+  {
+    icon: 'layers',
+    title: 'Statique, avec une seule exception',
+    text: "Tout le site est pré-généré en HTML statique. La seule route serveur est le chat. Résultat : rapide, robuste, peu coûteux à héberger.",
+  },
+  {
+    icon: 'sparkles',
+    title: 'Thèmes en OKLCH',
+    text: "Le style utilise l'espace colorimétrique OKLCH (perceptuellement uniforme), avec des fallbacks HEX à l'impression des CV.",
+  },
+  {
+    icon: 'git-branch',
+    title: 'Docker en dev, Vercel en prod',
+    text: "Développement conteneurisé pour un environnement reproductible, adaptateur de build qui bascule automatiquement entre Node en local et Vercel en production.",
+  },
+];
+---
+
+<PageLayout
+  title="Colophon - Comment ce site est construit"
+  description="Les coulisses techniques de ce portfolio : la base honnête (theme Astro Rocket, MIT), ce qui a été re-architecturé, et les choix d'ingénierie. Astro, DeepSeek, MDX typé, deux CV dont un ATS."
+>
+  <Hero layout="centered" size="sm">
+    <Badge slot="badge" variant="brand" pill>
+      <Icon name="code" size="sm" />
+      Colophon
+    </Badge>
+    <h1 slot="title">
+      <span class="text-foreground [-webkit-text-fill-color:currentColor]">Comment ce site</span><br />
+      <span class="text-brand-500 [-webkit-text-fill-color:var(--color-brand-500)]">est construit</span>
+    </h1>
+    <p slot="description">
+      Les coulisses techniques, en toute transparence. Ce que j'ai repris, ce que
+      j'ai reconstruit, et pourquoi.
+    </p>
+  </Hero>
+
+  <!-- La base assumée -->
+  <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-3xl px-6 flex flex-col gap-6">
+      <div class="flex flex-col gap-4" data-reveal>
+        <Badge variant="brand" pill class="self-start">La base, assumée</Badge>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+          Partir d'un theme, puis le reconstruire
+        </h2>
+      </div>
+      <div class="flex flex-col gap-5 text-lg text-foreground-muted leading-relaxed" data-reveal data-reveal-delay="1">
+        <p>
+          Ce site a démarré depuis le theme open source
+          <a href="https://github.com/hansmartens68/astro-rocket" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:text-brand-700 underline underline-offset-2">Astro Rocket</a>
+          (licence MIT). Je l'assume et je le crédite : partir d'une base solide,
+          c'est du bon sens d'ingénieur, pas un raccourci.
+        </p>
+        <p>
+          Ce qui compte, c'est ce que j'en ai fait. Le chatbot, les deux CV,
+          l'identité SEO, le pipeline de contenu typé, la sécurité : autant de
+          parties repensées ou reconstruites. Cette page raconte lesquelles, et
+          le code complet est ouvert pour le vérifier.
+        </p>
+      </div>
+      <div class="flex gap-3 mt-2" data-reveal data-reveal-delay="2">
+        <Button variant="outline" href={repoUrl} target="_blank" rel="noopener noreferrer">
+          <Icon name="brand-github" size="sm" />
+          Code source
+        </Button>
+        <Button variant="outline" href={`${repoUrl}/tree/main/docs`} target="_blank" rel="noopener noreferrer">
+          <Icon name="book-open" size="sm" />
+          Documentation technique
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ce que j'ai reconstruit -->
+  <section class="py-[var(--space-section-md)] bg-background border-t border-border">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-8 text-center flex flex-col items-center gap-4" data-reveal>
+        <Badge variant="brand" pill>Ce que j'ai reconstruit</Badge>
+        <h2 class="font-display text-4xl font-bold text-foreground">
+          Au-dessus de la base
+        </h2>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        {rebuilds.map((item, i) => (
+          <Card variant="elevated" hover data-reveal data-reveal-delay={i % 2}>
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name={item.icon} size="md" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-foreground">{item.title}</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">{item.text}</p>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Choix d'architecture -->
+  <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-8 text-center flex flex-col items-center gap-4" data-reveal>
+        <Badge variant="brand" pill>Partis pris</Badge>
+        <h2 class="font-display text-4xl font-bold text-foreground">
+          Choix d'architecture
+        </h2>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        {choices.map((item, i) => (
+          <Card hover data-reveal data-reveal-delay={i}>
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name={item.icon} size="md" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-foreground">{item.title}</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">{item.text}</p>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stack résumée -->
+  <section class="py-[var(--space-section-md)] bg-background border-t border-border">
+    <div class="mx-auto max-w-3xl px-6 flex flex-col gap-6">
+      <div class="flex flex-col gap-4" data-reveal>
+        <Badge variant="brand" pill class="self-start">Stack</Badge>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+          En bref
+        </h2>
+      </div>
+      <div class="flex flex-wrap gap-2" data-reveal data-reveal-delay="1">
+        {['Astro 6', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'MDX', 'Zod', 'DeepSeek', 'Sharp', 'Docker', 'Vercel', 'Playwright', 'Vitest'].map((t) => (
+          <Badge variant="brand" size="sm">{t}</Badge>
+        ))}
+      </div>
+      <p class="text-base text-foreground-muted leading-relaxed" data-reveal data-reveal-delay="2">
+        Le détail complet (architecture, contenu, CV, chatbot, configuration,
+        déploiement) est documenté dans le
+        <a href={`${repoUrl}/tree/main/docs`} target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:text-brand-700 underline underline-offset-2">dossier docs/</a>
+        du dépôt.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-2xl px-6 text-center" data-reveal>
+      <Badge variant="brand" pill class="mb-6">Contact</Badge>
+      <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
+        Ce genre d'approche vous parle ?
+      </h2>
+      <p class="text-lg text-foreground-muted mb-8 text-balance">
+        Disponible pour un poste en IA, Data Engineering ou développement backend.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button size="lg" href="/cv" class="cta-btn-brand">
+          Voir mon CV
+          <Icon name="arrow-right" size="sm" />
+        </Button>
+        <Button size="lg" variant="outline" href={siteConfig.socialLinks[0]} target="_blank" rel="noopener noreferrer">
+          <Icon name="brand-github" size="sm" />
+          GitHub
+        </Button>
+      </div>
+    </div>
+  </section>
+</PageLayout>

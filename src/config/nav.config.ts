@@ -41,6 +41,7 @@ export const footerNavItems: NavItem[] = [
   { label: 'CV Design', href: '/cv-design', order: 4 },
   { label: 'À propos', href: '/about', order: 5 },
   { label: 'Contact', href: '/contact', order: 6 },
+  { label: 'Colophon', href: '/colophon', order: 7 },
 ];
 
 export const legalLinks: LegalLink[] = [];
