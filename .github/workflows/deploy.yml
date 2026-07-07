@@ -28,6 +28,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Audit des dépendances de production (ce qui ship réellement).
+      # Non bloquant : la plupart des alertes viennent de chaînes build-time
+      # (ex. astro-icon > @iconify/tools > cheerio > undici) qui ne sont pas
+      # expédiées au navigateur. On veut la visibilité, pas un CI rouge en
+      # permanence sur des transitives non corrigeables sans mise à jour amont.
+      - name: Audit dependencies (report only)
+        run: pnpm audit --prod
+        continue-on-error: true
+
       - name: Lint
         run: pnpm run lint
 
