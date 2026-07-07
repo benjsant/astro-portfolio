@@ -11,6 +11,7 @@ import Card from '@/components/ui/data-display/Card/Card.astro';
 import Button from '@/components/ui/form/Button/Button.astro';
 import { Hero } from '@/components/hero';
 import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+import ProjectImageSVG from '@/components/projects/ProjectImageSVG.astro';
 import { getCollection } from 'astro:content';
 
 const items = await getCollection('projects', ({ data }) => !data.draft);
@@ -56,6 +57,10 @@ const projects = items.sort((a, b) => a.data.order - b.data.order);
                     ]}
                     loading="lazy"
                   />
+                </div>
+              ) : project.data.svgSlug ? (
+                <div class="overflow-hidden aspect-video md:aspect-auto md:h-full md:min-h-[220px]">
+                  <ProjectImageSVG slug={project.data.svgSlug} title={project.data.title} />
                 </div>
               ) : project.data.featured && (
                 <div class="flex items-center justify-center bg-gradient-to-br from-brand-500/15 via-brand-500/5 to-transparent aspect-video md:aspect-auto md:h-full md:min-h-[200px]">

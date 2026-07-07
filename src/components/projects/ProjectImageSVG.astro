@@ -1,0 +1,65 @@
+---
+/**
+ * Bannière SVG d'un projet (panneau d'illustration des cartes projets).
+ *
+ * Réutilise la bibliothèque de bannières déjà dessinées pour le blog
+ * (src/assets/blog/<slug>.svg), pilotées par le champ `svgSlug` du projet. Le
+ * SVG se colore via les variables de marque et s'adapte au clair / sombre.
+ * Contrairement à la version blog (bannière large), ici le SVG est contenu
+ * dans le panneau et le fond de marque comble le pourtour de façon invisible.
+ */
+const svgs = import.meta.glob<string>('/src/assets/blog/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+interface Props {
+  slug: string;
+  title: string;
+}
+
+const { slug, title } = Astro.props;
+const svgContent = svgs[`/src/assets/blog/${slug}.svg`] ?? '';
+---
+
+{svgContent && <div class="psvg" role="img" aria-label={title} set:html={svgContent} />}
+
+<style>
+  .psvg {
+    width: 100%;
+    height: 100%;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-500);
+  }
+  .psvg :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  :global(html.dark) .psvg {
+    background: var(--brand-600);
+  }
+
+  /* Couleurs de marque, adaptées au mode (mêmes règles que la bannière blog). */
+  .psvg :global(.bg)  { fill: var(--brand-500); }
+  .psvg :global(.ico) { stroke: var(--brand-50); }
+  .psvg :global(.txt) { fill: var(--brand-50); }
+  .psvg :global(.ln)  { stroke: var(--brand-200); stroke-opacity: 0.5; }
+  .psvg :global(.pil) { fill: var(--brand-300); fill-opacity: 0.35; stroke: var(--brand-100); stroke-opacity: 0.8; }
+  .psvg :global(.ptx) { fill: var(--brand-50); }
+  .psvg :global(.cor) { stroke: var(--brand-200); stroke-opacity: 0.7; }
+  .psvg :global(.num) { fill: var(--brand-100); fill-opacity: 0.18; }
+
+  :global(html.dark) .psvg :global(.bg)  { fill: var(--brand-600); }
+  :global(html.dark) .psvg :global(.ico) { stroke: var(--brand-200); }
+  :global(html.dark) .psvg :global(.txt) { fill: var(--brand-50); }
+  :global(html.dark) .psvg :global(.ln)  { stroke: var(--brand-300); stroke-opacity: 0.5; }
+  :global(html.dark) .psvg :global(.pil) { fill: var(--brand-600); fill-opacity: 0.4; stroke: var(--brand-300); stroke-opacity: 0.7; }
+  :global(html.dark) .psvg :global(.ptx) { fill: var(--brand-100); }
+  :global(html.dark) .psvg :global(.cor) { stroke: var(--brand-300); stroke-opacity: 0.6; }
+  :global(html.dark) .psvg :global(.num) { fill: var(--brand-50); fill-opacity: 0.18; }
+</style>
