@@ -1,0 +1,119 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg     { fill: var(--brand-500); }
+    .ico    { stroke: var(--brand-50);  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .ico-fill { fill: var(--brand-50); }
+    .txt    { fill: var(--brand-50); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 800; }
+    .sub    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 500; fill-opacity: 0.85; }
+    .mono   { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .ln     { stroke: var(--brand-300); stroke-width: 1; stroke-opacity: 0.3; }
+    .pil    { fill: var(--brand-400); fill-opacity: 0.28; stroke: var(--brand-200); stroke-opacity: 0.5; stroke-width: 1; }
+    .ptx    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 600; }
+    .cor    { stroke: var(--brand-300); stroke-width: 1.5; fill: none; stroke-opacity: 0.45; }
+    .node   { fill: var(--brand-400); fill-opacity: 0.16; stroke: var(--brand-50); stroke-width: 2.5; }
+    .edge   { stroke: var(--brand-50); stroke-width: 2.5; stroke-linecap: round; fill: none; stroke-opacity: 0.75; }
+    .dot    { fill: var(--brand-200); }
+  </style>
+
+  <!-- Background -->
+  <rect width="1200" height="630" class="bg"/>
+
+  <!-- Faint framing grid -->
+  <g class="ln">
+    <line x1="0" y1="120" x2="1200" y2="120" stroke-dasharray="2 14"/>
+    <line x1="0" y1="510" x2="1200" y2="510" stroke-dasharray="2 14"/>
+    <line x1="160" y1="0" x2="160" y2="630" stroke-dasharray="2 14"/>
+    <line x1="1040" y1="0" x2="1040" y2="630" stroke-dasharray="2 14"/>
+  </g>
+
+  <!-- DAG : extract -> (train / evaluate) -> notify -->
+  <g>
+    <!-- Edges (drawn first, nodes cover the ends) -->
+    <path class="edge" d="M 452 250 C 500 250, 500 205, 548 205"/>
+    <path class="edge" d="M 452 250 C 500 250, 500 295, 548 295"/>
+    <path class="edge" d="M 652 205 C 700 205, 700 250, 748 250"/>
+    <path class="edge" d="M 652 295 C 700 295, 700 250, 748 250"/>
+    <!-- Arrowheads -->
+    <path class="ico-fill" d="M 548 205 l -14 -6 l 3 6 l -3 6 z"/>
+    <path class="ico-fill" d="M 548 295 l -14 -6 l 3 6 l -3 6 z"/>
+    <path class="ico-fill" d="M 748 250 l -14 -6 l 3 6 l -3 6 z"/>
+
+    <!-- Node : extract -->
+    <g transform="translate(420, 250)">
+      <circle r="34" class="node"/>
+      <path class="ico" transform="translate(-12,-12) scale(1)" d="M4 12h16M13 5l7 7-7 7"/>
+    </g>
+    <!-- Node : train (top) -->
+    <g transform="translate(600, 205)">
+      <circle r="34" class="node"/>
+      <circle cx="0" cy="0" r="4" class="ico-fill"/>
+      <circle cx="-11" cy="8" r="3" class="ico-fill"/>
+      <circle cx="11" cy="8" r="3" class="ico-fill"/>
+      <circle cx="0" cy="-12" r="3" class="ico-fill"/>
+      <path class="ico" d="M0 0l-11 8M0 0l11 8M0 0l0 -12"/>
+    </g>
+    <!-- Node : evaluate (bottom) -->
+    <g transform="translate(600, 295)">
+      <circle r="34" class="node"/>
+      <path class="ico" d="M-13 6l7 -10l6 6l7 -12"/>
+    </g>
+    <!-- Node : notify -->
+    <g transform="translate(780, 250)">
+      <circle r="34" class="node"/>
+      <rect x="-13" y="-9" width="26" height="18" rx="3" class="ico"/>
+      <path class="ico" d="M-13 -7l13 9l13 -9"/>
+    </g>
+  </g>
+
+  <!-- Tag pills above title -->
+  <g transform="translate(0, 380)">
+    <g transform="translate(415, 0)">
+      <rect width="110" height="32" rx="16" class="pil"/>
+      <text x="55" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">AIRFLOW</text>
+    </g>
+    <g transform="translate(540, 0)">
+      <rect width="70" height="32" rx="16" class="pil"/>
+      <text x="35" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">DAG</text>
+    </g>
+    <g transform="translate(625, 0)">
+      <rect width="90" height="32" rx="16" class="pil"/>
+      <text x="45" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">MLOPS</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="475" font-size="82" text-anchor="middle" letter-spacing="-2" class="txt">Airflow ML</text>
+
+  <!-- Stats bar -->
+  <g transform="translate(600, 525)" text-anchor="middle">
+    <text x="0" y="0" font-size="18" class="mono" letter-spacing="2">
+      <tspan class="mono">DAG</tspan>
+      <tspan class="sub" dx="6">ORCHESTRÉ</tspan>
+      <tspan class="mono" dx="18">·</tspan>
+      <tspan class="mono" dx="18">TRAIN</tspan>
+      <tspan class="sub" dx="6">AUTO</tspan>
+      <tspan class="mono" dx="18">·</tspan>
+      <tspan class="mono" dx="18">EMAIL</tspan>
+      <tspan class="sub" dx="6">ALERTS</tspan>
+    </text>
+  </g>
+
+  <!-- Top-left meta tag -->
+  <g transform="translate(80, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <text x="14" y="5" font-size="14" class="mono" letter-spacing="2">PROJECT · MLOPS</text>
+  </g>
+
+  <!-- Top-right status dots -->
+  <g transform="translate(1100, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <circle cx="14" cy="0" r="4" class="dot" fill-opacity="0.6"/>
+    <circle cx="28" cy="0" r="4" class="dot" fill-opacity="0.3"/>
+  </g>
+
+  <!-- Corner brackets -->
+  <path d="M 36 60 L 36 36 L 60 36" class="cor"/>
+  <path d="M 1140 36 L 1164 36 L 1164 60" class="cor"/>
+  <path d="M 36 570 L 36 594 L 60 594" class="cor"/>
+  <path d="M 1140 594 L 1164 594 L 1164 570" class="cor"/>
+</svg>
