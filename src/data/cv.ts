@@ -88,7 +88,7 @@ export const cv: CVData = {
     name: 'Benjamin Santrisse',
     role: 'Développeur Backend Python (API, IA appliquée)',
     summary:
-      "Développeur Python spécialisé en IA et backend, reconverti vers l'IA via une formation certifiante (RNCP 6). Conçoit des projets concrets et déployés : agents LLM, pipelines MLOps, ETL et APIs FastAPI.",
+      "Développeur Python spécialisé en IA et backend, certifié Développeur IA RNCP niveau 6 à l'issue d'une reconversion. Conçoit des projets concrets et déployés : agents LLM, pipelines MLOps, ETL et APIs FastAPI.",
   },
 
   contact: [
@@ -117,6 +117,14 @@ export const cv: CVData = {
   ],
 
   projects: [
+    {
+      title: 'Job Hunter - pipeline de candidature assisté par IA',
+      repo: 'https://github.com/benjsant/n8n_jobs_pipeline',
+      period: 'Juin 2026 - en cours',
+      stack: 'Python · n8n · LangGraph · FastAPI · PostgreSQL/pgvector · Docker',
+      description:
+        "Système de recherche d'emploi auto-hébergé, en production quotidienne : collecte multi-API (8 workflows n8n), déduplication sémantique (pgvector), scoring hybride LLM, agent LangGraph groundé (registre INSEE) et génération de CV/lettres PDF ciblés par offre. Plus de 110 tests, CI GitHub Actions.",
+    },
     {
       title: 'InfiniDex - Pokédex augmenté par IA',
       repo: 'https://github.com/benjsant/InfiniDex',
@@ -160,8 +168,8 @@ export const cv: CVData = {
 
   education: [
     {
-      date: '2025-26',
-      title: 'Formation Développeur IA - RNCP niveau 6 (bac+3/4)',
+      date: '2025-26 · obtenue en mars 2026',
+      title: 'Certification Développeur IA - RNCP niveau 6 (bac+3/4)',
       school: 'Simplon, Lille',
     },
     {

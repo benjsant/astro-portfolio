@@ -1,0 +1,31 @@
+---
+title: "Job Hunter, pipeline de candidature assisté par IA"
+description: "Assistant de recherche d'emploi auto-hébergé : collecte multi-API quotidienne, déduplication sémantique pgvector, scoring hybride LLM, agent LangGraph groundé et génération de CV/lettres PDF ciblés par offre. Validation humaine avant tout envoi."
+repo: "https://github.com/benjsant/n8n_jobs_pipeline"
+tags: ["Python", "n8n", "LangGraph", "FastAPI", "PostgreSQL", "Docker"]
+featured: false
+order: 9
+year: 2026
+role: "Développeur Backend & Automatisation"
+services: ["Automatisation", "IA", "Backend"]
+draft: false
+---
+
+Système complet de recherche d'emploi qui tourne chez moi en production : chaque matin, il collecte les offres, les déduplique, les score selon mon profil et pousse les meilleures sur Discord. Un clic déclenche un agent IA qui analyse l'offre, se renseigne réellement sur l'entreprise et génère un CV et une lettre ciblés, livrés en PDF. L'envoi reste toujours humain.
+
+## Fonctionnalités
+
+- **Collecte multi-API quotidienne** : France Travail, La Bonne Alternance, JobSpy (LinkedIn/Indeed), pilotée par des profils de recherche multi-zones en base
+- **Déduplication double** : hash canonicalisé + similarité sémantique (embeddings locaux fastembed, pgvector, anti-join HNSW inter-collectes)
+- **Scoring hybride** : pré-filtre déterministe gratuit, affinage LLM du top 20 avec justification
+- **Agent LangGraph** : analyze, research (grounding registre INSEE + web), accroche, juge déterministe anti-clichés, validation de schéma
+- **CV et lettres adaptés par offre** : le LLM ne produit que des données (compétences et projets mis en avant ou masqués), le rendu Astro + Playwright reste fixe ; corps de lettres figés, seule l'accroche est rédigée
+- **Suivi complet** : mini-interface web (tri des offres, relances, statistiques de taux de réponse), digest hebdomadaire et notification d'échecs sur Discord
+
+## Garde-fous
+
+Aucune invention possible par construction : personnalisation validée contre un index de valeurs réelles, grounding officiel avant de parler d'une entreprise, relecture humaine obligatoire avant tout envoi. Plus de 110 tests (parité des nœuds n8n générée depuis des modules testés, cassettes LLM rejouées, intégration Postgres), CI GitHub Actions.
+
+## Stack
+
+n8n auto-hébergé (8 workflows), Python (FastAPI, LangGraph, DeepSeek), PostgreSQL + pgvector, micro-services Docker (embeddings locaux, scraping, rendu PDF Astro + Playwright), Discord webhooks.
