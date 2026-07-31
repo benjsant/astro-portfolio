@@ -1,0 +1,33 @@
+---
+title: "InfiniDex MCP"
+svgSlug: "infinidex-mcp"
+description: "Serveur Model Context Protocol qui expose les données d'InfiniDex à tout client MCP (Claude Desktop/Code, Cursor). Pont vers l'API REST, 100% local en Docker, sans dépendance au runtime."
+repo: "https://github.com/benjsant/infinidex_mcp"
+tags: ["MCP", "Python", "Docker", "Agent IA", "FastAPI"]
+featured: true
+order: 5
+year: 2026
+role: "Développeur IA / Outillage"
+services: ["MCP", "Intégration IA", "API"]
+---
+
+## À propos du projet
+
+InfiniDex MCP est un serveur [Model Context Protocol](https://modelcontextprotocol.io) qui expose les données structurées d'[InfiniDex](https://github.com/benjsant/InfiniDex) (Pokémon Infinite Fusion) à n'importe quel client MCP : Claude Desktop, Claude Code, Cursor, Windsurf. Là où InfiniDex expose déjà un agent LLM via HTTP pour son frontend, ce serveur permet à un assistant de coder ou un IDE d'**interroger directement** les données, sans toucher au site.
+
+## Choix d'archi notables
+
+- **Un pont, pas un couplage.** Le serveur fait le lien entre un client MCP et l'API REST d'InfiniDex. Il n'a **aucune dépendance** sur le runtime InfiniDex : seulement son URL. On peut le faire évoluer sans toucher au backend.
+- **Deux transports.** stdio (intégration locale directe dans un client) ou HTTP.
+- **100% local.** Tout tourne sur la machine, en Docker. Aucune publication, aucun service externe.
+- **Interface CLI** pour tester les tools hors d'un client.
+
+## Stack technique
+
+| Couche | Stack |
+| ------ | ----- |
+| Protocole | Model Context Protocol (stdio + HTTP) |
+| Serveur | Python |
+| Cible | API REST FastAPI d'InfiniDex + PostgreSQL |
+| Infra | Docker, 100% local |
+| Clients | Claude Desktop / Code, Cursor, Windsurf |

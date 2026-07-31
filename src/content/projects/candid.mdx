@@ -1,0 +1,35 @@
+---
+title: "Candid"
+svgSlug: "candid"
+description: "Assistant de candidature Android (Flutter), 100% sur l'appareil : scoring local, agent LLM ancré anti-invention (grounding INSEE), CV et lettre en PDF, 171 tests. Compagnon mobile de job_hunter."
+repo: "https://github.com/benjsant/candid"
+url: "https://benjsant.github.io/candid/"
+tags: ["Flutter", "Dart", "Agent IA", "On-device", "Gemini", "Android"]
+featured: true
+order: 1
+year: 2026
+role: "Développeur Mobile IA"
+services: ["Application mobile", "Agent IA", "On-device"]
+---
+
+## À propos du projet
+
+Candid est un assistant de candidature Android **entièrement autonome** : pas de serveur, pas d'hébergement, tout tourne sur le téléphone. On partage une offre depuis LinkedIn, France Travail ou Welcome to the Jungle ; l'app normalise, déduplique, score localement, puis un agent LLM produit un CV ciblé et une lettre en PDF. La relecture et l'envoi restent **humains**. C'est le compagnon mobile du projet Docker [job_hunter](https://github.com/benjsant/job_hunter), pensé pour la cible de partage Android que la version serveur ne peut pas avoir.
+
+## Choix d'archi notables
+
+- **Trois règles non négociables, tenues par du code testé.** L'app ne doit jamais inventer une compétence ou une expérience, jamais envoyer automatiquement, jamais modifier des données perso sans validation. Ces garde-fous (`lib/agent/guards.dart`, `lib/domain/dedup.dart`) sont couverts par des tests : les enfreindre casse la suite. C'est voulu.
+- **Agent LLM ancré (grounding).** Analyse de l'offre, ancrage sur des faits vérifiables (registre INSEE), génération d'accroche, passage par un juge, puis validation. Pas de broderie.
+- **100% on-device.** Aucun backend à héberger ; les seuls appels sortants vont vers des API publiques. Génération PDF sur l'appareil.
+- **Human-in-the-loop strict.** L'app produit des PDF et s'arrête là : c'est l'utilisateur qui relit et envoie.
+- **171 tests verts** et une documentation technique complète publiée sur GitHub Pages (architecture, modèle de données, agent, sources, audit de sécurité, journal des décisions).
+
+## Stack technique
+
+| Couche | Stack |
+| ------ | ----- |
+| App | Flutter 3.44 + Dart, min SDK Android 7.0 |
+| IA | Agent LLM (Gemini), grounding INSEE, juge |
+| Partage | `receive_sharing_intent` (Android share target) |
+| Sortie | Génération de CV et lettre en PDF sur l'appareil |
+| Qualité | 171 tests, doc technique sur GitHub Pages |
