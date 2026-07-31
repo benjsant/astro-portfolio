@@ -1,0 +1,112 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg     { fill: var(--brand-500); }
+    .ico    { stroke: var(--brand-50);  stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .txt    { fill: var(--brand-50); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 800; }
+    .sub    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 500; fill-opacity: 0.85; }
+    .mono   { fill: var(--brand-100); font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }
+    .ln     { stroke: var(--brand-300); stroke-width: 1; stroke-opacity: 0.3; }
+    .pil    { fill: var(--brand-400); fill-opacity: 0.28; stroke: var(--brand-200); stroke-opacity: 0.5; stroke-width: 1; }
+    .ptx    { fill: var(--brand-100); font-family: 'Outfit Variable', Outfit, system-ui, -apple-system, sans-serif; font-weight: 600; }
+    .cor    { stroke: var(--brand-300); stroke-width: 1.5; fill: none; stroke-opacity: 0.45; }
+    .phone  { fill: var(--brand-400); fill-opacity: 0.14; stroke: var(--brand-50); stroke-width: 2.5; }
+    .card   { fill: var(--brand-400); fill-opacity: 0.16; stroke: var(--brand-200); stroke-opacity: 0.3; stroke-width: 1; }
+    .card-dot { fill: var(--brand-100); fill-opacity: 0.35; }
+    .check-bg { fill: var(--brand-500); stroke: var(--brand-50); stroke-width: 3; }
+    .dot    { fill: var(--brand-200); }
+  </style>
+
+  <!-- Background -->
+  <rect width="1200" height="630" class="bg"/>
+
+  <!-- Faint framing grid -->
+  <g class="ln">
+    <line x1="0" y1="120" x2="1200" y2="120" stroke-dasharray="2 14"/>
+    <line x1="0" y1="510" x2="1200" y2="510" stroke-dasharray="2 14"/>
+    <line x1="160" y1="0" x2="160" y2="630" stroke-dasharray="2 14"/>
+    <line x1="1040" y1="0" x2="1040" y2="630" stroke-dasharray="2 14"/>
+  </g>
+
+  <!-- Share intent : offre qui entre dans le téléphone -->
+  <g transform="translate(430, 235)">
+    <rect x="-70" y="-40" width="120" height="80" rx="10" class="card"/>
+    <rect x="-52" y="-22" width="84" height="7" rx="3" class="card-dot"/>
+    <rect x="-52" y="-6" width="64" height="5" rx="2" class="card-dot"/>
+    <rect x="-52" y="6" width="72" height="5" rx="2" class="card-dot"/>
+    <text x="-10" y="34" font-size="11" text-anchor="middle" class="mono" fill-opacity="0.5">OFFRE</text>
+  </g>
+  <g class="ico">
+    <path d="M508 235 h44"/>
+    <path d="M544 227 l10 8 l-10 8"/>
+  </g>
+
+  <!-- Téléphone : CV + validation humaine -->
+  <g transform="translate(660, 235)">
+    <rect x="-72" y="-122" width="144" height="240" rx="22" class="phone"/>
+    <rect x="-14" y="-110" width="28" height="5" rx="2.5" class="card-dot"/>
+    <!-- écran : document CV -->
+    <rect x="-52" y="-92" width="104" height="150" rx="6" class="card"/>
+    <rect x="-40" y="-74" width="80" height="7" rx="3" class="card-dot"/>
+    <rect x="-40" y="-58" width="60" height="5" rx="2" class="card-dot"/>
+    <rect x="-40" y="-46" width="70" height="5" rx="2" class="card-dot"/>
+    <rect x="-40" y="-34" width="48" height="5" rx="2" class="card-dot"/>
+    <rect x="-40" y="-18" width="66" height="5" rx="2" class="card-dot"/>
+    <!-- pastille de validation (check) -->
+    <circle cx="0" cy="34" r="20" class="check-bg"/>
+    <path d="M-9 34 l6 7 l12 -15" class="ico"/>
+    <!-- home indicator -->
+    <rect x="-18" y="100" width="36" height="5" rx="2.5" class="card-dot"/>
+  </g>
+
+  <!-- Tag pills above title -->
+  <g transform="translate(0, 380)">
+    <g transform="translate(408, 0)">
+      <rect width="110" height="32" rx="16" class="pil"/>
+      <text x="55" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">FLUTTER</text>
+    </g>
+    <g transform="translate(533, 0)">
+      <rect width="130" height="32" rx="16" class="pil"/>
+      <text x="65" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">ON-DEVICE</text>
+    </g>
+    <g transform="translate(678, 0)">
+      <rect width="114" height="32" rx="16" class="pil"/>
+      <text x="57" y="21" font-size="13" text-anchor="middle" letter-spacing="1.5" class="ptx">AGENT IA</text>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="475" font-size="92" text-anchor="middle" letter-spacing="-2" class="txt">Candid</text>
+
+  <!-- Stats bar -->
+  <g transform="translate(600, 525)" text-anchor="middle">
+    <text x="0" y="0" font-size="18" class="mono" letter-spacing="2">
+      <tspan class="mono">171</tspan>
+      <tspan class="sub" dx="6">TESTS</tspan>
+      <tspan class="mono" dx="18">·</tspan>
+      <tspan class="mono" dx="18">SANS</tspan>
+      <tspan class="sub" dx="6">SERVEUR</tspan>
+      <tspan class="mono" dx="18">·</tspan>
+      <tspan class="mono" dx="18">PDF</tspan>
+      <tspan class="sub" dx="6">CIBLÉ</tspan>
+    </text>
+  </g>
+
+  <!-- Top-left meta tag -->
+  <g transform="translate(80, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <text x="14" y="5" font-size="14" class="mono" letter-spacing="2">PROJECT · MOBILE IA</text>
+  </g>
+
+  <!-- Top-right status dots -->
+  <g transform="translate(1100, 80)">
+    <circle cx="0" cy="0" r="4" class="dot"/>
+    <circle cx="14" cy="0" r="4" class="dot" fill-opacity="0.6"/>
+    <circle cx="28" cy="0" r="4" class="dot" fill-opacity="0.3"/>
+  </g>
+
+  <!-- Corner brackets -->
+  <path d="M 36 60 L 36 36 L 60 36" class="cor"/>
+  <path d="M 1140 36 L 1164 36 L 1164 60" class="cor"/>
+  <path d="M 36 570 L 36 594 L 60 594" class="cor"/>
+  <path d="M 1140 594 L 1164 594 L 1164 570" class="cor"/>
+</svg>
