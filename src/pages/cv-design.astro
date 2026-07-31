@@ -500,7 +500,9 @@ const pillContact = cv.contact.map((item) => ({
     print-color-adjust: exact !important;
   }
 
-  html, body { background: #fff !important; }
+  /* min-height:100vh (BaseLayout) + marge haute du hero débordaient d'un cheveu
+     sur une 2e page fantôme. On neutralise le plancher de hauteur en print. */
+  html, body { background: #fff !important; min-height: 0 !important; height: auto !important; }
 
   .cvd-root {
     --bg: #fff !important;
@@ -517,10 +519,14 @@ const pillContact = cv.contact.map((item) => ({
     --b700: #3730a3 !important;
     background: #fff !important;
     padding: 0 !important;
-    min-height: 0;
+    min-height: 0 !important;
+    height: auto !important;
   }
 
   header[data-menu-id], footer, .cvd-toolbar { display: none !important; }
+  /* Masque les overlays hors CV (widget chat z-50, etc.) qui créaient une
+     page blanche fantôme à l'impression. */
+  [class*="z-50"]:not(.cvd-paper):not(.cvd-paper *) { display: none !important; }
 
   .cvd-paper {
     max-width: none; width: 100%; margin: 0;
@@ -534,18 +540,18 @@ const pillContact = cv.contact.map((item) => ({
      fiable. (Les couleurs de texte/bordure viennent des styles de base.) */
   .cvd-hero {
     background: var(--b50) !important;
-    margin: 5mm 7mm 2mm !important;
-    padding: 3.5mm 6mm !important;
+    margin: 4mm 7mm 1mm !important;
+    padding: 3mm 6mm !important;
   }
 
-  .cvd-body { padding: 4mm 11mm 5mm !important; }
+  .cvd-body { padding: 3mm 11mm 1mm !important; }
 
   /* Compression print pour tenir sur 1 page (mode compact = défaut) */
-  .cvd-section { margin-bottom: 6px !important; }
-  .cvd-h2 { margin-bottom: 4px !important; }
-  .cvd-project { margin-bottom: 5px !important; }
-  .cvd-tl-item { margin-bottom: 6px !important; }
-  .cvd-skill-row { padding: 1.5px 0 !important; }
+  .cvd-section { margin-bottom: 4px !important; }
+  .cvd-h2 { margin-bottom: 3px !important; }
+  .cvd-project { margin-bottom: 4px !important; }
+  .cvd-tl-item { margin-bottom: 5px !important; }
+  .cvd-skill-row { padding: 1px 0 !important; }
 
   /* Mode AÉRÉ (bouton « 2 pages ») : dé-comprime tout. La spécificité
      « .cvd-aere .x » bat « .x » à !important égal → ces règles gagnent. */
