@@ -80,6 +80,8 @@ const projects = defineCollection({
       imageAlt: z.string().optional(),
       /** Bannière SVG de secours (src/assets/blog/<svgSlug>.svg) quand pas d'image. */
       svgSlug: z.string().optional(),
+      /** Ligne d'état honnête affichée en tête de la fiche (ex. "Code source public, exécution locale"). */
+      status: z.string().optional(),
       tags: z.array(z.string()).default([]),
       featured: z.boolean().default(false),
       order: z.number().default(99),
