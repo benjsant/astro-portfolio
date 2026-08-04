@@ -1,0 +1,48 @@
+---
+title: "Déploiement Cloud en IaC (Terraform)"
+description: "Déploiement d'une application existante sur le cloud en Infrastructure-as-Code avec Terraform : réseau, base managée, secrets, CI/CD et monitoring. Infra reproductible et jetable."
+tags: ["Terraform", "AWS", "Docker", "CI/CD", "IaC", "PostgreSQL"]
+featured: false
+draft: true
+order: 91
+year: 2026
+role: "DevOps / Cloud"
+services: ["Cloud", "IaC", "CI/CD"]
+---
+
+> **Projet en préparation (feuille de route).** Cette fiche capture l'idée et le
+> plan ; elle est en brouillon, non publiée. À activer (`draft: false`) et à
+> compléter quand le projet sera réalisé.
+
+## L'idée
+
+Déployer une application existante (l'API job-hunter ou InfiniDex) sur un cloud
+public **entièrement en Infrastructure-as-Code**, avec Terraform. L'infra devient
+du code versionné, relisible et jetable, comme un `docker-compose` mais pour du
+cloud. Objectif : combler le trou « cloud / IaC » qui filtre beaucoup d'offres
+backend, data et MLOps.
+
+## Objectifs
+
+- Écrire l'infra en Terraform : réseau, service conteneurisé, base managée,
+  secrets, CI/CD, monitoring.
+- Apprentissage projet-guidé, pas de tutorial hell : on apprend ce qu'il faut
+  pour livrer un déploiement réel.
+- Maîtrise des coûts : palier local via le **provider Docker**, puis
+  **LocalStack** (faux AWS, zéro facture), puis free tier réel avec
+  `terraform destroy` systématique.
+
+## Stack envisagée
+
+| Couche | Stack |
+| ------ | ----- |
+| IaC | Terraform (HCL) |
+| Cloud | AWS ou GCP (choisi selon les offres cibles) |
+| Apprentissage | Provider Docker, puis LocalStack |
+| CI/CD | GitHub Actions (déjà maîtrisé) |
+
+## Ce que ça démontre
+
+**Terraform / IaC / cloud** : le mot-clé qui débloque une catégorie entière
+d'offres. Montre qu'on sait provisionner et déployer une infra reproductible,
+pas seulement configurer un serveur à la main.

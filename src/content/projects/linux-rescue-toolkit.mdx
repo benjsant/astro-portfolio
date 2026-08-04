@@ -1,0 +1,49 @@
+---
+title: "Live-USB Toolkit Linux"
+description: "Couteau suisse Linux sur base XFCE légère : formatage disque/USB, scan antivirus, examen de périphériques, build et export de VM sur clé, orchestré en Python testé."
+tags: ["Linux", "Python", "Bash", "XFCE", "Docker", "Sécurité"]
+featured: false
+draft: true
+order: 92
+year: 2026
+role: "Outillage / Sysadmin"
+services: ["Tooling", "Sécurité", "Automatisation"]
+---
+
+> **Projet en préparation (feuille de route).** Cette fiche capture l'idée et le
+> plan ; elle est en brouillon, non publiée. À activer (`draft: false`) et à
+> compléter quand le projet sera réalisé. Projet plaisir : à time-boxer.
+
+## L'idée
+
+Recycler un vieux portable en **couteau suisse Linux** sur base XFCE légère :
+formatage de disque et de clé USB, scan antivirus d'une clé, examen des
+périphériques, et build/export de VM minimales sur clé de moins de 32 Go. Un
+« mini MediCat » maison, dans la lignée des outils forge (MintyForge,
+DistroScript).
+
+## Objectifs (l'angle qui a de la valeur)
+
+Ne pas réinventer l'existant (Ventoy, ClamAV, Clonezilla, virt-manager font déjà
+le gros), mais construire la **couche d'orchestration** par-dessus :
+
+- Un outil **Python piloté par config** (YAML) qui automatise les tâches, testé,
+  avec CI et une petite GUI/TUI XFCE.
+- La partie la plus intéressante : le **builder de VM minimale exportable en
+  moins de 32 Go** (image minimale, compression, pipeline de build).
+- Angle sécu : scan USB (ClamAV), empreinte des périphériques, détection BadUSB.
+
+## Stack envisagée
+
+| Couche | Stack |
+| ------ | ----- |
+| Base | Live Linux XFCE léger (Debian live / antiX / SystemRescue) |
+| Orchestration | Python (config YAML), tests, CI |
+| Briques | Ventoy, ClamAV, Clonezilla, QEMU/virt-manager |
+| Sécurité | ClamAV, fingerprint USB, garde-fous |
+
+## Note honnête
+
+Projet **plaisir**, pas un levier d'embauche pour un poste IA/Data/backend (il
+renforce le versant Linux déjà couvert). À faire comme respiration, time-boxé,
+en soignant la couche d'automatisation pour qu'il montre du *craft* logiciel.

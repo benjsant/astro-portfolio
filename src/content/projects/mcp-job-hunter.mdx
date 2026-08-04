@@ -1,0 +1,47 @@
+---
+title: "MCP Job-Hunter"
+description: "Serveur MCP exposant le pipeline de recherche d'emploi (offres, scoring DeepSeek, suivi) comme outils, pour piloter sa recherche en langage naturel depuis Claude Desktop."
+tags: ["MCP", "Python", "FastAPI", "PostgreSQL", "DeepSeek", "Agent IA"]
+featured: false
+draft: true
+order: 90
+year: 2026
+role: "Développeur IA / Outillage"
+services: ["MCP", "Agent IA", "Automatisation"]
+---
+
+> **Projet en préparation (feuille de route).** Cette fiche capture l'idée et le
+> plan ; elle est en brouillon, non publiée. À activer (`draft: false`) et à
+> compléter quand le projet sera réalisé.
+
+## L'idée
+
+Exposer le pipeline de recherche d'emploi (le projet n8n) comme un **serveur MCP
+(Model Context Protocol)** : au lieu d'un agent avec un accès système illimité,
+on définit un **jeu d'outils fixe et cadré** que n'importe quel client MCP
+(Claude Desktop, etc.) peut appeler. On pilote alors sa recherche d'emploi en
+langage naturel : « quelles offres à plus de 80 % je n'ai pas encore traitées ? »,
+« prépare une lettre pour celle-ci ».
+
+## Objectifs
+
+- Concevoir un serveur MCP propre au-dessus de la base PostgreSQL existante.
+- Outils envisagés : `chercher_offres`, `get_offre`, `scorer_offre`,
+  `lister_a_relancer`, `marquer_postule`, `generer_lettre`.
+- Frontières de permission strictes : chaque outil fait une chose précise,
+  rien de destructeur sans confirmation. La sécurité par construction.
+
+## Stack envisagée
+
+| Couche | Stack |
+| ------ | ----- |
+| Serveur MCP | Python (SDK MCP officiel) |
+| Données | PostgreSQL (réutilise le pipeline n8n) |
+| Scoring | DeepSeek (réutilisé) |
+| Client | Claude Desktop / tout client MCP |
+
+## Ce que ça démontre
+
+Maîtrise du **MCP** (rare et recherché) et de la **conception de frontières de
+permission** pour agents IA. Réutilise l'infra existante, donc effort concentré
+sur la partie différenciante.
