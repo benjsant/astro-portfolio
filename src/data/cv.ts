@@ -123,7 +123,7 @@ export const cv: CVData = {
       period: 'Juin 2026 - en cours',
       stack: 'Python · n8n · LangGraph · FastAPI · PostgreSQL/pgvector · Docker',
       description:
-        "Système de recherche d'emploi auto-hébergé, en production quotidienne : collecte multi-API (8 workflows n8n), déduplication sémantique (pgvector), scoring hybride LLM, agent LangGraph groundé (registre INSEE) et génération de CV/lettres PDF ciblés par offre. Plus de 110 tests, CI GitHub Actions.",
+        "Système de recherche d'emploi auto-hébergé, utilisé quotidiennement : collecte multi-API (8 workflows n8n), déduplication sémantique (pgvector), scoring hybride LLM, agent LangGraph groundé (registre INSEE) et génération de CV/lettres PDF ciblés par offre. Plus de 110 tests, CI GitHub Actions.",
     },
     {
       title: 'InfiniDex - Pokédex augmenté par IA',
@@ -139,7 +139,7 @@ export const cv: CVData = {
       period: 'Janvier - Mars 2026',
       stack: 'Python · XGBoost · FastAPI · PostgreSQL · Docker',
       description:
-        "Modèle XGBoost entraîné sur un dataset de combats simulés. Pipeline MLOps end-to-end : tracking MLflow, promotion auto en production, API FastAPI + interface Streamlit.",
+        "Modèle XGBoost entraîné sur un dataset de combats simulés. Pipeline MLOps end-to-end : tracking MLflow, promotion auto du meilleur modèle, API FastAPI + interface Streamlit.",
     },
     {
       title: 'Audiomancy - génération de playlists assistée par IA',

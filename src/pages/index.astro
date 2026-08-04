@@ -21,8 +21,8 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 ---
 
 <LandingLayout
-  title="Développeur IA & Data Engineering"
-  description="Développeur spécialisé en Intelligence Artificielle et Data Engineering. Pipelines ML, APIs FastAPI, agents LLM, ETL Prefect. Disponible pour de nouvelles opportunités."
+  title="Développeur Python · IA, Data & Automatisation"
+  description="Développeur Python : pipelines de données, APIs FastAPI, orchestration (Airflow, Prefect, n8n), agents LLM et automatisation système. Basé près de Valenciennes, mobile sur la métropole lilloise."
   includePersonSchema={true}
   includeProfessionalServiceSchema={true}
 >
@@ -31,13 +31,13 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     <Badge slot="badge" variant="brand" pill pulse class="dark:text-brand-200">Disponible · Ouvert aux opportunités</Badge>
 
     <h1 slot="title">
-      <span class="text-brand-600 dark:text-foreground [-webkit-text-fill-color:currentColor]">Développeur</span><br />
-      <span class="text-brand-600 dark:text-foreground [-webkit-text-fill-color:currentColor]">IA &amp; Data</span>
+      <span class="text-brand-600 dark:text-foreground [-webkit-text-fill-color:currentColor]">Développeur Python</span><br />
+      <span class="text-brand-600 dark:text-foreground [-webkit-text-fill-color:currentColor]">IA, Data &amp; Automatisation</span>
     </h1>
 
     <p slot="description">
-      Je conçois et déploie des systèmes IA concrets : pipelines ML, APIs, orchestration et LLMs.
-      Passionné par la chaîne complète : de la donnée brute au modèle en production.
+      Je conçois des systèmes concrets : pipelines ML, APIs, orchestration et LLMs.
+      La chaîne complète m'intéresse : collecte, traitement, modèle, exposition par API.
     </p>
 
     <Fragment slot="actions">
@@ -63,7 +63,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           </h2>
         </div>
         <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          De la donnée brute au modèle en production.
+          De la donnée brute au modèle exploitable.
         </p>
       </div>
 
@@ -92,7 +92,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Data Engineering</h3>
               <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Pipelines ETL robustes, APIs FastAPI, bases PostgreSQL et orchestration Prefect pour des flux de données fiables en production.
+                Pipelines ETL robustes, APIs FastAPI, bases PostgreSQL et orchestration Prefect pour des flux de données fiables et reproductibles.
               </p>
             </div>
           </div>
@@ -107,7 +107,22 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">MLOps & Déploiement</h3>
               <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Entraînement et suivi de modèles avec MLflow, conteneurisation Docker et pipelines CI/CD pour mettre les modèles en production.
+                Entraînement et suivi de modèles avec MLflow, conteneurisation Docker et pipelines CI/CD pour packager et exécuter les modèles de façon reproductible.
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        <!-- Automatisation & Intégration -->
+        <Card hover data-reveal data-reveal-delay="3">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="workflow" size="sm" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-foreground">Automatisation & Intégration</h3>
+              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+                Orchestration de traitements avec Airflow, Prefect et n8n. Connecteurs API, synchronisation entre systèmes, reprise et déduplication de données, automatisation d'environnements Linux.
               </p>
             </div>
           </div>
@@ -127,7 +142,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           </h2>
         </div>
         <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          Une sélection de projets récents, de la donnée brute au modèle déployé.
+          Une sélection de projets récents, du traitement de la donnée à l'interface.
         </p>
       </div>
 
@@ -178,7 +193,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           </h2>
         </div>
         <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          Un profil ancré dans le terrain : projets concrets, certification récente, disponible immédiatement.
+          Huit ans de formation et de pratique en informatique de gestion, du BTS SIO au titre RNCP niveau 6.
         </p>
       </div>
 
@@ -209,26 +224,77 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           </div>
         </Card>
 
-        <!-- Expérience + disponibilité -->
+        <!-- Licence Pro SIO -->
         <Card variant="elevated" padding="lg" hover data-reveal data-reveal-delay="1">
+          <div class="flex flex-col h-full gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="graduation-cap" size="sm" />
+              </div>
+              <Badge variant="brand" size="sm">2018 - 2019</Badge>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-foreground">Licence Pro SIO · Développement</h3>
+              <p class="text-sm text-foreground-muted mt-0.5">ISTV — Université de Valenciennes (UVHC)</p>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed flex-1">
+              Développement d'applications de gestion, bases de données relationnelles, conduite de projet.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-2 border-t border-border">
+              <Badge size="sm" variant="brand">PHP</Badge>
+              <Badge size="sm" variant="brand">Symfony</Badge>
+              <Badge size="sm" variant="brand">SQL</Badge>
+              <Badge size="sm" variant="brand">Développement applicatif</Badge>
+            </div>
+          </div>
+        </Card>
+
+        <!-- Expérience CAF du Nord -->
+        <Card variant="elevated" padding="lg" hover data-reveal data-reveal-delay="2">
           <div class="flex flex-col h-full gap-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
                 <Icon name="briefcase" size="sm" />
               </div>
-              <Badge variant="brand" size="sm" class="dark:text-brand-200">Disponible · Ouvert aux opportunités</Badge>
+              <Badge variant="brand" size="sm">2016 - 2019</Badge>
             </div>
             <div>
-              <h3 class="text-base font-semibold text-foreground">Recherche active d'emploi</h3>
-              <p class="text-sm text-foreground-muted mt-0.5">Métropole Valenciennoise + Lilloise · Remote</p>
+              <h3 class="text-base font-semibold text-foreground">Développeur applications de gestion</h3>
+              <p class="text-sm text-foreground-muted mt-0.5">CAF du Nord — Agence de Valenciennes · stages, 24 sem. cumulées</p>
             </div>
             <p class="text-sm text-foreground-muted leading-relaxed flex-1">
-              Développeur passionné par la chaîne complète de l'IA, de la collecte de données au modèle en production. À la recherche d'un poste dans lequel mettre mes projets concrets en valeur.
+              Développement d'une plateforme interne de gestion des espaces de travail. Recueil des besoins auprès des utilisateurs métier et maintenance évolutive d'applications existantes.
             </p>
             <div class="flex flex-wrap gap-1.5 pt-2 border-t border-border">
-              <Badge size="sm" variant="brand">ML Engineer</Badge>
-              <Badge size="sm" variant="brand">Data Engineer</Badge>
-              <Badge size="sm" variant="brand">Dev IA</Badge>
+              <Badge size="sm" variant="brand">PHP</Badge>
+              <Badge size="sm" variant="brand">Symfony</Badge>
+              <Badge size="sm" variant="brand">PostgreSQL</Badge>
+              <Badge size="sm" variant="brand">Bootstrap</Badge>
+              <Badge size="sm" variant="brand">Git</Badge>
+            </div>
+          </div>
+        </Card>
+
+        <!-- BTS SIO -->
+        <Card variant="elevated" padding="lg" hover data-reveal data-reveal-delay="3">
+          <div class="flex flex-col h-full gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="graduation-cap" size="sm" />
+              </div>
+              <Badge variant="brand" size="sm">2015 - 2017</Badge>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-foreground">BTS SIO · option SLAM</h3>
+              <p class="text-sm text-foreground-muted mt-0.5">Lycée Henri Wallon, Valenciennes</p>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed flex-1">
+              Formation initiale en développement logiciel, bases de données et réseaux.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-2 border-t border-border">
+              <Badge size="sm" variant="brand">Développement</Badge>
+              <Badge size="sm" variant="brand">Bases de données</Badge>
+              <Badge size="sm" variant="brand">Réseaux</Badge>
             </div>
           </div>
         </Card>
@@ -250,10 +316,10 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             </h2>
           </div>
           <p class="text-lg text-foreground-muted leading-relaxed mb-4">
-            Spécialisé en Intelligence Artificielle et Data Engineering, je construis des systèmes IA concrets et déployables, de la collecte de données jusqu'au modèle en production.
+            Spécialisé en Intelligence Artificielle et Data Engineering, je construis des systèmes IA concrets, de la collecte de données jusqu'au modèle exploitable.
           </p>
           <p class="text-lg text-foreground-muted leading-relaxed mb-8">
-            Passionné par les LLMs, le MLOps et l'automatisation intelligente. Toujours en veille sur les dernières avancées de l'écosystème IA.
+            Les LLMs, le MLOps et l'automatisation intelligente m'animent. Toujours en veille sur les dernières avancées de l'écosystème IA.
           </p>
            <Button variant="outline" href="/about" class="self-start">
             En savoir plus
@@ -270,7 +336,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             </div>
             <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
               <Icon name="layers" class="w-10 h-10 text-brand-500" />
-              <p class="text-sm font-semibold text-foreground">10+ projets<br />déployés</p>
+              <p class="text-sm font-semibold text-foreground">10+ projets<br />construits</p>
               <p class="text-xs text-foreground-muted">IA, Data, APIs, CI/CD</p>
             </div>
             <a href={siteConfig.socialLinks[0]} target="_blank" rel="noopener noreferrer" class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 h-full">
@@ -281,7 +347,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
               <Icon name="map-pin" class="w-10 h-10 text-brand-500" />
               <p class="text-sm font-semibold text-foreground">Basé à<br />{siteConfig.address?.city ?? 'France'}</p>
-              <p class="text-xs text-foreground-muted">Métropole Valenciennoise</p>
+              <p class="text-xs text-foreground-muted">Métropole Valenciennoise · Permis B + véhicule</p>
             </div>
           </div>
         </Card>
@@ -332,7 +398,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
         Une opportunité à me proposer ?
       </h2>
       <p class="text-lg text-foreground-muted mb-8 text-balance">
-        Disponible pour un poste en IA, ML Engineering ou Data, parlons-en.
+        Disponible pour un poste en développement Python, data engineering, automatisation ou intégration. En CDI, CDD ou alternance.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <Button size="lg" href="/cv" class="cta-btn-brand">
@@ -352,7 +418,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
         Une opportunité à me proposer ?
       </h2>
       <p class="text-lg text-foreground-muted mb-8 text-balance">
-        Disponible pour un poste en IA, ML Engineering ou Data, parlons-en.
+        Disponible pour un poste en développement Python, data engineering, automatisation ou intégration. En CDI, CDD ou alternance.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <Button size="lg" href="/cv" class="hero-btn-brand">

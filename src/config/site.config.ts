@@ -107,7 +107,7 @@ export interface SiteConfig {
 const siteConfig: SiteConfig = {
   name: 'Benjamin Santrisse',
   description:
-    'Développeur spécialisé en Intelligence Artificielle et Data Engineering : pipelines ML, APIs FastAPI, agents LLM, ETL Prefect. Disponible pour de nouvelles opportunités.',
+    'Développeur Python : pipelines de données, APIs FastAPI, orchestration (Airflow, Prefect, n8n), agents LLM et automatisation système. Basé près de Valenciennes, mobile sur la métropole lilloise.',
   url: SITE_URL || 'https://benjamin-santrisse.vercel.app',
   ogImage: '/og-default.png',
   author: 'Benjamin Santrisse',
