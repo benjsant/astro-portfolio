@@ -321,10 +321,16 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           <p class="text-lg text-foreground-muted leading-relaxed mb-8">
             Les LLMs, l'orchestration et l'automatisation sont mes terrains de prédilection. Veille technique régulière, documentée sur le blog.
           </p>
-           <Button variant="outline" href="/about" class="self-start">
-            En savoir plus
-            <Icon name="arrow-right" size="sm" />
-          </Button>
+          <div class="flex flex-wrap items-center gap-4 self-start">
+            <Button variant="outline" href="/about">
+              En savoir plus
+              <Icon name="arrow-right" size="sm" />
+            </Button>
+            <a href="/blog" class="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition-colors">
+              <Icon name="book-open" size="sm" />
+              Lire le blog
+            </a>
+          </div>
         </div>
         <Card variant="elevated" padding="lg" class="h-full flex flex-col" data-reveal="left" data-reveal-delay="1">
           <p class="text-sm text-foreground mb-5 text-center">En quelques chiffres.</p>
