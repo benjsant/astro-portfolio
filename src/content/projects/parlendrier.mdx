@@ -1,0 +1,45 @@
+---
+title: "Parlendrier"
+svgSlug: "parlendrier"
+description: "Agenda vocal Android (Flutter) : reconnaissance vocale 100% sur l'appareil (sherpa-onnx), l'audio ne quitte jamais le téléphone. Parseur de dates FR déterministe, sync Google Calendar."
+status: "Code source public, application Android (tests + CI)"
+repo: "https://github.com/benjsant/parlendrier"
+tags: ["Flutter", "Dart", "On-device", "Reconnaissance vocale", "Privacy", "Android"]
+featured: false
+draft: true
+order: 9
+year: 2026
+role: "Développeur Mobile IA"
+services: ["Application mobile", "IA on-device", "Privacy"]
+---
+
+> **Fiche en brouillon** (`draft: true`, non publiée). Passer `draft: false`
+> pour la publier ; ajouter `featured: true` et un `order` bas pour la mettre
+> en avant.
+
+## À propos du projet
+
+*Parler* + *calendrier*. On crée un événement de calendrier en le disant à voix haute, **sans que l'audio quitte le téléphone** :
+
+> « dentiste mardi prochain à 15h pendant 45 minutes » → *Dentiste, mardi 10 mars 15:00-15:45* → Google Calendar
+
+Les assistants vocaux existants font cela en envoyant l'enregistrement sur des serveurs distants. Ici, la transcription est **entièrement sur l'appareil**, avec un modèle embarqué : l'audio n'est jamais transmis, ni stocké ailleurs que dans la mémoire vive le temps de la reconnaissance.
+
+## Choix d'archi notables
+
+- **Reconnaissance vocale hors ligne** (sherpa-onnx, modèle français embarqué). Argument de confidentialité par construction.
+- **Analyse des dates déterministe.** Le parseur de dates et durées en français est du **code explicite modifiable**, pas une boîte noire, et fonctionne sans réseau.
+- **Repli LLM écrit mais débranché** tant qu'un journal local n'a pas prouvé qu'il sert. On ne ship pas ce qu'on n'a pas prouvé utile.
+- **Confirmation avant toute écriture** ; suppression par balayage avec annulation (une dictée ratée ne laisse pas de trace).
+- **Base locale SQLite** : fonctionne sans réseau, synchronise ensuite vers Google Calendar.
+- **Testé** (règle de confirmation verrouillée par des tests, CI GitHub Actions) et **documenté** (MkDocs).
+
+## Stack technique
+
+| Couche | Stack |
+| ------ | ----- |
+| App | Flutter / Dart, Android (minSdk 26) |
+| Voix | sherpa-onnx (reconnaissance vocale on-device, modèle FR) |
+| Données | Parseur de dates FR déterministe, SQLite local |
+| Sync | Google Calendar |
+| Qualité | Tests + CI, documentation MkDocs |
