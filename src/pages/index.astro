@@ -6,7 +6,7 @@ import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import BlogCard from '@/components/blog/BlogCard.astro';
-import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+import EmailLink from '@/components/patterns/EmailLink.astro';
 import { getCollection } from 'astro:content';
 import siteConfig from '@/config/site.config';
 
@@ -36,7 +36,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     </h1>
 
     <p slot="description">
-      Je conçois des systèmes concrets : pipelines ML, APIs, orchestration et LLMs.
+      Je conçois des systèmes concrets : pipelines de données, APIs, orchestration et agents LLM.
       La chaîne complète m'intéresse : collecte, traitement, modèle, exposition par API.
     </p>
 
@@ -63,7 +63,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           </h2>
         </div>
         <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          De la donnée brute au modèle exploitable.
+          Du traitement de la donnée à l'exploitation en production chez le client.
         </p>
       </div>
 
@@ -142,7 +142,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           </h2>
         </div>
         <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          Une sélection de projets récents, du traitement de la donnée à l'interface.
+          Une sélection de projets récents. Code source public, tests et documentation.
         </p>
       </div>
 
@@ -311,15 +311,15 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           <div class="flex flex-col gap-6 mb-6">
             <Badge variant="brand" pill class="self-start">À propos</Badge>
             <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-              Développeur IA,<br />
-              <span class="text-brand-500">passionné de data.</span>
+              Développeur Python,<br />
+              <span class="text-brand-500">de la donnée à l'automatisation.</span>
             </h2>
           </div>
           <p class="text-lg text-foreground-muted leading-relaxed mb-4">
-            Spécialisé en Intelligence Artificielle et Data Engineering, je construis des systèmes IA concrets, de la collecte de données jusqu'au modèle exploitable.
+            Développeur Python issu de l'informatique de gestion, je construis des systèmes de bout en bout : collecte et traitement de données, orchestration de flux, APIs, et IA appliquée quand elle apporte quelque chose.
           </p>
           <p class="text-lg text-foreground-muted leading-relaxed mb-8">
-            Les LLMs, le MLOps et l'automatisation intelligente m'animent. Toujours en veille sur les dernières avancées de l'écosystème IA.
+            Les LLMs, l'orchestration et l'automatisation sont mes terrains de prédilection. Veille technique régulière, documentée sur le blog.
           </p>
            <Button variant="outline" href="/about" class="self-start">
             En savoir plus
@@ -391,9 +391,8 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 
  <!-- CTA -->
   <section class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
-    <!-- Mobile: flat section, no card -->
-    <div class="glitch:hidden mx-auto max-w-2xl px-6 text-center" data-reveal>
-      <Badge variant="brand" pill class="mb-6">Let's talk</Badge>
+    <div class="mx-auto max-w-2xl px-6 text-center" data-reveal>
+      <Badge variant="brand" pill class="mb-6">Contact</Badge>
       <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
         Une opportunité à me proposer ?
       </h2>
@@ -401,36 +400,19 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
         Disponible pour un poste en développement Python, data engineering, automatisation ou intégration. En CDI, CDD ou alternance.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" href="/cv" class="cta-btn-brand">
+        <Button size="lg" href="/contact" class="cta-btn-brand">
+          <Icon name="mail" size="sm" />
+          Me contacter
+        </Button>
+        <Button size="lg" variant="outline" href="/cv">
           Voir mon CV
           <Icon name="arrow-right" size="sm" />
         </Button>
-        <Button size="lg" variant="outline" href="/about">
-          En savoir plus
-          <Icon name="arrow-right" size="sm" />
-        </Button>
       </div>
+      <p class="mt-6 text-sm text-foreground-muted">
+        ou par mail : <EmailLink user="santrissebenjamin" domain="gmail.com" class="text-brand-600 hover:text-brand-700 underline underline-offset-2" />
+      </p>
     </div>
-
-    <!-- Desktop: contained LetterGlitch band with glass card -->
-    <LetterGlitchBand>
-      <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
-        Une opportunité à me proposer ?
-      </h2>
-      <p class="text-lg text-foreground-muted mb-8 text-balance">
-        Disponible pour un poste en développement Python, data engineering, automatisation ou intégration. En CDI, CDD ou alternance.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" href="/cv" class="hero-btn-brand">
-          Voir mon CV
-          <Icon name="arrow-right" size="sm" />
-        </Button>
-        <Button size="lg" variant="outline" href="/about">
-          En savoir plus
-          <Icon name="arrow-right" size="sm" />
-        </Button>
-      </div>
-    </LetterGlitchBand>
   </section>
 
 <script>
