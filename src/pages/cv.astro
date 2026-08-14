@@ -44,6 +44,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
   <main class="cv-page pt-20 pb-12">
     <div class="cv-toolbar">
+      <a href="/cv-design" class="cv-print-btn cv-print-btn--ghost cv-design-link">Version mise en page</a>
       <button type="button" class="cv-print-btn cv-print-btn--ghost" onclick="document.querySelector('.cv-sheet').classList.remove('cv-aere'); window.print();">
         ↓ PDF · 1 page (compact)
       </button>
