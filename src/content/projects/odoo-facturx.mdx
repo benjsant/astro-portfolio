@@ -1,0 +1,41 @@
+---
+title: "Odoo Factur-X"
+svgSlug: "odoo-facturx"
+description: "Module Odoo 18 générant des factures Factur-X (PDF/A-3 + XML CII embarqué) depuis les factures clients, avec validation XML et suivi de transmission. Réforme facturation électronique FR."
+status: "Code source public, en développement (démonstration technique)"
+repo: "https://github.com/benjsant/odoo_facturx"
+tags: ["Python", "Odoo", "Factur-X", "ERP", "XML CII", "Intégration"]
+featured: false
+draft: true
+order: 8
+year: 2026
+role: "Développeur ERP / Intégration"
+services: ["Intégration ERP", "Conformité", "Backend"]
+---
+
+> **Fiche en brouillon** (`draft: true`, non publiée). Passer `draft: false`
+> pour la publier ; ajouter `featured: true` et un `order` bas pour la mettre
+> en avant.
+
+## À propos du projet
+
+Module **Odoo 18** (`account_facturx_export`) qui génère des factures au format **Factur-X** (un PDF/A-3 lisible par un humain, contenant un fichier XML en syntaxe CII lisible par une machine) directement depuis les factures clients d'Odoo, avec validation du XML et suivi du statut de transmission.
+
+Le projet est né de la **réforme française de la facturation électronique**, qui impose progressivement aux entreprises assujetties à la TVA d'émettre leurs factures dans un format structuré. Trois formats sont admis (Factur-X, UBL, CII) ; ce module traite **Factur-X uniquement**, le format hybride le plus répandu chez les PME françaises : un format couvert proprement plutôt que trois à moitié.
+
+## Choix d'archi notables
+
+- **Honnêteté du périmètre.** Démonstration technique pour comprendre le modèle de données d'Odoo et la mécanique de la réforme. Ce n'est pas un outil conforme ni destiné à la production, et c'est dit clairement.
+- **Génération CII depuis la facture client.** Le XML (syntaxe CII) est produit à partir des données de facture Odoo, puis embarqué dans un PDF/A-3.
+- **Validation du XML** produit et **suivi du statut** de transmission.
+- **Cycle de vie géré.** Le Factur-X généré est invalidé quand une facture repasse en brouillon.
+- **Documentation soignée** : page de référence de chaque option configurable, et un cours d'introduction à Odoo avec captures générées.
+
+## Stack technique
+
+| Couche | Stack |
+| ------ | ----- |
+| ERP | Odoo 18 (module `account_facturx_export`) |
+| Langage | Python |
+| Norme | Factur-X (PDF/A-3 + XML CII), réforme e-invoicing FR |
+| Qualité | Validation XML, documentation de référence |
