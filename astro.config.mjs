@@ -51,8 +51,7 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap({
-      // Exclut les composants et le CV ciblé Leclerc (page cachée, non indexée).
-      filter: (page) => !page.includes('/components') && !page.includes('/cv-leclerc'),
+      filter: (page) => !page.includes('/components'),
     }),
     icon(),
   ],
