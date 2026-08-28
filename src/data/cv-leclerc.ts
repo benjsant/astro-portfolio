@@ -61,11 +61,11 @@ export const cvLeclerc = {
   atouts: [
     {
       title: 'Connaissance des produits du rayon',
-      text: "Informatique, high-tech, multimédia, jeux vidéo. Formation en informatique du BTS au niveau bac+3/4. Je sais orienter un client vers le matériel adapté à son usage et expliquer une différence technique sans jargon.",
+      text: "Informatique, high-tech, multimédia, jeux vidéo. Formation en informatique du BTS au niveau bac+3/4. Je sais accueillir et conseiller un client, l'orienter vers le matériel adapté à son usage, expliquer une différence technique sans jargon et participer à l'animation du rayon.",
     },
     {
       title: 'Rigueur et organisation',
-      text: "Parcours en informatique de gestion : contrôle de données, respect des procédures, vérification systématique. Des réflexes directement utiles à la mise en rayon, au balisage, au suivi des prix et à la gestion des stocks.",
+      text: "Parcours en informatique de gestion : contrôle de données, respect des procédures, vérification systématique. Des réflexes directement utiles à la mise en rayon, au balisage, au respect des règles de merchandising, d'hygiène et de sécurité, au contrôle des stocks et au rangement de la réserve.",
     },
     {
       title: 'Autonomie et initiative',
@@ -73,7 +73,7 @@ export const cvLeclerc = {
     },
     {
       title: 'Fiabilité et disponibilité',
-      text: "Ponctualité et présence. Domicile à 15 minutes du magasin, véhicule personnel, aucune contrainte de transport ni d'horaire.",
+      text: "Ponctualité, présence et sens du service client. Domicile à 15 minutes du magasin, véhicule personnel, aucune contrainte de transport ni d'horaire.",
     },
   ] as LeclercAtout[],
 
