@@ -34,9 +34,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "validate": "pnpm lint && pnpm check && pnpm build",
-    "test": "vitest",
-    "test:e2e": "playwright test"
+    "validate": "pnpm lint && pnpm check && pnpm build"
   },
   "dependencies": {
     "@astrojs/mdx": "5.0.6",
