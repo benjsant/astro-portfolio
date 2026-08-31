@@ -44,17 +44,16 @@ pnpm dev                     # http://localhost:4321
 | `pnpm format` | Prettier (écriture) |
 | `pnpm format:check` | Prettier (vérification seule) |
 | `pnpm validate` | lint + check + build (le combo avant de pousser) |
-| `pnpm test` | Tests unitaires (Vitest) |
-| `pnpm test:e2e` | Tests end-to-end (Playwright) |
 
 Réflexe minimal avant de pousser : `pnpm build` (sinon le déploiement échoue).
 Idéalement `pnpm validate`.
 
 ## Tests
 
-- **Vitest** (`pnpm test`) : tests unitaires, notamment la validation des
-  entrées de l'API.
-- **Playwright** (`pnpm test:e2e`) : tests de bout en bout dans un navigateur.
+Pas de tests automatisés pour l'instant. La validation repose sur `pnpm validate`
+(lint + type-check + build) et sur le typage strict des collections de contenu
+(schémas Zod) vérifié au build : une frontmatter invalide casse le build. Le combo
+`pnpm validate` doit passer avant de pousser.
 
 ## Intégration continue
 
