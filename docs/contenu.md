@@ -98,8 +98,9 @@ order: 0                             # ordre d'affichage
 
 ## Note d'exactitude : la recherche
 
-Le template d'origine mentionne une recherche **Pagefind**. Les dépendances sont
-encore dans `package.json`, mais **la recherche n'est pas câblée** dans ce
-portfolio (aucun composant ne l'utilise, seul du texte marketing y fait
-référence). Ne documente pas une fonctionnalité de recherche active tant qu'elle
-n'a pas été réellement branchée.
+Il n'y a **pas de recherche** dans ce portfolio. Le template d'origine embarquait
+**Pagefind**, mais il n'a jamais été câblé (aucun composant, aucune étape
+d'indexation au build) : les dépendances `pagefind` et `@pagefind/default-ui` ont
+été retirées lors d'un ménage. Pour ajouter une recherche un jour, il faudra la
+brancher entièrement : réinstaller Pagefind, ajouter l'étape d'indexation au build
+et un composant d'interface.
