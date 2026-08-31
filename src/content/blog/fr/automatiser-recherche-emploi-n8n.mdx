@@ -1,0 +1,114 @@
+---
+title: "J'ai appliqué l'ingénierie data/IA à ma propre recherche d'emploi"
+description: "Un pipeline n8n qui collecte, déduplique et score des offres d'emploi avec un agent DeepSeek, validation humaine avant envoi. PostgreSQL comme source de vérité."
+publishedAt: 2026-06-25
+author: "Benjamin Santrisse"
+tags: ["n8n", "Automatisation", "Data Engineering", "IA", "PostgreSQL", "DeepSeek", "Agent IA"]
+draft: false
+featured: false
+locale: "fr"
+---
+
+Chercher un emploi de développeur, c'est répétitif : ouvrir cinq sites, lire des offres en double, recopier les mêmes infos, suivre où on en est dans un tableur qui finit par diverger. Plutôt que de subir, j'ai traité ma recherche d'emploi comme un **problème de data engineering** : une chaîne qui collecte, déduplique, score et trie les offres, avec un agent LLM pour évaluer l'adéquation, et **toujours un humain qui valide avant le moindre envoi**.
+
+Le projet s'appelle **job-hunter**. Voici comment il est construit.
+
+---
+
+## L'architecture en une vue
+
+```
+Sources (5)  →  Collecte  →  Déduplication (SHA256)  →  Scoring (0-100)
+            →  PostgreSQL (source de vérité)  →  notification Discord
+            →  Validation humaine  →  Agent candidature  →  CV + lettre (PDF)
+            →  Brouillon Gmail  →  Archivage Drive
+```
+
+Le tout est orchestré par **n8n** (auto-hébergé en Docker), avec **PostgreSQL comme unique source de vérité**. Aucune donnée ne « vit » dans n8n : les workflows lisent et écrivent en base, ce qui rend chaque étape rejouable et auditable.
+
+Cinq workflows découpent les responsabilités : recherche d'offres, agent de candidature, suivi de statut, finalisation (CV + lettre), et candidature spontanée (entreprises sans offre publiée).
+
+---
+
+## 1. Unifier cinq sources hétérogènes
+
+Les offres viennent de **France Travail, Adzuna, JSearch (RapidAPI), JobSpy et La Bonne Alternance**. Chaque source a son propre schéma : un même poste n'a ni le même format de date, ni le même champ « localisation », ni le même identifiant.
+
+Première étape : un **normaliseur par source** qui ramène tout à une forme commune (titre, entreprise, localisation, contrat, URL, description). Chaque normaliseur est isolé dans un module testé : un payload réel sert de fixture pour verrouiller le comportement quand une API change.
+
+Deuxième étape, la plus utile : la **déduplication**. Le même poste remonte souvent de deux ou trois sources. Je calcule une **empreinte SHA256 sur une clé canonicalisée** (entreprise + intitulé normalisés), ce qui regroupe les doublons même quand les libellés diffèrent légèrement.
+
+```js
+import { createHash } from "node:crypto";
+
+const canonical = (s) =>
+  s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, " ").trim();
+
+const fingerprint = (offer) =>
+  createHash("sha256")
+    .update(`${canonical(offer.company)}::${canonical(offer.title)}`)
+    .digest("hex");
+```
+
+Une contrainte d'unicité sur cette empreinte en base fait le reste : insérer un doublon est silencieusement ignoré.
+
+---
+
+## 2. Le scoring piloté par le profil
+
+Une fois les offres propres en base, il faut **les trier**, sinon on se retrouve avec 80 offres et aucune priorité.
+
+Le scoring se fait en deux temps :
+
+- **Un filtre dur (exclusions)** d'abord : les profils de recherche définissent des `must_have` et des `exclusions`. Une offre « data analyst BI sans modélisation » ou « 5 ans d'expérience minimum » est écartée avant même d'appeler le LLM. Ça évite de payer des tokens pour des offres hors-cible.
+- **Un scoring multi-dimensionnel** ensuite, confié à un **agent DeepSeek**. Il produit un JSON structuré : un score global, des sous-scores (compétences, expérience, localisation, salaire), et surtout les compétences qui *matchent* et celles qui *manquent*.
+
+```json
+{
+  "score_global": 0,
+  "skills_score": 0,
+  "experience_score": 0,
+  "location_score": 0,
+  "salary_score": 0,
+  "matching_skills": [],
+  "missing_skills": []
+}
+```
+
+Ce format force l'agent à **justifier** son score plutôt qu'à cracher un chiffre. Les `missing_skills` sont d'ailleurs un bonus inattendu : elles me disent, offre après offre, quelles compétences reviennent et mériteraient que je progresse.
+
+L'agent est entièrement piloté par un **fichier de system prompt** versionné : son comportement, ses garde-fous et son format de sortie y sont définis. Changer la cible ne demande aucune modification des workflows.
+
+---
+
+## 3. Fiabilité plutôt que liberté du LLM
+
+Pour les lettres de motivation, j'ai d'abord laissé l'agent tout rédiger. Mauvaise idée : qualité inégale, variations de ton, et un risque d'invention.
+
+J'ai inversé l'approche : le **corps de la lettre est figé** (un texte que j'ai validé, qui présente mes projets), et l'agent ne rédige **qu'une seule chose** : l'accroche personnalisée (« pourquoi cette entreprise »). Le reste est de la **substitution déterministe** de variables.
+
+Résultat : la **surface d'erreur est divisée par dix**, la qualité est constante, et la seule personnalisation qui compte (le lien avec l'entreprise) reste présente. C'est un principe que je garde en tête pour toute intégration de LLM en production : **contraindre le modèle là où la fiabilité prime, le laisser libre seulement là où la valeur ajoutée le justifie.**
+
+---
+
+## 4. Le garde-fou : un humain dans la boucle
+
+C'est le point le plus important, et le plus assumé : **rien n'est envoyé automatiquement.**
+
+Le pipeline prépare : il collecte, score, génère un CV et une lettre, crée un **brouillon Gmail** et archive sur Drive. Mais l'envoi reste un **clic humain**, après relecture. L'objectif n'a jamais été de candidater en masse : c'est d'**éliminer le travail répétitif** (chercher, dédupliquer, trier, mettre en forme) pour que je consacre mon temps à ce qui compte vraiment : choisir les bonnes offres et soigner chaque candidature.
+
+---
+
+## Ce que j'ai appris
+
+**PostgreSQL comme source de vérité change tout.** Garder l'état hors de l'outil d'orchestration rend chaque étape rejouable, testable et auditable. n8n devient un simple chef d'orchestre, pas un coffre-fort.
+
+**La déduplication est le vrai gain.** Sur des sources qui se recoupent, une empreinte canonicalisée + une contrainte d'unicité économisent des heures de lecture en double.
+
+**Un agent qui justifie vaut mieux qu'un agent qui tranche.** Imposer un JSON avec sous-scores et compétences manquantes transforme une boîte noire en outil de décision exploitable.
+
+**Contraindre le LLM est une compétence en soi.** Savoir *où* figer le déterministe et *où* laisser le modèle libre, c'est souvent ce qui sépare une démo d'un système fiable.
+
+---
+
+> Ce projet n'a pas vocation à remplacer une vraie candidature : il enlève le bruit pour laisser place à l'essentiel. Et accessoirement, il m'a appris autant sur le data engineering et l'orchestration que bien des tutoriels.
