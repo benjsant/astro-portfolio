@@ -326,8 +326,7 @@ const { class: className } = Astro.props;
       // Bootstrap already toggles .dark for 'system' mode - we just refresh text.
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
       const onSchemeChange = () => syncSystemSubLine();
-      if (mql.addEventListener) mql.addEventListener('change', onSchemeChange);
-      else if (mql.addListener) mql.addListener(onSchemeChange);
+      mql.addEventListener('change', onSchemeChange);
     }
   }
 
