@@ -14,7 +14,6 @@ respecte pas le schéma, le build échoue (garde-fou utile).
 | `stack` | `content/stack/` | .md / .mdx | Fiches techno |
 | `authors` | `content/authors/` | .json | Auteur(s) |
 | `faqs` | `content/faqs/` | .json | Questions/réponses (schema FAQ) |
-| `pages` | `content/pages/` | .md / .mdx | Pages de contenu |
 
 ## Ajouter un article de blog
 

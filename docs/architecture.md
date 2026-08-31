@@ -65,7 +65,6 @@ src/
     stack/             Fiches techno .mdx
     authors/           Auteur(s) .json
     faqs/              FAQ .json (pour le schema FAQ)
-    pages/             Pages de contenu .mdx
   data/
     cv.ts              TOUT le contenu des deux CV (fichier clé)
   config/
