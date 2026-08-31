@@ -116,6 +116,6 @@ Les composants sont rangés par usage dans `src/components/` :
 ## Origine du code
 
 Démarré depuis le thème [Astro Rocket](https://github.com/hansmartens68/astro-rocket)
-(licence MIT), puis fortement personnalisé. Certaines briques du template
-d'origine (par exemple des dépendances de recherche) restent présentes mais ne
-sont pas toutes câblées : voir les notes d'exactitude dans les autres fichiers.
+(licence MIT), puis fortement personnalisé. Le code mort du template (composants
+non importés, recherche Pagefind non câblée, échafaudage de tests Vitest/Playwright)
+a été retiré lors d'un ménage : ce qui reste est effectivement utilisé.
