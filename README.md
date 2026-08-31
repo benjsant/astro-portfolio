@@ -43,8 +43,6 @@ docker compose up
 | `pnpm check` | Type-check Astro + TypeScript |
 | `pnpm lint` | ESLint |
 | `pnpm validate` | lint + check + build |
-| `pnpm test` | Tests Vitest |
-| `pnpm test:e2e` | Tests Playwright |
 
 ## Architecture
 
