@@ -64,8 +64,8 @@ const id = `typing-${Math.random().toString(36).slice(2, 8)}`;
     document.body.appendChild(measurer);
 
     let maxWidth = 0;
-    for (const word of words) {
-      measurer.textContent = word + '|'; // include cursor character in measurement
+    for (let i = 0; i < words.length; i++) {
+      measurer.textContent = words[i] + '|'; // include cursor character in measurement
       maxWidth = Math.max(maxWidth, measurer.offsetWidth);
     }
     document.body.removeChild(measurer);

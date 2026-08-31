@@ -74,8 +74,8 @@ const projects = defineCollection({
     z.object({
       title: z.string(),
       description: z.string(),
-      url: z.string().url().optional(),
-      repo: z.string().url().optional(),
+      url: z.url().optional(),
+      repo: z.url().optional(),
       image: image().optional(),
       imageAlt: z.string().optional(),
       /** Bannière SVG de secours (src/assets/blog/<svgSlug>.svg) quand pas d'image. */
@@ -100,7 +100,7 @@ const stack = defineCollection({
     name: z.string(),
     description: z.string(),
     version: z.string(),
-    url: z.string().url(),
+    url: z.url(),
     icon: z.string(), // icon name, e.g. 'brand-astro'
     colorOklch: z.string(), // OKLCH params, e.g. '62.5% 0.22 38'
     order: z.number().default(0),
