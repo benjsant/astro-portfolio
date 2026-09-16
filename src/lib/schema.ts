@@ -5,7 +5,6 @@ import type {
   LocalBusiness,
   BlogPosting,
   BreadcrumbList,
-  FAQPage,
   WithContext,
 } from 'schema-dts';
 import siteConfig from '@/config/site.config';
@@ -152,26 +151,6 @@ export function createBreadcrumbSchema(
       position: index + 1,
       name: item.name,
       item: item.url,
-    })),
-  };
-}
-
-/**
- * Create FAQPage schema
- */
-export function createFAQSchema(
-  faqs: Array<{ question: string; answer: string }>
-): WithContext<FAQPage> {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
     })),
   };
 }

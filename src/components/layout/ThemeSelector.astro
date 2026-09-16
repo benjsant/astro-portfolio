@@ -33,7 +33,7 @@ const themes = [
 <div
   class:list={['theme-selector flex flex-wrap items-center gap-1', className]}
   role="group"
-  aria-label="Select colour theme"
+  aria-label="Choisir la couleur du thème"
 >
   {themes.map((theme) => (
     <button
@@ -42,7 +42,7 @@ const themes = [
       data-theme-id={theme.id}
       style={`background-color:${theme.color};--swatch:${theme.color}`}
       title={theme.name}
-      aria-label={`${theme.name} theme`}
+      aria-label={`Thème ${theme.name}`}
     />
   ))}
 </div>
@@ -84,7 +84,7 @@ const themes = [
 
 <script>
   const STORAGE_KEY = 'color-theme';
-  const DEFAULT_THEME = 'blue';
+  const DEFAULT_THEME = 'teal';
 
   function getActiveTheme(): string {
     try {

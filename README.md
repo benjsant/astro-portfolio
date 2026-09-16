@@ -12,11 +12,11 @@ La documentation technique complète est dans [`docs/`](docs/README.md) : archit
 
 | Couche | Stack |
 | ------ | ----- |
-| Framework | Astro 6, React 19 (chat), TypeScript |
+| Framework | Astro 6, React 19 (chat, effet LetterGlitch), TypeScript |
 | Styling | Tailwind CSS v4, thèmes OKLCH |
 | Contenu | MDX, Content Layer API (schémas Zod) |
 | Chatbot | API DeepSeek (`deepseek-chat`), appel unique, rate-limit par IP |
-| SEO | JSON-LD (Person, BlogPosting, FAQ), sitemap, OG, RSS, robots |
+| SEO | JSON-LD (Person, BlogPosting), sitemap, OG, RSS, robots |
 | Déploiement | Vercel (adaptateur), Node en local |
 
 ## Démarrage
@@ -71,9 +71,9 @@ Détails dans [`docs/architecture.md`](docs/architecture.md).
 ## Choix d'archi notables
 
 - **Chatbot en appel unique.** `/api/chat` ([src/pages/api/chat.ts](src/pages/api/chat.ts)) injecte les projets et articles dans le prompt système puis fait un seul appel DeepSeek. Rate-limit par IP (10 requêtes par heure), contrôle d'origine, prompt cadré au portfolio.
-- **Contenu typé.** Collections Zod pour blog, projects, stack, authors, faqs. Toutes les frontmatter MDX sont validées au build.
+- **Contenu typé.** Collections Zod pour blog, projects, stack, authors. Toutes les frontmatter MDX sont validées au build.
 - **Deux CV.** `/cv` en version ATS stricte (une colonne, sans photo) et `/cv-design` en version mise en page, imprimables en PDF.
-- **SEO complet.** JSON-LD Person et ProfessionalService et BlogPosting et FAQ, OG par page, sitemap auto, RSS, robots, manifest PWA.
+- **SEO complet.** JSON-LD Person, ProfessionalService et BlogPosting, OG par page, sitemap auto, RSS, robots, manifest PWA.
 - **Adaptateur selon la cible.** La variable `DEPLOY_TARGET` bascule l'adaptateur Astro entre Vercel et Node.
 
 ## Crédits
