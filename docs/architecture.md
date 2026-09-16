@@ -5,7 +5,7 @@
 | Couche | Technologie |
 |---|---|
 | Framework | Astro 6 (`output: static`) |
-| Îlots interactifs | React 19 (uniquement le chat) |
+| Îlots interactifs | React 19 (le chat et l'effet LetterGlitch des pages À propos et Projets) |
 | Langage | TypeScript |
 | Style | Tailwind CSS v4 (plugin Vite) + thèmes CSS en OKLCH |
 | Contenu | MDX + Content Layer API, schémas validés par Zod |
@@ -64,7 +64,6 @@ src/
     projects/          Fiches projets .mdx
     stack/             Fiches techno .mdx
     authors/           Auteur(s) .json
-    faqs/              FAQ .json (pour le schema FAQ)
   data/
     cv.ts              TOUT le contenu des deux CV (fichier clé)
   config/
@@ -96,11 +95,11 @@ Les composants sont rangés par usage dans `src/components/` :
 | `hero/` | Zones d'accroche |
 | `blog/` | Rendu des articles |
 | `projects/` | Cartes et pages projets |
-| `chat/` | `ChatWidget.tsx` (le seul composant React) |
+| `chat/` | `ChatWidget.tsx` (îlot React) |
 | `seo/` | Balises meta, JSON-LD |
 | `patterns/` | Petites briques réutilisables (dont `CvContactValue`) |
 | `ui/` | Composants de base (boutons, inputs, data-display) |
-| `effects/` | Effets visuels |
+| `effects/` | `LetterGlitch.tsx` (îlot React, bande animée sur desktop) |
 
 ## Flux : de la donnée à la page
 
