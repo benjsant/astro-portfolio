@@ -4,7 +4,7 @@
 
 | Couche | Technologie |
 |---|---|
-| Framework | Astro 6 (`output: static`) |
+| Framework | Astro 7 (`output: static`) |
 | Îlots interactifs | React 19 (le chat et l'effet LetterGlitch des pages À propos et Projets) |
 | Langage | TypeScript |
 | Style | Tailwind CSS v4 (plugin Vite) + thèmes CSS en OKLCH |

@@ -2,7 +2,7 @@
 
 Portfolio et blog personnel de **Benjamin Santrisse**, développeur IA et Data Engineering.
 
-Site statique généré avec Astro 6, Tailwind CSS v4 et MDX, développé en Docker et déployé sur Vercel. Inclut un assistant conversationnel embarqué (DeepSeek) qui répond aux questions des visiteurs sur le portfolio.
+Site statique généré avec Astro 7, Tailwind CSS v4 et MDX, développé en Docker et déployé sur Vercel. Inclut un assistant conversationnel embarqué (DeepSeek) qui répond aux questions des visiteurs sur le portfolio.
 
 ## Documentation
 
@@ -12,7 +12,7 @@ La documentation technique complète est dans [`docs/`](docs/README.md) : archit
 
 | Couche | Stack |
 | ------ | ----- |
-| Framework | Astro 6, React 19 (chat, effet LetterGlitch), TypeScript |
+| Framework | Astro 7, React 19 (chat, effet LetterGlitch), TypeScript |
 | Styling | Tailwind CSS v4, thèmes OKLCH |
 | Contenu | MDX, Content Layer API (schémas Zod) |
 | Chatbot | API DeepSeek (`deepseek-chat`), appel unique, rate-limit par IP |
