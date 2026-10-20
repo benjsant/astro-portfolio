@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { DEEPSEEK_API_KEY, SITE_URL } from 'astro:env/server';
 import { getPortfolioContext } from '@/lib/portfolio-data';
 
 export const prerender = false;
@@ -151,7 +152,7 @@ function isAllowedOrigin(request: Request): boolean {
 
   const origin = request.headers.get('origin');
   const referer = request.headers.get('referer');
-  const siteUrl = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
+  const siteUrl = (SITE_URL || '').replace(/\/$/, '');
 
   if (!siteUrl) return true;
   if (origin) return origin.startsWith(siteUrl);
@@ -189,7 +190,9 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  const apiKey = import.meta.env.DEEPSEEK_API_KEY;
+  // Lu à l'exécution via astro:env (un `import.meta.env` serait figé au build,
+  // donc vide si la clé n'est présente qu'au runtime).
+  const apiKey = DEEPSEEK_API_KEY;
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'Service indisponible.' }), {
       status: 503,

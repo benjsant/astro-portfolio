@@ -114,14 +114,14 @@ const siteConfig: SiteConfig = {
   email: 'santrissebenjamin.portfolio@gmail.com',
   address: {
     street: '',
-    city: 'Marly', // à mettre à jour avec ta ville
+    city: 'Marly',
     state: '',
     zip: '',
     country: 'France',
   },
   socialLinks: [
     'https://github.com/benjsant',
-    'https://www.linkedin.com/in/benjamin-santrisse/', // à mettre à jour avec ton profil LinkedIn
+    'https://www.linkedin.com/in/benjamin-santrisse/',
   ],
   twitter: undefined,
   verification: {

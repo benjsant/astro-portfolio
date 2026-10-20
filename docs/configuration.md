@@ -22,7 +22,7 @@ Valeurs actuelles utiles dans `site.config.ts` :
 
 | Fichier | Rôle |
 |---|---|
-| [src/lib/schema.ts](../src/lib/schema.ts) | Données structurées JSON-LD (Person, ProfessionalService, BlogPosting, FAQ). C'est l'identité que Google lit. |
+| [src/lib/schema.ts](../src/lib/schema.ts) | Données structurées JSON-LD (Person, ProfessionalService, BlogPosting). C'est l'identité que Google lit. |
 | `src/components/seo/` | Balises meta par page (title, description, Open Graph, Twitter) |
 | `public/og-default.png` | Image de partage (1200x630). Doit rester un PNG/JPG : LinkedIn n'affiche pas les SVG en preview. |
 | [src/pages/robots.txt.ts](../src/pages/robots.txt.ts) | robots.txt dynamique : autorise les moteurs, bloque une liste de crawlers d'IA |
@@ -60,7 +60,6 @@ le code : renseigne-les dans `.env` (local, gitignoré) et sur Vercel.
 | `BING_SITE_VERIFICATION` | serveur (public) | Bing Webmaster | Optionnel |
 | `PUBLIC_GA_MEASUREMENT_ID` | client | Google Analytics 4 | Optionnel |
 | `PUBLIC_GTM_ID` | client | Google Tag Manager | Optionnel |
-| `PUBLIC_GOOGLE_MAPS_API_KEY` | client | Google Maps (composant) | Optionnel |
 | `PUBLIC_CONSENT_ENABLED` | client | Active le bandeau de consentement | Optionnel |
 | `PUBLIC_PRIVACY_POLICY_URL` | client | Lien politique de confidentialité | Optionnel |
 

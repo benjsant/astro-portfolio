@@ -13,7 +13,6 @@ respecte pas le schéma, le build échoue (garde-fou utile).
 | `projects` | `content/projects/` | .md / .mdx | Fiches projets |
 | `stack` | `content/stack/` | .md / .mdx | Fiches techno |
 | `authors` | `content/authors/` | .json | Auteur(s) |
-| `faqs` | `content/faqs/` | .json | Questions/réponses (schema FAQ) |
 
 ## Ajouter un article de blog
 
