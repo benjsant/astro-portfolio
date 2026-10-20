@@ -10,7 +10,7 @@ import EmailLink from '@/components/patterns/EmailLink.astro';
 import { getCollection } from 'astro:content';
 import siteConfig from '@/config/site.config';
 
-const projectItems = await getCollection('projects');
+const projectItems = await getCollection('projects', ({ data }) => !data.draft);
 const featuredProjects = projectItems
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 4);
@@ -403,7 +403,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
         Une opportunité à me proposer ?
       </h2>
       <p class="text-lg text-foreground-muted mb-8 text-balance">
-        Disponible pour un poste en développement Python, data engineering, automatisation ou intégration. En CDI, CDD ou alternance.
+        Disponible pour un poste en développement Python, data engineering, automatisation ou intégration. En CDI ou CDD.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <Button size="lg" href="/contact" class="cta-btn-brand">
@@ -421,36 +421,5 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     </div>
   </section>
 
-<script>
-  function initCountup() {
-    const counters = document.querySelectorAll<HTMLElement>('[data-countup]:not([data-countup-init])');
-    if (counters.length === 0) return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        observer.unobserve(entry.target);
-        const el = entry.target as HTMLElement;
-        const target = parseInt(el.dataset.countup ?? '0', 10);
-        const suffix = el.dataset.suffix ?? '';
-        const duration = 1200;
-        const start = performance.now();
-        const tick = (now: number) => {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          el.textContent = Math.round(eased * target) + suffix;
-          if (progress < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      });
-    }, { threshold: 0.4 });
-    counters.forEach((el) => {
-      el.dataset.countupInit = 'true';
-      observer.observe(el);
-    });
-  }
-
-  initCountup();
-</script>
 
 </LandingLayout>

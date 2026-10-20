@@ -166,8 +166,9 @@ export default function ChatWidget() {
 
   return (
     <div className="fixed bottom-6 right-20 z-50 flex flex-col items-end gap-3 print:hidden">
+      {/* Sous sm : panneau fixé sur toute la largeur (évite le débordement à gauche). */}
       {open && (
-        <div className="flex flex-col w-[340px] max-h-[520px] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
+        <div className="fixed inset-x-4 bottom-24 sm:static sm:inset-auto flex flex-col sm:w-[340px] max-h-[min(520px,calc(100dvh-7rem))] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-background-secondary">
             <div className="flex items-center gap-2">

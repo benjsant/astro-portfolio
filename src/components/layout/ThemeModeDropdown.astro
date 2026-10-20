@@ -33,7 +33,7 @@ const { class: className } = Astro.props;
     )}
     aria-haspopup="menu"
     aria-expanded="false"
-    aria-label="Theme: system. Click to change."
+    aria-label="Thème : système. Cliquer pour changer."
   >
     <!-- Monitor - shown when data-theme-mode="system" (also pre-bootstrap fallback) -->
     <svg class="ttg-icon ttg-icon-system h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -72,7 +72,7 @@ const { class: className } = Astro.props;
       'p-1.5 hidden'
     )}
     role="menu"
-    aria-label="Colour mode"
+    aria-label="Mode d'affichage"
   >
     <button type="button" class="ttg-row" role="menuitemradio" aria-checked="false" data-mode="system">
       <span class="ttg-row-icon">
@@ -82,8 +82,8 @@ const { class: className } = Astro.props;
         </svg>
       </span>
       <span class="ttg-row-label">
-        <span class="ttg-row-title">System</span>
-        <span class="ttg-system-sub">Currently light</span>
+        <span class="ttg-row-title">Système</span>
+        <span class="ttg-system-sub">Actuellement clair</span>
       </span>
       <svg class="ttg-check h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M20 6L9 17l-5-5"/>
@@ -97,7 +97,7 @@ const { class: className } = Astro.props;
         </svg>
       </span>
       <span class="ttg-row-label">
-        <span class="ttg-row-title">Light</span>
+        <span class="ttg-row-title">Clair</span>
       </span>
       <svg class="ttg-check h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M20 6L9 17l-5-5"/>
@@ -111,7 +111,7 @@ const { class: className } = Astro.props;
         </svg>
       </span>
       <span class="ttg-row-label">
-        <span class="ttg-row-title">Dark</span>
+        <span class="ttg-row-title">Sombre</span>
       </span>
       <svg class="ttg-check h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M20 6L9 17l-5-5"/>
@@ -206,6 +206,7 @@ const { class: className } = Astro.props;
 
   const STORAGE_KEY = 'theme';
   const VALID_MODES: readonly Mode[] = ['system', 'light', 'dark'] as const;
+  const MODE_LABELS: Record<Mode, string> = { system: 'système', light: 'clair', dark: 'sombre' };
 
   function readMode(): Mode {
     try {
@@ -234,12 +235,12 @@ const { class: className } = Astro.props;
 
   function syncAllTriggerLabels(mode: Mode): void {
     document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach((btn) => {
-      btn.setAttribute('aria-label', `Theme: ${mode}. Click to change.`);
+      btn.setAttribute('aria-label', `Thème : ${MODE_LABELS[mode]}. Cliquer pour changer.`);
     });
   }
 
   function syncSystemSubLine(): void {
-    const text = osIsDark() ? 'Currently dark' : 'Currently light';
+    const text = osIsDark() ? 'Actuellement sombre' : 'Actuellement clair';
     document.querySelectorAll<HTMLElement>('.ttg-system-sub').forEach((el) => {
       el.textContent = text;
     });

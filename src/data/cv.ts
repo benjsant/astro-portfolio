@@ -73,6 +73,13 @@ export interface CVData {
   /** Infos complémentaires (permis, mobilité…) - affichées comme les contacts. */
   details: { label: string; value: string }[];
   skills: SkillRow[];
+  /**
+   * Mots-clés ATS complémentaires (compétences réelles, non détaillées dans
+   * `skills`). Rendus sur `/cv` uniquement, en fin de section Compétences.
+   * `hidden: true` = texte blanc sur blanc (lisible par les parseurs, invisible
+   * à l'œil). `hidden: false` = ligne visible, en petit gris.
+   */
+  keywords: { hidden: boolean; items: string[] };
   projects: Project[];
   experiences: Experience[];
   education: EducationEntry[];
@@ -115,6 +122,17 @@ export const cv: CVData = {
     { category: 'Dev & DevOps', value: 'Docker, Git, Linux, Node.js, CI/CD GitHub Actions' },
     { category: 'Langues', value: 'Français courant, Anglais technique' },
   ],
+
+  keywords: {
+    hidden: true,
+    items: [
+      'Data Engineering', 'ETL', 'Pipelines de données', 'SQL', 'API REST', 'Streamlit',
+      'Apache Airflow', 'Prefect', 'n8n', 'LangGraph', 'MCP', 'Tool calling', 'Agents IA',
+      'PyTorch', 'CNN', 'Computer Vision', 'Jupyter', 'Pydantic', 'Flask', 'Scrapy',
+      'Prometheus', 'Grafana', 'Monitoring', 'Bash', 'Shell', 'Podman', 'Distrobox',
+      'Flutter', 'Dart', 'Android', 'IA on-device', 'Gemini', 'Automatisation', 'Scripting',
+    ],
+  },
 
   projects: [
     {
