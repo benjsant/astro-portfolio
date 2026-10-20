@@ -15,7 +15,12 @@ services:
     environment:
       - NODE_ENV=development
 
-    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev -- --host"
+    # Le volume anonyme node_modules est créé par root : on le rend à `node`
+    # (uid 1000), puis tout tourne sous cet utilisateur pour que les fichiers
+    # générés (.astro/, dist/, lockfile) ne deviennent pas la propriété de root.
+    command: >
+      sh -c "chown node:node /app/node_modules &&
+             su node -s /bin/sh -c 'npx -y pnpm@11 install && npx -y pnpm@11 dev --host'"
 
     stdin_open: true
     tty: true

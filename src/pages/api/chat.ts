@@ -7,18 +7,33 @@ export const prerender = false;
 // -- Rate limiting -----------------------------------------------------------
 const RATE_LIMIT_MAX = 10;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+const RATE_LIMIT_MAX_ENTRIES = 5000;
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
-function getRateLimitKey(request: Request): string {
-  return (
-    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-    request.headers.get('x-real-ip') ||
-    'unknown'
-  );
+// Limite en mémoire : par instance seulement (sur Vercel, chaque instance a son
+// propre compteur, remis à zéro au cold start). C'est un garde-fou, pas un quota strict.
+function getRateLimitKey(request: Request, clientAddress: string | undefined): string {
+  // Sur Vercel, x-forwarded-for est réécrit par la plateforme : fiable.
+  // Ailleurs (Docker/Node), l'en-tête est fourni par le client et falsifiable,
+  // on utilise donc l'adresse de la connexion.
+  if (process.env.VERCEL) {
+    const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0].trim();
+    if (forwarded) return forwarded;
+  }
+  return clientAddress || 'unknown';
+}
+
+// Purge les entrées expirées pour que la Map ne grossisse pas indéfiniment.
+function pruneRateLimitStore(now: number): void {
+  if (rateLimitStore.size < RATE_LIMIT_MAX_ENTRIES) return;
+  for (const [key, entry] of rateLimitStore) {
+    if (now > entry.resetAt) rateLimitStore.delete(key);
+  }
 }
 
 function checkRateLimit(ip: string): { allowed: boolean; remaining: number; resetIn: number } {
   const now = Date.now();
+  pruneRateLimitStore(now);
   const entry = rateLimitStore.get(ip);
 
   if (!entry || now > entry.resetAt) {
@@ -146,31 +161,43 @@ async function askDeepSeek(
 }
 
 // -- Origin check ------------------------------------------------------------
-function isAllowedOrigin(request: Request): boolean {
+function isAllowedOrigin(request: Request, site: URL | undefined): boolean {
   // En dev Astro, on bypass pour ne pas bloquer localhost.
   if (import.meta.env.DEV) return true;
 
-  const origin = request.headers.get('origin');
-  const referer = request.headers.get('referer');
-  const siteUrl = (SITE_URL || '').replace(/\/$/, '');
+  const siteOrigin = toOrigin(SITE_URL || site?.href);
+  // Sans SITE_URL valide, on ne peut rien comparer : on refuse plutôt que de tout accepter.
+  if (!siteOrigin) return false;
 
-  if (!siteUrl) return true;
-  if (origin) return origin.startsWith(siteUrl);
-  if (referer) return referer.startsWith(siteUrl);
+  // Comparaison stricte de l'origine (schéma + hôte + port) : un simple
+  // startsWith laisserait passer https://site.vercel.app.evil.com.
+  const origin = request.headers.get('origin');
+  if (origin) return toOrigin(origin) === siteOrigin;
+  const referer = request.headers.get('referer');
+  if (referer) return toOrigin(referer) === siteOrigin;
   // Pas d'Origin ni de Referer -> curl/Postman brut -> rejeter
   return false;
 }
 
+function toOrigin(value: string | undefined | null): string | null {
+  if (!value) return null;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
 // -- Route handler -----------------------------------------------------------
-export const POST: APIRoute = async ({ request }) => {
-  if (!isAllowedOrigin(request)) {
+export const POST: APIRoute = async ({ request, clientAddress, site }) => {
+  if (!isAllowedOrigin(request, site)) {
     return new Response(JSON.stringify({ error: 'Accès refusé.' }), {
       status: 403,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
-  const ip = getRateLimitKey(request);
+  const ip = getRateLimitKey(request, clientAddress);
   const { allowed, remaining, resetIn } = checkRateLimit(ip);
 
   if (!allowed) {
@@ -200,7 +227,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  let body: { message?: string; history?: unknown };
+  let body: { message?: unknown; history?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -210,7 +237,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const userMessage = body.message?.trim();
+  const userMessage = typeof body?.message === 'string' ? body.message.trim() : '';
   if (!userMessage || userMessage.length > 500) {
     return new Response(JSON.stringify({ error: 'Message invalide.' }), {
       status: 400,

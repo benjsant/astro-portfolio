@@ -29,6 +29,11 @@ const FOLLOWUPS: string[] = [
 // ── Minimal safe markdown renderer ────────────────────────────────────────────
 // Supports: **bold**, [text](url), - bullets, paragraph breaks.
 // No HTML injection (returns JSX, never uses dangerouslySetInnerHTML).
+// Les liens viennent du LLM : on n'accepte que les chemins internes et http(s).
+function isSafeHref(href: string): boolean {
+  return /^\/(?!\/)/.test(href) || /^https?:\/\//i.test(href);
+}
+
 function renderInline(text: string): ReactNode[] {
   const nodes: ReactNode[] = [];
   // Token order: link [text](url) > bold **xxx**
@@ -40,8 +45,11 @@ function renderInline(text: string): ReactNode[] {
     if (match.index > lastIndex) {
       nodes.push(text.slice(lastIndex, match.index));
     }
-    if (match[1] && match[2]) {
-      const href = match[2];
+    if (match[1] && match[2] && !isSafeHref(match[2].trim())) {
+      // Lien au schéma non autorisé (javascript:, data:...) : texte seul.
+      nodes.push(match[1]);
+    } else if (match[1] && match[2]) {
+      const href = match[2].trim();
       const isExternal = /^https?:\/\//.test(href);
       nodes.push(
         <a
