@@ -17,8 +17,18 @@ services:
     # Le volume anonyme node_modules est créé par root : on le rend à `node`
     # (uid 1000), puis tout tourne sous cet utilisateur pour que les fichiers
     # générés (.astro/, dist/, lockfile) ne deviennent pas la propriété de root.
+    #
+    # Au démarrage, on retire aussi :
+    #   - .astro/dev.json : verrou laissé par un arrêt brutal (extinction du
+    #     PC) qui bloque sinon `astro dev` (« Another astro dev server is
+    #     already running ») ; le conteneur est seul à servir ce projet ;
+    #   - les droits root sur node_modules/.vite : une commande lancée en root
+    #     (`docker compose exec astro …` sans `-u node`) y crée des fichiers
+    #     que Vite ne peut plus remplacer (EACCES).
     command: >
-      sh -c "chown node:node /app/node_modules &&
+      sh -c "rm -f /app/.astro/dev.json &&
+             chown node:node /app/node_modules &&
+             mkdir -p /app/node_modules/.vite && chown -R node:node /app/node_modules/.vite &&
              su node -s /bin/sh -c 'npx -y pnpm@11 install && npx -y pnpm@11 dev --host'"
 
     stdin_open: true
