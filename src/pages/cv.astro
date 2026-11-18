@@ -96,7 +96,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
         ))}
         {cv.keywords.items.length > 0 && (
           <p class:list={['cv-line cv-keywords', cv.keywords.hidden && 'cv-keywords--hidden']}>
-            <strong>Mots-clés :</strong> {cv.keywords.items.join(', ')}
+            <strong>Autres outils :</strong> {cv.keywords.items.join(', ')}
           </p>
         )}
       </section>

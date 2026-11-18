@@ -159,14 +159,15 @@ export const cv: CVData = {
     { category: 'Langues', value: 'Français (langue maternelle), anglais technique' },
   ],
 
+  // Outils réellement utilisés dans les projets publics, non détaillés dans
+  // `skills`. Ligne VISIBLE : du texte caché (blanc sur blanc) ressort en
+  // vrac dans l'aperçu texte des logiciels de recrutement et est mal vu.
   keywords: {
-    hidden: true,
+    hidden: false,
     items: [
-      'Data Engineering', 'ETL', 'Pipelines de données', 'SQL', 'API REST', 'Streamlit',
-      'Apache Airflow', 'Prefect', 'n8n', 'LangGraph', 'MCP', 'Tool calling', 'Agents IA',
-      'PyTorch', 'CNN', 'Computer Vision', 'Jupyter', 'Pydantic', 'Flask', 'Scrapy',
-      'Prometheus', 'Grafana', 'Monitoring', 'Bash', 'Shell', 'Podman', 'Distrobox',
-      'Flutter', 'Dart', 'Android', 'IA on-device', 'Gemini', 'Automatisation', 'Scripting',
+      'SQL', 'API REST', 'Streamlit', 'Apache Airflow', 'Prefect', 'n8n', 'LangGraph', 'MCP',
+      'PyTorch (CNN)', 'Jupyter', 'Pydantic', 'Flask', 'Scrapy', 'Prometheus', 'Grafana',
+      'Bash', 'Podman', 'Flutter', 'Gemini',
     ],
   },
 
