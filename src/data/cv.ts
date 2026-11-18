@@ -137,7 +137,7 @@ export const cv: CVData = {
   projects: [
     {
       title: 'Job Hunter - pipeline de candidature assisté par IA',
-      repo: 'https://github.com/benjsant/n8n_jobs_pipeline',
+      repo: 'https://github.com/benjsant/job_hunter',
       period: 'Juin 2026 - en cours',
       stack: 'Python · n8n · LangGraph · FastAPI · PostgreSQL/pgvector · Docker',
       description:
@@ -153,7 +153,7 @@ export const cv: CVData = {
     },
     {
       title: 'PredictionDex - prédiction de combats Pokémon',
-      repo: 'https://github.com/benjsant/lets-go-predictiondex',
+      repo: 'https://github.com/benjsant/predictiondex',
       period: 'Janvier - Mars 2026',
       stack: 'Python · XGBoost · FastAPI · PostgreSQL · Docker',
       description:
@@ -193,7 +193,7 @@ export const cv: CVData = {
     {
       date: '2018-19',
       title: 'Licence Pro SIO, option Développement',
-      school: 'ISTV de Valenciennes (UVHC)',
+      school: 'ISTV de Valenciennes (UPHF, ex-UVHC)',
     },
     {
       date: '2015-17',
