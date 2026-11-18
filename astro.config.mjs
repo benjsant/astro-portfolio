@@ -39,6 +39,9 @@ export default defineConfig({
       PUBLIC_CONSENT_ENABLED: envField.boolean({ context: 'client', access: 'public', optional: true, default: false }),
       PUBLIC_PRIVACY_POLICY_URL: envField.string({ context: 'client', access: 'public', optional: true, default: '' }),
       DEEPSEEK_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // Téléphone du CV : lu UNIQUEMENT en `astro dev` (voir src/data/cv.ts),
+      // jamais dans un build. À définir dans .env.local (ignoré par Git).
+      CV_PHONE: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
 
