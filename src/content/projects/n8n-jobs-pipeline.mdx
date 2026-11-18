@@ -1,7 +1,7 @@
 ---
 title: "Job Hunter, pipeline de candidature assisté par IA"
-description: "Assistant de recherche d'emploi auto-hébergé : collecte multi-API quotidienne, déduplication sémantique pgvector, scoring hybride LLM, agent LangGraph groundé et génération de CV/lettres PDF ciblés par offre. Validation humaine avant tout envoi."
-status: "Auto-hébergé, utilisé quotidiennement"
+description: "Assistant de recherche d'emploi auto-hébergé (arrêté en août 2026) : collecte multi-API quotidienne, déduplication sémantique pgvector, scoring hybride LLM, agent LangGraph groundé et génération de CV/lettres PDF ciblés par offre. Validation humaine avant tout envoi."
+status: "Projet arrêté (août 2026), code source public"
 repo: "https://github.com/benjsant/job_hunter"
 tags: ["Python", "n8n", "LangGraph", "FastAPI", "PostgreSQL", "Docker"]
 featured: false
@@ -12,7 +12,9 @@ services: ["Automatisation", "IA", "Backend"]
 draft: false
 ---
 
-Système complet de recherche d'emploi que j'auto-héberge et utilise quotidiennement : chaque matin, il collecte les offres, les déduplique, les score selon mon profil et pousse les meilleures sur Discord. Un clic déclenche un agent IA qui analyse l'offre, se renseigne réellement sur l'entreprise et génère un CV et une lettre ciblés, livrés en PDF. L'envoi reste toujours humain.
+Système complet de recherche d'emploi que j'ai auto-hébergé et utilisé de juin à août 2026 : chaque matin, il collectait les offres, les dédupliquait, les scorait selon mon profil et poussait les meilleures sur Discord. Un clic déclenchait un agent IA qui analysait l'offre, se renseignait réellement sur l'entreprise et générait un CV et une lettre ciblés, livrés en PDF. L'envoi restait toujours humain.
+
+J'ai arrêté le projet en août 2026 : les sources de données, notamment France Travail, n'étaient pas assez fiables pour justifier de le maintenir. Le code reste public.
 
 ## Fonctionnalités
 
