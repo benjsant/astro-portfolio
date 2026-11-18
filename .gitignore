@@ -3,16 +3,22 @@ node_modules/
 
 # Build output
 dist/
+.vercel/
 .output/
 
 # Logs
 *.log
 logs/
 
-# Environment variables
+# Environment variables (.env.local contient CV_PHONE : ne jamais versionner)
 .env
 .env.*
+.env.local
 !.env.example
+
+# PDF du CV générés en local (out-private/ contient le téléphone)
+out-private/
+out-public/
 
 # OS files
 .DS_Store

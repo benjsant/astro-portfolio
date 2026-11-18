@@ -30,7 +30,7 @@ export function createPersonSchema(): WithContext<Person> {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: siteConfig.name,
-    jobTitle: 'Développeur Python · IA, Data & Automatisation',
+    jobTitle: 'Développeur Python : IA, data et automatisation',
     url: siteConfig.url,
     ...(siteConfig.authorImage ? { image: `${siteConfig.url}${siteConfig.authorImage}` } : {}),
     address: {

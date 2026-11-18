@@ -16,7 +16,20 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/layout/Header.astro';
 import CvContactValue from '@/components/patterns/CvContactValue.astro';
-import { cv } from '@/data/cv';
+import { cv as defaultCv, type CVData } from '@/data/cv';
+
+// Par défaut : le CV principal. D'éventuelles variantes locales
+// réutilisent cette page en passant leurs propres données.
+interface Props {
+  cv?: CVData;
+  designHref?: string;
+  /**
+   * Espacement : `dense` resserre (variantes longues), `roomy` aère pour
+   * remplir la page (variantes courtes). Toujours 1 page.
+   */
+  spacing?: 'dense' | 'normal' | 'roomy';
+}
+const { cv = defaultCv, designHref = '/cv-design', spacing = 'normal' } = Astro.props;
 
 // Anti-IA / anti-ATS : tiret cadratin/demi-cadratin (— –) -> trait d'union,
 // point médian (·) -> virgule. Rend le texte parfaitement linéaire.
@@ -44,7 +57,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
 
   <main class="cv-page pt-20 pb-12">
     <div class="cv-toolbar">
-      <a href="/cv-design" class="cv-print-btn cv-print-btn--ghost cv-design-link">Version mise en page</a>
+      <a href={designHref} class="cv-print-btn cv-print-btn--ghost cv-design-link">Version mise en page</a>
       <button type="button" class="cv-print-btn cv-print-btn--ghost" onclick="document.querySelector('.cv-sheet').classList.remove('cv-aere'); window.print();">
         ↓ PDF · 1 page (compact)
       </button>
@@ -53,13 +66,13 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
       </button>
     </div>
 
-    <article class="cv-sheet">
+    <article class:list={['cv-sheet', spacing !== 'normal' && `cv-${spacing}`]}>
       <!-- HEADER -->
       <header class="cv-head">
         <h1 class="cv-name">{cv.header.name}</h1>
-        <p class="cv-role">{cv.header.role}</p>
+        <p class="cv-role">{clean(cv.header.role)}</p>
         {recherche && <p class="cv-avail">{clean(recherche.value)}</p>}
-        <p class="cv-summary">{cv.header.summary}</p>
+        <p class="cv-summary">{clean(cv.header.summary)}</p>
 
         <p class="cv-contact">
           {cv.contact.map((item, i) => (
@@ -94,7 +107,7 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
         {cv.projects.map((project) => (
           <div class="cv-item">
             <p class="cv-item-head"><strong>{project.title}</strong>{project.period ? ` (${clean(project.period)})` : ''}</p>
-            <p class="cv-item-tech">{clean(project.stack)}</p>
+            {project.stack && <p class="cv-item-tech">{clean(project.stack)}</p>}
             <p class="cv-item-desc">{project.description}</p>
           </div>
         ))}
@@ -122,21 +135,25 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
         ))}
       </section>
 
-      <!-- CERTIFICATIONS -->
-      <section class="cv-section">
-        <h2>Certifications</h2>
-        {cv.certifications.map((c) => (
-          <p class="cv-line"><strong>{c.title}</strong> ({c.date})</p>
-        ))}
-      </section>
+      <!-- CERTIFICATIONS (section absente si la liste est vide) -->
+      {cv.certifications.length > 0 && (
+        <section class="cv-section">
+          <h2>Certifications</h2>
+          {cv.certifications.map((c) => (
+            <p class="cv-line"><strong>{c.title}</strong> ({c.date})</p>
+          ))}
+        </section>
+      )}
 
-      <!-- INTÉRÊTS -->
-      <section class="cv-section">
-        <h2>Centres d'intérêt</h2>
-        {cv.interests.map((i) => (
-          <p class="cv-line"><strong>{i.title}</strong> : {i.description}</p>
-        ))}
-      </section>
+      <!-- INTÉRÊTS (section absente si la liste est vide) -->
+      {cv.interests.length > 0 && (
+        <section class="cv-section">
+          <h2>Centres d'intérêt</h2>
+          {cv.interests.map((i) => (
+            <p class="cv-line"><strong>{i.title}</strong> : {i.description}</p>
+          ))}
+        </section>
+      )}
     </article>
   </main>
 </BaseLayout>
@@ -286,6 +303,20 @@ const otherDetails = cv.details.filter((d) => d.label !== 'Recherche');
   .cv-keywords strong { color: oklch(45% 0.01 250); }
   .cv-keywords--hidden,
   .cv-keywords--hidden strong { color: #fff !important; user-select: text; }
+  /* Variante dense : la ligne masquée garde son texte (lu par les ATS) mais
+     n'occupe presque plus de hauteur. */
+  .cv-dense .cv-keywords--hidden { font-size: 4px; line-height: 1.1; margin: 0; }
+  /* … et un peu moins d'espace entre sections et projets. */
+  .cv-dense .cv-section { margin-top: 6px; }
+  .cv-dense .cv-item { margin-bottom: 4px; }
+  /* Variante aérée (CV courts) : remplit la page A4 sans passer à 2 pages. */
+  .cv-roomy .cv-section { margin-top: 38px; }
+  .cv-roomy .cv-section h2 { margin-bottom: 11px; }
+  .cv-roomy .cv-summary { line-height: 1.55; }
+  .cv-roomy .cv-line { margin: 12px 0; line-height: 1.55; }
+  .cv-roomy .cv-item { margin-bottom: 22px; }
+  .cv-roomy .cv-item-desc { line-height: 1.5; }
+  .cv-roomy ul.cv-tasks li { margin-bottom: 3px; line-height: 1.55; }
 
   .cv-item { margin-bottom: 5px; }
   .cv-item:last-child { margin-bottom: 0; }
