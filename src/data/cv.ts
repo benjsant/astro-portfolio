@@ -130,7 +130,7 @@ export const cv: CVData = {
     name: 'Benjamin Santrisse',
     role: 'Développeur Backend Python (API, IA appliquée)',
     summary:
-      "Développeur Python spécialisé en IA et backend, certifié Développeur IA (RNCP niveau 6) à l'issue d'une reconversion. Conçoit des projets concrets et conteneurisés (Docker) : agents LLM, pipelines MLOps, ETL et APIs FastAPI.",
+      "Développeur Python spécialisé en IA et backend, certifié Développeur IA (RNCP niveau 6) à l'issue d'une formation en IA. Conçoit des projets concrets et conteneurisés (Docker) : agents LLM, pipelines MLOps, ETL et APIs FastAPI.",
   },
 
   contact: [
@@ -178,7 +178,7 @@ export const cv: CVData = {
       period: 'Juin - août 2026',
       stack: 'Python · n8n · LangGraph · FastAPI · PostgreSQL/pgvector · Docker',
       description:
-        "Système de recherche d'emploi exécuté en local (Docker Compose) : collecte multi-API (8 workflows n8n), déduplication sémantique (pgvector), scoring hybride LLM, agent LangGraph appuyé sur le registre INSEE et génération de CV/lettres PDF ciblés par offre. Plus de 110 tests pytest, CI GitHub Actions.",
+        "Système de recherche d'emploi exécuté en local (Docker Compose) : collecte multi-API (8 workflows n8n), déduplication sémantique (pgvector), scoring hybride LLM, agent LangGraph et génération de CV/lettres PDF ciblés par offre.",
     },
     {
       title: 'InfiniDex - Pokédex augmenté par IA',
