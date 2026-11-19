@@ -1,16 +1,16 @@
 ---
 title: "Candid"
 svgSlug: "candid"
-description: "Agent LLM entièrement on-device sur Android (Flutter/Dart) : inférence locale sans appel réseau, ancrage sur des faits vérifiables pour supprimer les inventions du modèle, génération de PDF."
+description: "Agent LLM qui tourne entièrement sur le téléphone (Android, Flutter/Dart) : inférence locale sans appel réseau, ancrage sur des faits vérifiables pour supprimer les inventions du modèle, génération de PDF."
 status: "Code source public, application Android"
 repo: "https://github.com/benjsant/candid"
 url: "https://benjsant.github.io/candid/"
-tags: ["Flutter", "Dart", "Agent IA", "On-device", "Gemini", "Android"]
+tags: ["Flutter", "Dart", "Agent IA", "IA embarquée", "Gemini", "Android"]
 featured: true
 order: 3
 year: 2026
 role: "Développeur Mobile IA"
-services: ["Application mobile", "Agent IA", "On-device"]
+services: ["Application mobile", "Agent IA", "IA embarquée"]
 ---
 
 ## À propos du projet
@@ -21,8 +21,8 @@ Candid est un assistant de candidature Android **entièrement autonome** : pas d
 
 - **Trois règles non négociables, inscrites dans le code.** L'app ne doit jamais inventer une compétence ou une expérience, jamais envoyer automatiquement, jamais modifier des données perso sans validation. Ces garde-fous vivent dans `lib/agent/guards.dart` et `lib/domain/dedup.dart`.
 - **Agent LLM ancré.** Analyse de l'offre, ancrage sur des faits vérifiables, génération d'accroche, passage par un juge, puis validation. Pas de broderie.
-- **100% on-device.** Aucun backend à héberger ; les seuls appels sortants vont vers des API publiques. Génération PDF sur l'appareil.
-- **Human-in-the-loop strict.** L'app produit des PDF et s'arrête là : c'est l'utilisateur qui relit et envoie.
+- **100 % sur le téléphone.** Aucun backend à héberger ; les seuls appels sortants vont vers des API publiques. Génération PDF sur l'appareil.
+- **Validation humaine stricte.** L'app produit des PDF et s'arrête là : c'est l'utilisateur qui relit et envoie.
 - **Documentation technique complète** publiée sur GitHub Pages (architecture, modèle de données, agent, sources, audit de sécurité, journal des décisions).
 
 ## Stack technique
