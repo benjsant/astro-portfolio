@@ -21,13 +21,13 @@ J'ai arrêté le projet en août 2026 : les sources de données, notamment Franc
 - **Collecte multi-API quotidienne** : France Travail, La Bonne Alternance, JobSpy (LinkedIn/Indeed), pilotée par des profils de recherche multi-zones en base
 - **Déduplication double** : hash canonicalisé + similarité sémantique (embeddings locaux fastembed, pgvector, anti-join HNSW inter-collectes)
 - **Scoring hybride** : pré-filtre déterministe gratuit, affinage LLM du top 20 avec justification
-- **Agent LangGraph** : analyze, research (grounding registre INSEE + web), accroche, juge déterministe anti-clichés, validation de schéma
+- **Agent LangGraph** : analyse de l'offre, recherche sur l'entreprise, accroche, juge déterministe anti-clichés, validation de schéma
 - **CV et lettres adaptés par offre** : le LLM ne produit que des données (compétences et projets mis en avant ou masqués), le rendu Astro + Playwright reste fixe ; corps de lettres figés, seule l'accroche est rédigée
 - **Suivi complet** : mini-interface web (tri des offres, relances, statistiques de taux de réponse), digest hebdomadaire et notification d'échecs sur Discord
 
 ## Garde-fous
 
-Aucune invention possible par construction : personnalisation validée contre un index de valeurs réelles, grounding officiel avant de parler d'une entreprise, relecture humaine obligatoire avant tout envoi. Plus de 110 tests (parité des nœuds n8n générée depuis des modules testés, cassettes LLM rejouées, intégration Postgres), CI GitHub Actions.
+Aucune invention possible par construction : personnalisation validée contre un index de valeurs réelles, informations sur l'entreprise vérifiées avant d'en parler, relecture humaine obligatoire avant tout envoi.
 
 ## Stack
 
