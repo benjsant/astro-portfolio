@@ -152,10 +152,10 @@ export const cv: CVData = {
   skills: [
     { category: 'IA & Données', value: 'Machine Learning, MLOps, Pandas, NumPy, Scikit-learn, MLflow, XGBoost' },
     { category: 'IA générative', value: 'LLMs, RAG, Agents IA (ReAct, tool-calling), DeepSeek, Prompt engineering' },
-    { category: 'Langages', value: 'Python, JavaScript, PHP, HTML/CSS' },
+    { category: 'Langages', value: 'Python, SQL, TypeScript, JavaScript, PHP, HTML/CSS' },
     { category: 'Frameworks', value: 'FastAPI, Django, Symfony, React, Next.js' },
     { category: 'Bases de données', value: 'MySQL, PostgreSQL, MongoDB, pgvector' },
-    { category: 'Dev & DevOps', value: 'Docker, Git, Linux, Node.js, CI/CD GitHub Actions' },
+    { category: 'Dev & DevOps', value: 'Docker, Git, pytest, CI/CD GitHub Actions, Linux, Node.js' },
     { category: 'Langues', value: 'Français (langue maternelle), anglais technique' },
   ],
 
@@ -165,9 +165,9 @@ export const cv: CVData = {
   keywords: {
     hidden: false,
     items: [
-      'SQL', 'API REST', 'Streamlit', 'Apache Airflow', 'Prefect', 'n8n', 'LangGraph', 'MCP',
+      'API REST', 'Streamlit', 'Apache Airflow', 'Prefect', 'n8n', 'LangGraph', 'MCP',
       'PyTorch (CNN)', 'Jupyter', 'Pydantic', 'Flask', 'Scrapy', 'Prometheus', 'Grafana',
-      'Bash', 'Podman', 'Flutter', 'Gemini',
+      'Azure', 'Bash', 'Podman', 'Flutter', 'Gemini',
     ],
   },
 
@@ -178,7 +178,7 @@ export const cv: CVData = {
       period: 'Juin - août 2026',
       stack: 'Python · n8n · LangGraph · FastAPI · PostgreSQL/pgvector · Docker',
       description:
-        "Système de recherche d'emploi exécuté en local (Docker Compose) : collecte multi-API (8 workflows n8n), déduplication sémantique (pgvector), scoring hybride LLM, agent LangGraph groundé (registre INSEE) et génération de CV/lettres PDF ciblés par offre. Plus de 110 tests, CI GitHub Actions.",
+        "Système de recherche d'emploi exécuté en local (Docker Compose) : collecte multi-API (8 workflows n8n), déduplication sémantique (pgvector), scoring hybride LLM, agent LangGraph appuyé sur le registre INSEE et génération de CV/lettres PDF ciblés par offre. Plus de 110 tests pytest, CI GitHub Actions.",
     },
     {
       title: 'InfiniDex - Pokédex augmenté par IA',
@@ -194,7 +194,7 @@ export const cv: CVData = {
       period: 'Janvier - mars 2026',
       stack: 'Python · XGBoost · FastAPI · PostgreSQL · Docker',
       description:
-        "Modèle XGBoost entraîné sur un dataset de combats simulés. Pipeline MLOps end-to-end : tracking MLflow, promotion auto du meilleur modèle, API FastAPI + interface Streamlit.",
+        "Modèle XGBoost entraîné sur un dataset de combats simulés. Pipeline MLOps de bout en bout : suivi des expériences avec MLflow, promotion automatique du meilleur modèle, API FastAPI et interface Streamlit.",
     },
     {
       title: 'Audiomancy - génération de playlists assistée par IA',
@@ -202,7 +202,7 @@ export const cv: CVData = {
       period: 'Juillet 2025 - mars 2026',
       stack: 'Python · FastAPI · Next.js · MongoDB · Docker',
       description:
-        "Projet en équipe. Agent ReAct DeepSeek (boucle Thought/Action/Observation) + API Jamendo pour générer des playlists musicales. Stack monitoring Prometheus/Grafana, déployé sur Azure pendant le projet.",
+        "Projet en équipe. Agent ReAct DeepSeek (boucle Thought/Action/Observation) relié à l'API Jamendo pour générer des playlists musicales. Stack monitoring Prometheus/Grafana, déployé sur Azure pendant le projet.",
     },
   ],
 
@@ -210,7 +210,7 @@ export const cv: CVData = {
     {
       org: 'CAF du Nord - Agence de Valenciennes',
       role: 'Développeur web Symfony - stages successifs',
-      date: 'Mai 2016 - mai 2019 (6 mois cumulés, 24 semaines)',
+      date: 'Mai 2016 - mai 2019 (24 semaines cumulées)',
       tasks: [
         "Développement et intégration d'interfaces web avec Symfony et Bootstrap dans des applications internes",
         "Participation au développement d'une plateforme de gestion des espaces de travail",
