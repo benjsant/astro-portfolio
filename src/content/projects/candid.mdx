@@ -1,8 +1,8 @@
 ---
 title: "Candid"
 svgSlug: "candid"
-description: "Agent LLM entièrement on-device sur Android (Flutter/Dart) : inférence locale sans appel réseau, grounding sur registre INSEE pour supprimer les inventions du modèle, génération de PDF, 171 tests."
-status: "Code source public, application Android (171 tests)"
+description: "Agent LLM entièrement on-device sur Android (Flutter/Dart) : inférence locale sans appel réseau, ancrage sur des faits vérifiables pour supprimer les inventions du modèle, génération de PDF."
+status: "Code source public, application Android"
 repo: "https://github.com/benjsant/candid"
 url: "https://benjsant.github.io/candid/"
 tags: ["Flutter", "Dart", "Agent IA", "On-device", "Gemini", "Android"]
@@ -19,18 +19,18 @@ Candid est un assistant de candidature Android **entièrement autonome** : pas d
 
 ## Choix d'archi notables
 
-- **Trois règles non négociables, tenues par du code testé.** L'app ne doit jamais inventer une compétence ou une expérience, jamais envoyer automatiquement, jamais modifier des données perso sans validation. Ces garde-fous (`lib/agent/guards.dart`, `lib/domain/dedup.dart`) sont couverts par des tests : les enfreindre casse la suite. C'est voulu.
-- **Agent LLM ancré (grounding).** Analyse de l'offre, ancrage sur des faits vérifiables (registre INSEE), génération d'accroche, passage par un juge, puis validation. Pas de broderie.
+- **Trois règles non négociables, inscrites dans le code.** L'app ne doit jamais inventer une compétence ou une expérience, jamais envoyer automatiquement, jamais modifier des données perso sans validation. Ces garde-fous vivent dans `lib/agent/guards.dart` et `lib/domain/dedup.dart`.
+- **Agent LLM ancré.** Analyse de l'offre, ancrage sur des faits vérifiables, génération d'accroche, passage par un juge, puis validation. Pas de broderie.
 - **100% on-device.** Aucun backend à héberger ; les seuls appels sortants vont vers des API publiques. Génération PDF sur l'appareil.
 - **Human-in-the-loop strict.** L'app produit des PDF et s'arrête là : c'est l'utilisateur qui relit et envoie.
-- **171 tests verts** et une documentation technique complète publiée sur GitHub Pages (architecture, modèle de données, agent, sources, audit de sécurité, journal des décisions).
+- **Documentation technique complète** publiée sur GitHub Pages (architecture, modèle de données, agent, sources, audit de sécurité, journal des décisions).
 
 ## Stack technique
 
 | Couche | Stack |
 | ------ | ----- |
 | App | Flutter 3.44 + Dart, min SDK Android 7.0 |
-| IA | Agent LLM (Gemini), grounding INSEE, juge |
+| IA | Agent LLM (Gemini), ancrage sur des faits vérifiables, juge |
 | Partage | `receive_sharing_intent` (Android share target) |
 | Sortie | Génération de CV et lettre en PDF sur l'appareil |
-| Qualité | 171 tests, doc technique sur GitHub Pages |
+| Documentation | Doc technique sur GitHub Pages |
